@@ -1,21 +1,24 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import staffData from '../../../data/staff.json';
+import staffEn from '../../../data/staff.en.json';
+import staffEs from '../../../data/staff.es.json';
+import staffVi from '../../../data/staff.vi.json';
+import { pickLocale } from '../../../lib/i18n';
 import type { Lang } from '../../../config';
 import en from '../../../data/ui.en.json';
 import es from '../../../data/ui.es.json';
 import vi from '../../../data/ui.vi.json';
 
 export async function getStaticPaths() {
-  const members = (staffData as any).members as Array<{ slug: string }>;
+  const members = (staffEn as any).members as Array<{ slug: string }>;
   const langs: Lang[] = ['en', 'es', 'vi'];
   return members.flatMap((m) => langs.map((lang) => ({ params: { lang, member: m.slug } })));
 }
 const { lang, member } = Astro.params as { lang: Lang; member: string };
 const ui = lang === 'es' ? es : lang === 'vi' ? vi : en;
-const members = (staffData as any).members as Array<{
+const members = ((pickLocale({ en: staffEn, es: staffEs, vi: staffVi }, lang) as any).members as Array<{
   slug: string; name: string; role: string; phone: string; photo: string; bio: string;
-}>;
+}>);
 const person = members.find((m) => m.slug === member);
 if (!person) return Astro.redirect(`/${lang}/staff/`, 404);
 ---

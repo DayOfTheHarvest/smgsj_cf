@@ -13,8 +13,9 @@ still names a person instead of the parish, fix that first.
 | Service | Why | Must be owned by | Current holder | Recovery if lost |
 |---|---|---|---|---|
 | GitHub org + repo | Website source + edit history | Parish org, 2+ owners | ________ | Org owners re-invite; repo can be re-pushed from any clone |
-| Netlify team + site | Hosting, builds, logins | Parish team, 2+ admins | ________ | Admins re-add members; site rebuilds from GitHub |
-| Netlify Identity users | Who can log in to `/admin` | — (per-person emails) | ________ | Any admin re-invites |
+| Cloudflare account (Pages + Worker) | Hosting, builds, `/admin` login backend | Parish, 2+ admins | ________ | Admins re-add members; site rebuilds from GitHub |
+| GitHub OAuth app (parish org) | "Sign in with GitHub" at `/admin` | Parish org owners | ________ | Org owners recreate the app, update Worker `GITHUB_CLIENT_ID`/`SECRET` |
+| GitHub editors (Write access) | Who can log in to `/admin` | Parish org team | ________ | Org owner adds the member to the team |
 | Network Solutions account (`webaccount@smgsj.org`) | `smgsj.org` domain (auto-renew ON) + DNS | Parish, 2+ admins | ________ | Password reset to `webaccount@smgsj.org`; keep that inbox monitored |
 | Google/YouTube `@smgsjca` | Stream links, embeds | Parish channel admins | ________ | YouTube Brand-account transfer |
 | Facebook page | Footer/contact links | 2+ parish page admins | ________ | Meta Business Suite admin recovery |
@@ -31,7 +32,7 @@ Also: `smgsj@smgsj.org` (parish mail) and `webaccount@smgsj.org` (domain/hosting
 
 - Skills: basic HTML/Markdown, `git`, and `npm` (all documented in
   `README.md` / `DEPLOY.md`). No framework expertise required for routine work.
-- First week: log in at `/admin`, do the sandbox drills in `HANDBOOK.md`,
+- First week: log in at `/admin` (Sveltia CMS — Sign in with GitHub), do the sandbox drills in `HANDBOOK.md`,
   run `npm run build` locally, read the open office questions in `MIGRATION.md §3`.
 - Standing routine: bulletins + presiders weekly (office staff, no volunteer
   needed); dependency refresh (`npm update`, rebuild) quarterly.
@@ -39,8 +40,8 @@ Also: `smgsj@smgsj.org` (parish mail) and `webaccount@smgsj.org` (domain/hosting
 ## 3. What breaks if neglected (and how fast)
 
 - Domain renewal lapses → whole site offline. Keep auto-renew + monitored inbox.
-- Netlify free-tier limits → effectively never for this traffic; check the
-  monthly email summary.
+- Cloudflare Pages/Workers free-tier limits → effectively never for this traffic; check the
+  Cloudflare dashboard email summary.
 - `node_modules` rot → rebuild from scratch yearly (`rm -rf node_modules dist .astro && npm install && npm run build`).
 - weconnect.com hotlinks (4 bulletins only) die → re-upload those PDFs via Media.
 

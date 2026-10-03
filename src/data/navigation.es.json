@@ -1,0 +1,187 @@
+{
+  "groups": [
+    {
+      "id": "about",
+      "label": "Nosotros",
+      "href": "/about-us/",
+      "children": [
+        {
+          "label": "Personal",
+          "href": "/staff/"
+        },
+        {
+          "label": "Santa Patrona",
+          "href": "/patron-saint/"
+        },
+        {
+          "label": "Historia",
+          "href": "/about-us/"
+        },
+        {
+          "label": "Fotos",
+          "href": "/photos/"
+        }
+      ]
+    },
+    {
+      "id": "sacraments",
+      "label": "Sacramentos",
+      "href": "/sacraments/",
+      "children": [
+        {
+          "label": "Bautismo",
+          "href": "/baptism/"
+        },
+        {
+          "label": "Reconciliación",
+          "href": "/reconciliation/"
+        },
+        {
+          "label": "Eucaristía",
+          "href": "/eucharist/"
+        },
+        {
+          "label": "Confirmación",
+          "href": "/confirmation/"
+        },
+        {
+          "label": "Matrimonio",
+          "href": "/marriage/"
+        },
+        {
+          "label": "Unción",
+          "href": "/anointing/"
+        },
+        {
+          "label": "Órdenes",
+          "href": "/orders/"
+        }
+      ]
+    },
+    {
+      "id": "formation",
+      "label": "Formación en la Fe",
+      "href": "/formation/",
+      "children": [
+        {
+          "label": "Prep. Bautismal",
+          "href": "/baptism-prep/"
+        },
+        {
+          "label": "Ministerios Catequéticos",
+          "href": "/catechetical-ministries/"
+        },
+        {
+          "label": "OCIA / RICA",
+          "href": "/rcia/"
+        },
+        {
+          "label": "Iniciación de Niños",
+          "href": "/rcia-children/"
+        },
+        {
+          "label": "Niños",
+          "href": "/religious-ed-children/"
+        },
+        {
+          "label": "Liturgia Infantil",
+          "href": "/children-liturgy/"
+        },
+        {
+          "label": "Apertura de la Palabra",
+          "href": "/breaking-word/"
+        },
+        {
+          "label": "ILM",
+          "href": "/ilm/"
+        },
+        {
+          "label": "GLVN",
+          "href": "/glvn/"
+        },
+        {
+          "label": "Libros GLVN",
+          "href": "/glvn-books/"
+        },
+        {
+          "label": "GLVN en Vivo",
+          "href": "/glvn-live/"
+        },
+        {
+          "label": "Videos GLVN",
+          "href": "/glvn-video/"
+        },
+        {
+          "label": "Milagros Eucarísticos",
+          "href": "/glvn-miracles/"
+        }
+      ]
+    },
+    {
+      "id": "ministry",
+      "label": "Unirse",
+      "href": "/join/",
+      "children": [
+        {
+          "label": "Únase",
+          "href": "/join/"
+        },
+        {
+          "label": "Voluntariado",
+          "href": "/volunteer/"
+        }
+      ]
+    },
+    {
+      "id": "facility",
+      "label": "Instalaciones",
+      "href": "/facility/",
+      "children": [
+        {
+          "label": "Eventos de Hoy",
+          "href": "/calendar/#today"
+        },
+        {
+          "label": "Calendario",
+          "href": "/calendar/"
+        },
+        {
+          "label": "Solicitud de reserva",
+          "href": "https://www.calendarwiz.com/cwsuggest/cwsuggestform.php?crd=smgsj"
+        },
+        {
+          "label": "Revisión previa",
+          "href": "https://script.google.com/macros/s/AKfycbzPfSdWV_Vdaz8eu9NtRbgGgvUZT23qgS4gqGhVLZ1e2PqhsDc/exec?action=sign&formId=1SoOFzxZRFbEqaQBHIMXa5BYT5vsUokb6JroFeGTAzSo&editorUUID=a4e4f132-76a6-4488-b5b8-055911dfb699"
+        },
+        {
+          "label": "Revisión posterior",
+          "href": "https://script.google.com/macros/s/AKfycbzPfSdWV_Vdaz8eu9NtRbgGgvUZT23qgS4gqGhVLZ1e2PqhsDc/exec?action=sign&formId=1lllZ4cRVPscnwIaOTxqTcgHDB9CO4k28snbV-PKo11I&editorUUID=a4e4f132-76a6-4488-b5b8-055911dfb699"
+        },
+        {
+          "label": "Alquiler del Salón",
+          "href": "/hall-rental/"
+        },
+        {
+          "label": "Acuerdo de Uso",
+          "href": "/facility-agreement/"
+        },
+        {
+          "label": "Pago en línea",
+          "href": "@payment"
+        }
+      ]
+    },
+    {
+      "id": "mass-times",
+      "label": "Horario de Misas",
+      "href": "/mass-times/",
+      "children": []
+    },
+    {
+      "id": "contact",
+      "label": "Contacto",
+      "href": "/contact/",
+      "children": []
+    }
+  ]
+}

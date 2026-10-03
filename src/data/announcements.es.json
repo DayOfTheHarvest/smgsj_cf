@@ -1,0 +1,22 @@
+{
+  "slides": [
+    {
+      "image": "/uploads/slide-campaign.webp",
+      "alt": "Capital Campaign — pledge and donate",
+      "link": "/campaign/",
+      "caption": "Capital Campaign — Pledge / Donate Now",
+      "seconds": 5,
+      "width": 1920,
+      "height": 480
+    },
+    {
+      "image": "/uploads/slide-pastor.webp",
+      "alt": "Pastor's letter — October 4, 2026",
+      "link": "/uploads/docs/pastor-letter-2026-10-04.pdf",
+      "caption": "Pastor's Letter — October 4, 2026",
+      "seconds": 5,
+      "width": 1920,
+      "height": 480
+    }
+  ]
+}

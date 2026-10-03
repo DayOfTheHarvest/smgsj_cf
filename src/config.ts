@@ -1,5 +1,5 @@
 // Central endpoints + site constants.
-// Contact info and external links live in Decap-managed src/data/settings.json
+// Contact info and external links live in CMS-managed src/data/settings.json
 // (editable at /admin: Site settings & navigation). Auth/form/media stay in
 // code: swapping them changes site infrastructure, not content.
 import settingsData from './data/settings.json';
@@ -16,18 +16,17 @@ export const EMERGENCY_EN_ES: string = settings.emergency_en_es;
 export const EMERGENCY_VI: string = settings.emergency_vi;
 export const FACILITY_EMAIL: string = settings.facility_email;
 
-// Auth provider for /admin (Decap CMS).
-// 'netlify-identity' now; future Cloudflare move: 'cloudflare-worker'
-// or an external SaaS CMS — Decap config reads this at build time.
-export type AuthProvider = 'netlify-identity' | 'cloudflare-worker' | 'none';
-export const AUTH_PROVIDER: AuthProvider = 'netlify-identity';
+// Auth provider for /admin (Sveltia CMS).
+// 'cloudflare-worker': GitHub login via the parish Cloudflare Worker
+// (sveltia-cms-auth). 'none' disables the login check.
+export type AuthProvider = 'cloudflare-worker' | 'none';
+export const AUTH_PROVIDER: AuthProvider = 'cloudflare-worker';
 
 // Contact form endpoint.
-// 'netlify-forms' now (native <form netlify> handling + notifications
-// to the office email in Netlify UI). Future move: swap to a
-// Cloudflare Worker URL or Formspree/Getform endpoint.
-export type FormEndpoint = 'netlify-forms' | string;
-export const FORM_ENDPOINT: FormEndpoint = 'netlify-forms';
+// The site has no web forms (contact page uses call/email cards), so there
+// is no form backend. If a form is ever added, point this at its endpoint.
+export type FormEndpoint = 'none' | string;
+export const FORM_ENDPOINT: FormEndpoint = 'none';
 export const FORM_NOTIFICATION_EMAIL = EMAIL;
 
 // Media base. Day 1: local /uploads (checked into git) + hotlinked

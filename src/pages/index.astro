@@ -1,10 +1,11 @@
 ---
 import HomePage from '../components/HomePage.astro';
 import { getCollection } from 'astro:content';
+import { bundlePages } from '../lib/i18n';
 
 // Site root serves the English homepage directly — no redirect, no flash.
 // ES/VI visitors use the header switcher (their choice is remembered).
 const pages = await getCollection('pages');
-const home = pages.find((p) => p.slug === 'home');
+const home = bundlePages(pages).get('home');
 ---
-<HomePage lang="en" homeEntry={home} isRoot={true} />
+<HomePage lang="en" home={home} isRoot={true} />

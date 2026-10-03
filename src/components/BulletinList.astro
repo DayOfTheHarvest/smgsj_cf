@@ -1,8 +1,12 @@
 ---
-import bulletinsData from '../data/bulletins.json';
-interface Props { limit?: number; }
-const { limit = 5 } = Astro.props;
-const data = bulletinsData as any;
+import bulletinsEn from '../data/bulletins.en.json';
+import bulletinsEs from '../data/bulletins.es.json';
+import bulletinsVi from '../data/bulletins.vi.json';
+import { pickLocale } from '../lib/i18n';
+import type { Lang } from '../config';
+interface Props { limit?: number; lang?: Lang; }
+const { limit = 5, lang = 'en' } = Astro.props;
+const data = pickLocale({ en: bulletinsEn, es: bulletinsEs, vi: bulletinsVi }, lang) as any;
 // Show bulletins from the past N weeks (staff-set window; 0 = show all).
 const weeks = Number(data.weeks ?? 3);
 const cutoff = weeks > 0 ? Date.now() - weeks * 7 * 864e5 : 0;

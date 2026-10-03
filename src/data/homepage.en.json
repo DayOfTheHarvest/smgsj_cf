@@ -1,0 +1,126 @@
+{
+  "pastor_quote": "I am delighted to welcome you as you visit our parish website. This is a place where we stay connected and support one another in our life of faith. — Pastor Andrew C. Nguyen",
+  "events": [
+    {
+      "title": "Church Picnic",
+      "text": "See the bulletin for date and details.",
+      "link": "",
+      "link_label": "",
+      "icon": "users"
+    },
+    {
+      "title": "Prayer Group",
+      "text": "See the bulletin for meeting times.",
+      "link": "",
+      "link_label": "",
+      "icon": "church"
+    },
+    {
+      "title": "Volunteers Needed — Ushers",
+      "text": "Answer the call to serve.",
+      "link": "/volunteer/",
+      "link_label": "Volunteer",
+      "icon": "star"
+    }
+  ],
+  "hero": {
+    "eyebrow": "San Jose, California · Est. 1961",
+    "title": "Welcome to St. Maria Goretti Parish!",
+    "subtitle": "A vibrant trilingual Catholic community on Senter Road — all are welcome.",
+    "buttons": [
+      {
+        "label": "Mass Times",
+        "link": "/mass-times/",
+        "style": "gold"
+      },
+      {
+        "label": "Stream Mass",
+        "link": "@youtube",
+        "style": "light"
+      },
+      {
+        "label": "Ministry",
+        "link": "/join/",
+        "style": "light"
+      }
+    ]
+  },
+  "facility": {
+    "link_label": "Facility Reservation Request",
+    "tail": "For individual events, please call the parish office."
+  },
+  "catholic": {
+    "ethics_name": "EthicsPoint (Children & Vulnerable Adults)",
+    "ethics_report": "Report online",
+    "icons": [
+      {
+        "image": "/uploads/icon-usccb.png",
+        "alt": "United States Conference of Catholic Bishops",
+        "link": "https://www.usccb.org",
+        "width": 140,
+        "height": 140
+      },
+      {
+        "image": "/uploads/icon-dsj.png",
+        "alt": "Diocese of San José",
+        "link": "https://www.dsj.org/about-us/",
+        "width": 116,
+        "height": 140
+      },
+      {
+        "image": "/uploads/icon-vatican.png",
+        "alt": "The Holy See",
+        "link": "https://w2.vatican.va/content/vatican/en.html",
+        "width": 109,
+        "height": 140
+      }
+    ]
+  },
+  "sections": [
+    {
+      "type": "preset",
+      "id": "carousel",
+      "visible": true
+    },
+    {
+      "type": "preset",
+      "id": "hero",
+      "visible": true
+    },
+    {
+      "type": "preset",
+      "id": "actions",
+      "visible": true
+    },
+    {
+      "type": "preset",
+      "id": "schedule",
+      "visible": true
+    },
+    {
+      "type": "preset",
+      "id": "events",
+      "visible": true
+    },
+    {
+      "type": "preset",
+      "id": "body",
+      "visible": true
+    },
+    {
+      "type": "preset",
+      "id": "office",
+      "visible": true
+    },
+    {
+      "type": "preset",
+      "id": "flocknote",
+      "visible": true
+    },
+    {
+      "type": "preset",
+      "id": "catholic",
+      "visible": true
+    }
+  ]
+}

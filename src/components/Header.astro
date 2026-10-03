@@ -1,17 +1,20 @@
 ---
 import { EXTERNAL, PHONE, ADDRESS, LOGO, resolveLink, type Lang } from '../config';
-import navData from '../data/navigation.json';
+import navEn from '../data/navigation.en.json';
+import navEs from '../data/navigation.es.json';
+import navVi from '../data/navigation.vi.json';
+import { pickLocale } from '../lib/i18n';
 interface Props { lang: Lang; slug: string; ui: any; }
 const { lang, slug, ui } = Astro.props;
 const tel = PHONE.replace(/[^0-9]/g, '');
 const langPath = slug && slug !== 'home' ? '/' + slug + '/' : '/';
-const nav = navData as any;
+const nav = pickLocale({ en: navEn, es: navEs, vi: navVi }, lang) as any;
 const hrefFor = (href: string) => resolveLink(href, lang);
 const groups = ((nav.groups as Array<any>) ?? []).map((g) => ({
-  label: g.label[lang] || g.label.en,
+  label: g.label,
   href: hrefFor(g.href),
   children: ((g.children as Array<any>) ?? []).map((c) => ({
-    label: c.label[lang] || c.label.en,
+    label: c.label,
     href: hrefFor(c.href),
   })),
 }));

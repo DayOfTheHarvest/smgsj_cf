@@ -1,0 +1,48 @@
+{
+  "cards": [
+    {
+      "icon": "news",
+      "title": "Bản Tin",
+      "text": "",
+      "link": "",
+      "link_label": "",
+      "style": "primary",
+      "extra_link": "",
+      "extra_label": "",
+      "kind": "bulletins"
+    },
+    {
+      "icon": "heart",
+      "title": "Dâng Hiến Online",
+      "text": "Hỗ trợ sứ mạng của giáo xứ chúng ta trực tuyến.",
+      "link": "@giving",
+      "link_label": "Dâng Hiến Online",
+      "style": "primary",
+      "extra_link": "",
+      "extra_label": "",
+      "kind": "link"
+    },
+    {
+      "icon": "card",
+      "title": "Thanh Toán Online",
+      "text": "Thanh toán cho giáo xứ cho các dịch vụ đã thực hiện.",
+      "link": "@payment",
+      "link_label": "Thanh Toán Online",
+      "style": "primary",
+      "extra_link": "",
+      "extra_label": "",
+      "kind": "link"
+    },
+    {
+      "icon": "form",
+      "title": "Đơn Xin",
+      "text": "Tang lễ, thuê hội trường, chứng chỉ, rửa tội và ghi danh giáo lý.",
+      "link": "/requests/",
+      "link_label": "Đơn Xin",
+      "style": "primary",
+      "extra_link": "",
+      "extra_label": "",
+      "kind": "link"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import { marked } from 'marked';
 
-// Render staff-authored Markdown (Decap `markdown` widget output,
-// frontmatter body_es/body_vi, collection bodies) to HTML.
+// Render staff-authored Markdown (Sveltia `markdown` widget output,
+// per-locale file bodies) to HTML.
 // GFM tables enabled (schedules); raw HTML disallowed in output.
 marked.setOptions({ gfm: true, breaks: false });
 

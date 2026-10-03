@@ -1,0 +1,48 @@
+{
+  "cards": [
+    {
+      "icon": "news",
+      "title": "Boletín",
+      "text": "",
+      "link": "",
+      "link_label": "",
+      "style": "primary",
+      "extra_link": "",
+      "extra_label": "",
+      "kind": "bulletins"
+    },
+    {
+      "icon": "heart",
+      "title": "Donar en línea",
+      "text": "Apoye la misión de nuestra parroquia en línea.",
+      "link": "@giving",
+      "link_label": "Donar en línea",
+      "style": "primary",
+      "extra_link": "",
+      "extra_label": "",
+      "kind": "link"
+    },
+    {
+      "icon": "card",
+      "title": "Pago en línea",
+      "text": "Realice pagos a la parroquia por servicios prestados.",
+      "link": "@payment",
+      "link_label": "Pago en línea",
+      "style": "primary",
+      "extra_link": "",
+      "extra_label": "",
+      "kind": "link"
+    },
+    {
+      "icon": "form",
+      "title": "Formularios",
+      "text": "Funeral, alquiler del salón, certificados, bautismo e inscripción catequética.",
+      "link": "/requests/",
+      "link_label": "Formularios",
+      "style": "primary",
+      "extra_link": "",
+      "extra_label": "",
+      "kind": "link"
+    }
+  ]
+}

@@ -1,23 +1,48 @@
 backend:
-  name: git-gateway
-  branch: main # parish org repo default branch
+  name: github
+  repo: <ORG>/smgsj-site
+  branch: main
+  base_url: https://<worker>.workers.dev
+  site_domain: www.smgsj.org
+  auth_methods: [oauth]
 
 # Pages + weekly presider roster. No approval flow, no roles (plan Sec 4).
 # Staff hand-links new pages; header nav stays code-owned.
 publish_mode: simple
 media_folder: public/uploads
 public_folder: /uploads
+media_library:
+  config:
+    # URL-safe upload names (spaces/caps/accents become dashes/lowercase).
+    slugify_filename: true
 editorial_workflow: false
+site_url: https://www.smgsj.org
+app_title: St. Maria Goretti Parish
+logo:
+  src: /uploads/logo.png
 slug:
   encoding: ascii
   clean_accents: true
   sanitize_replacement: '-'
 
+# Three editing languages. Per-locale files (<name>.<locale>.json, <slug>.<locale>.md)
+# with shared structure duplicated; missing text falls back to English (src/lib/i18n.ts).
+i18n:
+  structure: multiple_files
+  locales: [en, es, vi]
+
 collections:
+
   - name: pages
     label: Pages (one file per topic, EN + ES + VI)
-    description: 'Safe to edit text freely — you cannot break the site layout from here. Only rule: never change the page address.'
+    label_singular: Page
+    icon: article
+    description: 'Safe to edit text freely — you cannot break the site layout from here. Only rule: never change the page address. Switch languages with the locale switcher in the top-right corner.'
     folder: src/content/pages
+    summary: '{{title}}'
+    preview_path: '/en/{{slug}}'
+    aliases_field: false
+    i18n: true
     create: true # staff can add pages; filename comes from the page address below
     delete: false # never delete — hide by removing its menu link instead
     extension: md
@@ -28,66 +53,97 @@ collections:
         name: slug_key
         widget: string
         required: true
+        i18n: duplicate
         pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Lowercase letters, numbers, and dashes only']
-        hint: 'WARNING: this becomes the web address (/en/your-address/). Changing it later breaks links.'
-      - label: 'Title (English, required, max 60)'
-        name: title_en
+        hint: 'WARNING: this becomes the web address (/en/your-address/). Changing it later breaks links. Shared by all languages — edit in English only.'
+      - label: 'Title (required in English, max 60 — other languages optional)'
+        name: title
         widget: string
-        required: true
-        pattern: ['^.{1,60}$', 'Keep under 60 characters']
-        hint: 'Shown in the header and Google results. Keep short.'
-      - label: 'Body (English, required)'
+        i18n: true
+        required: [en]
+        hint: 'Shown in the header and Google results. Keep short. Empty translations show English.'
+      - label: 'Body'
         name: body
         widget: markdown
+        i18n: true
         required: false
-        hint: 'Main content. Bold, italic, lists, links, and pictures only. For every picture, fill in its description box so blind visitors hear what it shows.'
+        hint: 'Main content. Bold, italic, lists, links, and pictures only. For every picture, fill in its description box so blind visitors hear what it shows. Empty translations show English + banner.'
         buttons: [bold, italic, bulleted-list, numbered-list, link]
-      - label: 'Title (Español, optional)'
-        name: title_es
-        widget: string
+      - label: 'Page widgets (optional — add a row only if this page needs one)'
+        name: blocks
+        widget: list
+        i18n: true
         required: false
-        hint: 'Leave empty to show English + banner.'
-      - label: 'Body (Español, optional)'
-        name: body_es
-        widget: markdown
-        required: false
-        hint: 'Leave empty to show English + banner.'
-        buttons: [bold, italic, bulleted-list, numbered-list, link]
-      - label: 'Title (Tiếng Việt, optional)'
-        name: title_vi
-        widget: string
-        required: false
-        hint: 'Leave empty to show English + banner.'
-      - label: 'Body (Tiếng Việt, optional)'
-        name: body_vi
-        widget: markdown
-        required: false
-        hint: 'Leave empty to show English + banner.'
-        buttons: [bold, italic, bulleted-list, numbered-list, link]
+        max: 1
+        hint: 'Add a widget row only if this page needs one. To remove the thermometer, delete its row.'
+        types:
+          - name: fundraiser
+            label: Fundraiser thermometer
+            summary: '{{title}}'
+            fields:
+              - label: 'Title (this language, read aloud for screen readers)'
+                name: title
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Goal (dollars, numbers only)'
+                name: goal
+                widget: number
+                i18n: duplicate
+              - label: 'Raised so far (dollars, numbers only)'
+                name: pledged
+                widget: number
+                i18n: duplicate
+              - label: 'As of (date)'
+                name: updated
+                widget: string
+                i18n: duplicate
+              - label: 'Donate link'
+                name: donate_link
+                widget: string
+                i18n: duplicate
+              - label: 'Donate button label (this language)'
+                name: donate_label
+                widget: string
+                i18n: true
+                required: false
+      - name: updated
+        widget: hidden
+        i18n: duplicate
+
   - name: schedule
     label: Mass schedule & presiders (weekly)
+    icon: calendar_month
     description: 'Each Mass row carries its own presider name, so nothing can silently mismatch.'
+    i18n: true
     files:
       - name: locations
         label: Location names (translations)
-        file: src/data/locations.json
-        description: How each place name reads in each language. Pick the place from the dropdown, then type its name in each language.
+        icon: location_on
+        file: src/data/locations.{{locale}}.json
+        i18n: true
+        description: 'How each place name reads in this language. Switch languages top-right to translate all four places. Add/remove rows in English only.'
         fields:
           - label: 'Locations'
             name: locations
             widget: list
+            i18n: true
             summary: '{{name}}'
-            hint: 'Do not add or remove rows without the web developer volunteer — the Mass list matches by the English name.'
+            hint: 'Do not add or remove rows without the web developer volunteer — the Mass list matches by the English name. Add/remove rows in English; other languages follow the same rows.'
             fields:
               - label: 'Place (must match Mass list)'
                 name: name
                 widget: select
+                i18n: duplicate
                 options: ['Church', 'Patio', 'Divine Mercy Chapel', "Viet. Martyr's Shrine"]
-              - { label: 'English', name: en, widget: string }
-              - { label: 'Español', name: es, widget: string }
-              - { label: 'Tiếng Việt', name: vi, widget: string }
+              - label: 'Name in this language'
+                name: text
+                widget: string
+                i18n: true
+                required: false
       - name: masses
         label: Mass times, places & presiders
+        icon: event
         file: src/data/masses.json
         description: The 21 weekly Masses, each with its presider. Everything is picked from lists except names and times.
         fields:
@@ -105,7 +161,8 @@ collections:
           - label: 'Masses'
             name: masses
             widget: list
-            summary: '{{day}} {{time}} ({{lang}})'
+            collapsed: auto
+            summary: "{{day}} {{time}} ({{lang}}) · {{presider | default('TBD')}}"
             hint: 'Pick day, language, and place from the lists. Do not add or remove rows without the web developer volunteer.'
             fields:
               - label: 'Service'
@@ -143,118 +200,191 @@ collections:
                 required: false
       - name: schedule-info
         label: Confession text
-        file: src/data/schedule-info.json
+        icon: notes
+        file: src/data/schedule-info.{{locale}}.json
+        i18n: true
+        description: 'Confession day/time wording in this language — shown beside the Mass schedule. Switch languages top-right.'
         fields:
           - label: 'Confession'
             name: confession
             widget: object
+            i18n: true
+            required: false
             fields:
-              - label: 'Day'
+              - label: 'Day (e.g. Every Saturday)'
                 name: day
-                widget: object
-                fields:
-                  - { label: 'English (e.g. Every Saturday)', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
-              - label: 'Time'
-                name: time
-                widget: object
-                fields:
-                  - { label: 'English (e.g. 3:00 PM – 3:45 PM)', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
-  - name: parish
-    label: Parish info
-    files:
-      - name: office-hours
-        label: Office hours (homepage, footer, contact)
-        file: src/data/office.json
-        description: One place — updates the homepage Contact section, the footer on every page, and the contact page automatically.
-        fields:
-          - label: 'Office hours (two lines per language: open days first, closed days second)'
-            name: en
-            widget: text
-            hint: 'Example: Tuesday – Friday: 10:00 a.m. – 5:00 p.m.'
-          - label: 'Horario de oficina (dos líneas: días abierto, días cerrado)'
-            name: es
-            widget: text
-          - label: 'Giờ văn phòng (hai dòng: ngày mở cửa, ngày đóng cửa)'
-            name: vi
-            widget: text
-  - name: directory
-    label: Staff directory
-    files:
-      - name: staff
-        label: Staff members
-        file: src/data/staff.json
-        description: Names, roles, phone numbers, and bios. Photos are managed by the web developer volunteer.
-        fields:
-          - label: 'Members'
-            name: members
-            widget: list
-            summary: '{{name}}'
-            fields:
-              - label: 'Page code'
-                name: slug
                 widget: string
-                hint: 'For a NEW person, type lowercase-with-dashes (e.g. maria-santos). Never change an existing code — profile links would break.'
-              - { label: 'Name', name: name, widget: string }
-              - { label: 'Role', name: role, widget: string }
-              - { label: 'Phone', name: phone, widget: string }
-              - label: 'Photo'
-                name: photo
-                widget: image
+                i18n: true
                 required: false
-                hint: 'WARNING: do not change unless replacing the portrait. Use Choose image, never type a path.'
-              - { label: 'Bio (blank = no profile page link)', name: bio, widget: text, required: false }
+              - label: 'Time (e.g. 3:00 PM – 3:45 PM)'
+                name: time
+                widget: string
+                i18n: true
+                required: false
+
   - name: bulletins
     label: Bulletins (weekly)
+    icon: description
+    description: 'Weekly Sunday bulletin PDFs, newest first.'
+    i18n: true
     files:
       - name: bulletin-list
         label: Bulletin links
-        file: src/data/bulletins.json
-        description: Newest first. Upload the PDF via Media first, then paste its /uploads/ link here.
+        file: src/data/bulletins.{{locale}}.json
+        i18n: true
+        description: Newest first. Upload the PDF via Media first, then paste its /uploads/ link here. Write the label in this language — switch top-right.
         fields:
           - label: 'Show bulletins from the past N weeks (0 = show all)'
             name: weeks
             widget: number
+            i18n: duplicate
             hint: 'The card stays short automatically — older bulletins drop off by date.'
           - label: 'Bulletins (newest first)'
             name: bulletins
             widget: list
+            collapsed: auto
+            label_singular: 'Bulletin'
+            add_to_top: true
+            i18n: true
             summary: '{{label}}'
             fields:
-              - { label: 'Date', name: date, widget: string }
-              - { label: 'Label (e.g. October 11, 2026)', name: label, widget: string }
-              - { label: 'PDF link', name: url, widget: string }
+              - label: 'Date'
+                name: date
+                widget: string
+                i18n: duplicate
+              - label: 'Label (e.g. October 11, 2026 — this language)'
+                name: label
+                widget: string
+                i18n: true
+                required: false
+              - label: 'PDF link'
+                name: url
+                widget: string
+                i18n: duplicate
+
   - name: announcements
     label: Homepage carousel
+    icon: campaign
+    description: 'Rotating homepage banner slides — the first slide shows on load.'
+    i18n: true
     files:
       - name: slides
         label: Rotating slides (pastor letter + announcements)
-        file: src/data/announcements.json
-        description: First slide shows on load; slides rotate every 5 seconds. Upload wide banners (~1920px) via Media.
+        file: src/data/announcements.{{locale}}.json
+        i18n: true
+        description: First slide shows on load; slides rotate every 5 seconds. Upload wide banners (~1920px) via Media. Write caption and alt text in this language — switch top-right.
         fields:
           - label: 'Slides'
             name: slides
             widget: list
+            collapsed: auto
+            label_singular: 'Slide'
+            i18n: true
             summary: '{{caption}}'
+            thumbnail: image
             fields:
-              - { label: 'Banner image', name: image, widget: image }
-              - { label: 'Alt text (describe the banner)', name: alt, widget: string }
-              - { label: 'Image width in pixels (1920 matches the current banners)', name: width, widget: number, required: false }
-              - { label: 'Image height in pixels (480 matches the current banners)', name: height, widget: number, required: false }
-              - { label: 'Link (/campaign/ for parish pages, full URL for PDFs)', name: link, widget: string }
-              - { label: 'Caption (read aloud for blind visitors)', name: caption, widget: string }
+              - { label: 'Banner image', name: image, widget: image, i18n: duplicate }
+              - label: 'Alt text (describe the banner, this language)'
+                name: alt
+                widget: string
+                i18n: true
+                required: false
+              - { label: 'Image width in pixels (1920 matches the current banners)', name: width, widget: number, required: false, i18n: duplicate }
+              - { label: 'Image height in pixels (480 matches the current banners)', name: height, widget: number, required: false, i18n: duplicate }
+              - { label: 'Link (/campaign/ for parish pages, full URL for PDFs)', name: link, widget: string, i18n: duplicate }
+              - label: 'Caption (read aloud for blind visitors, this language)'
+                name: caption
+                widget: string
+                i18n: true
+                required: false
               - label: 'Seconds on screen (each slide can differ)'
                 name: seconds
                 widget: number
+                i18n: duplicate
                 hint: 'How long this slide shows before rotating. Blank = 5 seconds.'
+
+  # ——— Parish setup (office, staff, site-wide settings) ———
+  - divider: true
+
+  - name: parish
+    label: Parish info
+    icon: business
+    description: 'Office hours in all 3 languages — updates the homepage, footer and contact page at once.'
+    i18n: true
+    files:
+      - name: office-hours
+        label: Office hours (homepage, footer, contact)
+        file: src/data/office.{{locale}}.json
+        i18n: true
+        description: One place — updates the homepage Contact section, the footer on every page, and the contact page automatically. Switch languages top-right.
+        fields:
+          - label: 'Office hours (two lines: open days first, closed days second)'
+            name: text
+            widget: text
+            i18n: true
+            required: false
+            hint: 'Example: Tuesday – Friday: 10:00 a.m. – 5:00 p.m.'
+
+  - name: directory
+    label: Staff directory
+    icon: group
+    description: 'Priests, staff and office contacts — photos via Choose image, never a typed path.'
+    i18n: true
+    files:
+      - name: staff
+        label: Staff members
+        file: src/data/staff.{{locale}}.json
+        i18n: true
+        description: Names, roles, phone numbers, and bios. Photos are managed by the web developer volunteer. Write role and bio in this language — switch top-right.
+        fields:
+          - label: 'Members'
+            name: members
+            widget: list
+            collapsed: auto
+            label_singular: 'Member'
+            i18n: true
+            summary: '{{name}}'
+            thumbnail: photo
+            fields:
+              - label: 'Page code'
+                name: slug
+                widget: string
+                i18n: duplicate
+                hint: 'For a NEW person, type lowercase-with-dashes (e.g. maria-santos). Never change an existing code — profile links would break.'
+              - label: 'Name'
+                name: name
+                widget: string
+                i18n: duplicate
+              - label: 'Role (this language)'
+                name: role
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Phone'
+                name: phone
+                widget: string
+                i18n: duplicate
+              - label: 'Photo'
+                name: photo
+                widget: image
+                required: false
+                i18n: duplicate
+                hint: 'WARNING: do not change unless replacing the portrait. Use Choose image, never type a path.'
+              - label: 'Bio (blank = no profile page link, this language)'
+                name: bio
+                widget: text
+                required: false
+                i18n: true
+
   - name: site
     label: 'Site settings, navigation & homepage — CAREFUL'
+    icon: settings
+    description: 'Contact info, menus and homepage — changes here affect the whole site.'
+    i18n: true
     files:
       - name: settings
         label: Contact info & external links
+        icon: settings
         file: src/data/settings.json
         description: >-
           WARNING: these values appear in the header and footer of EVERY page.
@@ -294,667 +424,543 @@ collections:
           - { label: 'EthicsPoint phone', name: ethicspoint_phone, widget: string }
       - name: navigation
         label: Header menu structure
-        file: src/data/navigation.json
+        icon: menu
+        file: src/data/navigation.{{locale}}.json
+        i18n: true
         description: >-
           WARNING: this is the header menu for the whole site. A wrong link
           breaks navigation everywhere; an empty label shows a blank menu item.
-          Links must start AND end with / (e.g. /mass-times/). Ask the web
-          volunteer before adding or removing menu items.
+          Links must start AND end with / (e.g. /mass-times/). Add, remove or
+          reorder menu items in English only — other languages follow the same
+          items. Ask the web volunteer before changing the structure.
         fields:
           - label: 'Menu groups'
             name: groups
             widget: list
-            summary: '{{label.en}}'
+            collapsed: auto
+            label_singular: 'Menu group'
+            i18n: true
+            summary: '{{label}}'
             fields:
-              - { label: 'Group code (leave alone — used behind the scenes)', name: id, widget: string }
-              - label: 'Group name'
+              - label: 'Group code (leave alone — used behind the scenes)'
+                name: id
+                widget: string
+                i18n: duplicate
+              - label: 'Group name (this language)'
                 name: label
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
-              - { label: 'Group link (e.g. /about-us/)', name: href, widget: string }
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Group link (e.g. /about-us/)'
+                name: href
+                widget: string
+                i18n: duplicate
               - label: 'Submenu links'
                 name: children
                 widget: list
-                summary: '{{label.en}}'
+                label_singular: 'Link'
+                i18n: true
+                summary: '{{label}}'
                 fields:
-                  - label: 'Link name'
+                  - label: 'Link name (this language)'
                     name: label
-                    widget: object
-                    fields:
-                      - { label: 'English', name: en, widget: string }
-                      - { label: 'Español', name: es, widget: string }
-                      - { label: 'Tiếng Việt', name: vi, widget: string }
-                  - { label: 'Link (e.g. /staff/)', name: href, widget: string }
+                    widget: string
+                    i18n: true
+                    required: false
+                  - label: 'Link (e.g. /staff/)'
+                    name: href
+                    widget: string
+                    i18n: duplicate
           - label: 'Quick links (Mass Times + Contact buttons)'
             name: quick_links
             widget: list
+            label_singular: 'Link'
+            i18n: true
+            summary: '{{label}}'
             fields:
-              - { label: 'Link code (leave alone — used behind the scenes)', name: id, widget: string }
-              - label: 'Link name'
+              - label: 'Link code (leave alone — used behind the scenes)'
+                name: id
+                widget: string
+                i18n: duplicate
+              - label: 'Link name (this language)'
                 name: label
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
-              - { label: 'Link (e.g. /mass-times/)', name: href, widget: string }
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Link (e.g. /mass-times/)'
+                name: href
+                widget: string
+                i18n: duplicate
       - name: homepage-text
         label: Homepage welcome & events
-        file: src/data/homepage.json
+        icon: home
+        file: src/data/homepage.{{locale}}.json
+        i18n: true
         description: >-
           The pastor's welcome quote and the three event cards on the homepage.
           Changing the pastor's words needs the pastor's approval first.
+          Switch languages top-right; add/remove/reorder rows in English only.
         fields:
-          - label: 'Page layout (order + visibility of homepage sections)'
-            name: layout
-            widget: object
-            fields:
-              - label: 'Section order (top to bottom — drag to reorder)'
-                name: order
-                widget: list
-                hint: 'WARNING: every row must be one of: carousel, hero, actions, schedule, events, body, office, flocknote, catholic. A typo hides that section.'
-                field:
-                  name: section
-                  widget: select
-                  options: ['carousel', 'hero', 'actions', 'schedule', 'events', 'custom', 'body', 'office', 'flocknote', 'catholic']
-              - label: 'Hidden sections'
-                name: hidden
-                widget: list
-                hint: 'Add a section here to hide it without deleting its content. Remove the row to show it again.'
-                field:
-                  name: section
-                  widget: select
-                  options: ['carousel', 'hero', 'actions', 'schedule', 'events', 'custom', 'body', 'office', 'flocknote', 'catholic']
+          - label: 'Homepage sections (order, visibility + custom blocks)'
+            name: sections
+            widget: list
+            i18n: true
+            hint: 'Drag rows to reorder the homepage. Uncheck Visible to hide a section without deleting it (it keeps its place). Add a Custom block row anywhere for new titled card blocks. Never change a Theme section name — only its visibility. Add/remove rows in English only.'
+            types:
+              - name: preset
+                label: Theme section
+                summary: '{{id}}'
+                fields:
+                  - label: 'Section'
+                    name: id
+                    widget: select
+                    i18n: duplicate
+                    options: ['carousel', 'hero', 'actions', 'schedule', 'events', 'body', 'office', 'flocknote', 'catholic']
+                  - label: 'Visible'
+                    name: visible
+                    widget: boolean
+                    default: true
+                    i18n: duplicate
+              - name: custom
+                label: Custom block
+                summary: '{{title}}'
+                fields:
+                  - label: 'Block heading (this language)'
+                    name: title
+                    widget: string
+                    required: false
+                    i18n: true
+                  - label: 'Cards in this block'
+                    name: cards
+                    widget: list
+                    collapsed: auto
+                    i18n: true
+                    summary: '{{title}}'
+                    thumbnail: image
+                    fields:
+                      - label: 'Icon (pick from the list)'
+                        name: icon
+                        widget: select
+                        i18n: duplicate
+                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                        required: false
+                      - label: 'Heading (this language)'
+                        name: title
+                        widget: string
+                        required: false
+                        i18n: true
+                      - label: 'Text (this language)'
+                        name: text
+                        widget: text
+                        required: false
+                        i18n: true
+                      - { label: 'Picture (Media library)', name: image, widget: image, required: false, i18n: duplicate }
+                      - label: 'Button link (blank = no button)'
+                        name: link
+                        widget: string
+                        required: false
+                        i18n: duplicate
+                      - label: 'Button label (this language)'
+                        name: link_label
+                        widget: string
+                        required: false
+                        i18n: true
           - label: 'Hero banner (top welcome block)'
             name: hero
             widget: object
+            i18n: true
+            required: false
             fields:
-              - { label: 'Eyebrow line (small caps above title)', name: eyebrow, widget: string, required: false }
-              - label: 'Title'
+              - label: 'Eyebrow line (small caps above title)'
+                name: eyebrow
+                widget: string
+                required: false
+                i18n: duplicate
+              - label: 'Title (this language)'
                 name: title
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
-              - label: 'Subtitle'
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Subtitle (this language)'
                 name: subtitle
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: text }
-                  - { label: 'Español', name: es, widget: text }
-                  - { label: 'Tiếng Việt', name: vi, widget: text }
+                widget: text
+                i18n: true
+                required: false
               - label: 'Hero buttons'
                 name: buttons
                 widget: list
-                summary: '{{label.en}}'
-                hint: 'WARNING: parish links must start AND end with / . A wrong link makes a dead button.'
+                i18n: true
+                summary: '{{label}}'
+                hint: 'WARNING: parish links must start AND end with / . A wrong link makes a dead button. Add/remove buttons in English only.'
                 fields:
-                  - label: 'Label'
+                  - label: 'Label (this language)'
                     name: label
-                    widget: object
-                    fields:
-                      - { label: 'English', name: en, widget: string }
-                      - { label: 'Español', name: es, widget: string }
-                      - { label: 'Tiếng Việt', name: vi, widget: string }
-                  - { label: 'Link', name: link, widget: string }
+                    widget: string
+                    i18n: true
+                    required: false
+                  - label: 'Link'
+                    name: link
+                    widget: string
+                    i18n: duplicate
                   - label: 'Color'
                     name: style
                     widget: select
+                    i18n: duplicate
                     options: ['gold', 'light', 'primary', 'outline']
-          - label: "Pastor's welcome quote"
+          - label: "Pastor's welcome quote (all languages — translate each)"
             name: pastor_quote
             widget: text
+            i18n: true
+            required: false
           - label: 'Event cards'
             name: events
             widget: list
-            summary: '{{title.en}}'
+            collapsed: auto
+            label_singular: 'Event'
+            i18n: true
+            summary: '{{title}}'
+            hint: 'Add, remove or reorder cards in English only — other languages follow the same cards.'
             fields:
               - label: 'Icon (pick from the list)'
                 name: icon
                 widget: select
+                i18n: duplicate
                 options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
                 required: false
-              - label: 'Title'
+              - label: 'Title (this language)'
                 name: title
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
-              - label: 'Text'
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Text (this language)'
                 name: text
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: text }
-                  - { label: 'Español', name: es, widget: text }
-                  - { label: 'Tiếng Việt', name: vi, widget: text }
+                widget: text
+                i18n: true
+                required: false
               - label: 'Link (a parish page like /volunteer/, a full web address, or a @shortcut word — blank = no link)'
                 name: link
                 widget: string
                 required: false
+                i18n: duplicate
                 hint: 'WARNING: parish page addresses must start AND end with / . You can also type a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube) — those follow Site settings automatically. A wrong address makes a dead button.'
-              - label: 'Link label'
+              - label: 'Link label (this language)'
                 name: link_label
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string, required: false }
-                  - { label: 'Español', name: es, widget: string, required: false }
-                  - { label: 'Tiếng Việt', name: vi, widget: string, required: false }
+                widget: string
+                required: false
+                i18n: true
           - label: 'Facility line (under event cards)'
             name: facility
             widget: object
+            i18n: true
+            required: false
             fields:
-              - label: 'Reservation link label'
+              - label: 'Reservation link label (this language)'
                 name: link_label
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
-              - label: 'Closing sentence'
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Closing sentence (this language)'
                 name: tail
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: text }
-                  - { label: 'Español', name: es, widget: text }
-                  - { label: 'Tiếng Việt', name: vi, widget: text }
-          - label: 'Custom sections (whole new blocks staff can add)'
-            name: custom
-            widget: list
-            summary: '{{title.en}}'
-            hint: 'Each row is a titled block of cards, placed together at the Custom spot in Page layout order. Add as many blocks as needed.'
-            fields:
-              - label: 'Block heading'
-                name: title
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string, required: false }
-                  - { label: 'Español', name: es, widget: string, required: false }
-                  - { label: 'Tiếng Việt', name: vi, widget: string, required: false }
-              - label: 'Cards in this block'
-                name: cards
-                widget: list
-                summary: '{{title.en}}'
-                fields:
-                  - label: 'Icon (pick from the list)'
-                    name: icon
-                    widget: select
-                    options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
-                    required: false
-                  - label: 'Heading'
-                    name: title
-                    widget: object
-                    fields:
-                      - { label: 'English', name: en, widget: string, required: false }
-                      - { label: 'Español', name: es, widget: string, required: false }
-                      - { label: 'Tiếng Việt', name: vi, widget: string, required: false }
-                  - label: 'Text'
-                    name: text
-                    widget: object
-                    fields:
-                      - { label: 'English', name: en, widget: text, required: false }
-                      - { label: 'Español', name: es, widget: text, required: false }
-                      - { label: 'Tiếng Việt', name: vi, widget: text, required: false }
-                  - { label: 'Picture (Media library)', name: image, widget: image, required: false }
-                  - { label: 'Button link (blank = no button)', name: link, widget: string, required: false }
-                  - label: 'Button label'
-                    name: link_label
-                    widget: object
-                    fields:
-                      - { label: 'English', name: en, widget: string, required: false }
-                      - { label: 'Español', name: es, widget: string, required: false }
-                      - { label: 'Tiếng Việt', name: vi, widget: string, required: false }
+                widget: text
+                i18n: true
+                required: false
           - label: 'Diocesan block (icons at page end)'
             name: catholic
             widget: object
+            i18n: true
+            required: false
             fields:
               - label: 'Icon links (add, remove, or reorder)'
                 name: icons
                 widget: list
+                label_singular: 'Icon'
+                i18n: true
                 summary: '{{alt}}'
-                hint: 'WARNING: use the Media library images already uploaded. Deleting all rows removes the icon row. All icons show at the same height.'
+                hint: 'WARNING: use the Media library images already uploaded. Deleting all rows removes the icon row. All icons show at the same height. Add/remove rows in English only.'
                 fields:
-                  - { label: 'Image (pick from uploads)', name: image, widget: image }
-                  - { label: 'Alt text', name: alt, widget: string }
-                  - { label: 'Link', name: link, widget: string }
-                  - { label: 'Width in pixels (keeps proportions)', name: width, widget: number }
-                  - { label: 'Height in pixels', name: height, widget: number }
-              - label: 'EthicsPoint name'
+                  - { label: 'Image (pick from uploads)', name: image, widget: image, i18n: duplicate }
+                  - label: 'Alt text (this language)'
+                    name: alt
+                    widget: string
+                    i18n: true
+                    required: false
+                  - label: 'Link'
+                    name: link
+                    widget: string
+                    i18n: duplicate
+                  - label: 'Width in pixels (keeps proportions)'
+                    name: width
+                    widget: number
+                    i18n: duplicate
+                  - label: 'Height in pixels'
+                    name: height
+                    widget: number
+                    i18n: duplicate
+              - label: 'EthicsPoint name (this language)'
                 name: ethics_name
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
-              - label: 'Report-online label'
-                name: ethics_report
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
-      - name: fundraisers
-        label: Fundraisers (thermometer + donate button)
-        file: src/data/fundraisers.json
-        description: >-
-          Each row powers one fundraiser page (matched by page address). To add
-          a fundraiser: create its page under Pages first, then add its money
-          row here with the same address.
-        fields:
-          - label: 'Fundraisers'
-            name: fundraisers
-            widget: list
-            summary: '{{title.en}}'
-            fields:
-              - label: 'Page address (must match the fundraiser page, e.g. campaign)'
-                name: id
                 widget: string
-                hint: 'WARNING: must match the page address exactly, or no thermometer appears.'
-              - label: 'Title'
-                name: title
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
-              - { label: 'Goal (dollars, numbers only)', name: goal, widget: number }
-              - { label: 'Raised so far (dollars, numbers only)', name: pledged, widget: number }
-              - { label: 'As of (date)', name: updated, widget: string }
-              - { label: 'Donate link', name: donate_link, widget: string }
-              - label: 'Donate button label'
-                name: donate_label
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
+                i18n: true
+                required: false
+              - label: 'Report-online label (this language)'
+                name: ethics_report
+                widget: string
+                i18n: true
+                required: false
       - name: action-cards
         label: Homepage action cards
-        file: src/data/actions.json
+        icon: dashboard
+        file: src/data/actions.{{locale}}.json
+        i18n: true
         description: >-
           The cards below the welcome banner. Add, remove, or reorder cards.
           Each card has a kind (bulletin list, link button, or text only).
+          Switch languages top-right; add/remove cards in English only.
         fields:
           - label: 'Cards'
             name: cards
             widget: list
-            summary: '{{title.en}}'
+            collapsed: auto
+            label_singular: 'Card'
+            i18n: true
+            summary: '{{title}}'
             fields:
               - label: 'Icon (pick from the list — no emoji needed)'
                 name: icon
                 widget: select
+                i18n: duplicate
                 options: ['news', 'heart', 'card', 'form', 'calendar', 'users', 'church', 'phone', 'mail', 'clock', 'star', 'info']
                 required: false
-              - label: 'Title'
+              - label: 'Title (this language)'
                 name: title
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string }
-                  - { label: 'Español', name: es, widget: string }
-                  - { label: 'Tiếng Việt', name: vi, widget: string }
-              - label: 'Text (blank for bulletin-list cards)'
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Text (blank for bulletin-list cards, this language)'
                 name: text
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: text, required: false }
-                  - { label: 'Español', name: es, widget: text, required: false }
-                  - { label: 'Tiếng Việt', name: vi, widget: text, required: false }
-              - { label: 'Button link (blank = text-only card)', name: link, widget: string, required: false, hint: 'A parish page (/requests/), a full web address, or a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube).' }
-              - label: 'Button label'
+                widget: text
+                i18n: true
+                required: false
+              - label: 'Button link (blank = text-only card)'
+                name: link
+                widget: string
+                required: false
+                i18n: duplicate
+                hint: 'A parish page (/requests/), a full web address, or a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube).'
+              - label: 'Button label (this language)'
                 name: link_label
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string, required: false }
-                  - { label: 'Español', name: es, widget: string, required: false }
-                  - { label: 'Tiếng Việt', name: vi, widget: string, required: false }
+                widget: string
+                required: false
+                i18n: true
               - label: 'Button color'
                 name: style
                 widget: select
+                i18n: duplicate
                 options: ['primary', 'gold', 'outline']
-              - { label: 'Second link (optional, e.g. Online Payment)', name: extra_link, widget: string, required: false }
-              - label: 'Second link label'
+              - label: 'Second link (optional, e.g. Online Payment)'
+                name: extra_link
+                widget: string
+                required: false
+                i18n: duplicate
+              - label: 'Second link label (this language)'
                 name: extra_label
-                widget: object
-                fields:
-                  - { label: 'English', name: en, widget: string, required: false }
-                  - { label: 'Español', name: es, widget: string, required: false }
-                  - { label: 'Tiếng Việt', name: vi, widget: string, required: false }
+                widget: string
+                required: false
+                i18n: true
               - label: 'Card kind (what this card shows)'
                 name: kind
                 widget: select
+                i18n: duplicate
                 options:
                   - { label: 'Bulletin list (latest bulletins)', value: bulletins }
                   - { label: 'Link button', value: link }
                   - { label: 'Text only', value: text }
                 hint: 'WARNING: only ONE card should be a bulletin list.'
+
   - name: updates
     label: Notices, forms & galleries
+    icon: notifications
+    description: 'Urgent site-wide banner, request-form links and photo galleries.'
+    i18n: true
     files:
       - name: notice
         label: Urgent site-wide notice banner
-        file: src/data/notice.json
-        description: Shows a gold alert bar on EVERY page. Turn ON only for urgent news (closures, emergencies, holy-day changes) and turn OFF when it expires.
+        icon: warning
+        file: src/data/notice.{{locale}}.json
+        i18n: true
+        description: Shows a gold alert bar on EVERY page. Turn ON only for urgent news (closures, emergencies, holy-day changes) and turn OFF when it expires. Write the message in this language — switch languages top-right.
         fields:
           - label: 'Show the banner (ON = visible site-wide)'
             name: enabled
             widget: boolean
-          - label: 'Message'
+            i18n: duplicate
+          - label: 'Message (this language)'
             name: text
-            widget: object
-            fields:
-              - { label: 'English', name: en, widget: text }
-              - { label: 'Español', name: es, widget: text }
-              - { label: 'Tiếng Việt', name: vi, widget: text }
-          - { label: 'Link (optional — blank = no link)', name: link, widget: string, required: false }
-          - label: 'Link label'
+            widget: text
+            i18n: true
+            required: false
+          - label: 'Link (optional — blank = no link)'
+            name: link
+            widget: string
+            required: false
+            i18n: duplicate
+          - label: 'Link label (this language, optional)'
             name: link_label
-            widget: object
-            fields:
-              - { label: 'English', name: en, widget: string, required: false }
-              - { label: 'Español', name: es, widget: string, required: false }
-              - { label: 'Tiếng Việt', name: vi, widget: string, required: false }
+            widget: string
+            required: false
+            i18n: true
       - name: forms
         label: Request form links
+        icon: assignment
         file: src/data/forms.json
         description: The request-forms page list. Update URLs when yearly registrations roll over (e.g. 2026-2027 → 2027-2028). Parish-page links must start AND end with / .
         fields:
           - label: 'Forms'
             name: forms
             widget: list
+            collapsed: auto
+            label_singular: 'Form'
             summary: '{{label}}'
             fields:
               - { label: 'Label (keep all 3 languages in one line)', name: label, widget: string }
               - { label: 'Link', name: url, widget: string, hint: 'A parish page, a full web address, or a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube).' }
       - name: galleries
         label: Photo galleries
-        file: src/data/galleries.json
-        description: Gallery titles with photo counts. Paste the Google Photos album link when an album moves over; blank link shows the title without a link.
+        icon: photo_library
+        file: src/data/galleries.{{locale}}.json
+        i18n: true
+        description: Gallery titles with photo counts. Paste the Google Photos album link when an album moves over; blank link shows the title without a link. Write the title in this language — switch top-right.
         fields:
           - label: 'Galleries'
             name: galleries
             widget: list
+            collapsed: auto
+            label_singular: 'Gallery'
+            i18n: true
             summary: '{{title}}'
             fields:
-              - { label: 'Title', name: title, widget: string }
-              - { label: 'Photo count', name: photos, widget: number }
-              - { label: 'Album link (blank = no link yet)', name: url, widget: string, required: false }
+              - label: 'Title (this language)'
+                name: title
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Photo count'
+                name: photos
+                widget: number
+                i18n: duplicate
+              - label: 'Album link (blank = no link yet)'
+                name: url
+                widget: string
+                required: false
+                i18n: duplicate
+
+  # ——— Translators (button & heading words, all languages) ———
+  - divider: true
+
   - name: interface
     label: 'Interface words — TRANSLATORS ONLY'
+    icon: translate
+    description: 'Button and heading words in English, Español and Tiếng Việt — one screen, switch language top-right.'
+    i18n: true
     files:
-      - name: ui-en
-        label: Button & heading words (English)
-        file: src/data/ui.en.json
-        description: 'WARNING: wording only — never rename, remove, or add rows, or buttons and headings across the site go blank. A missing translation shows English automatically.'
+      - name: ui
+        label: Button & heading words (all languages)
+        file: src/data/ui.{{locale}}.json
+        description: 'WARNING: wording only — never rename, remove, or add rows, or buttons and headings across the site go blank. Switch languages with the locale switcher in the top-right corner. A missing translation shows English automatically.'
+        i18n: true
         fields:
-        - { label: 'Get-in-touch card title', name: contactCard, widget: string }
-        - { label: 'Contact section heading', name: contactSection, widget: string }
-        - { label: 'Saturday (day group)', name: daySaturday, widget: string }
-        - { label: 'Sunday (day group)', name: daySunday, widget: string }
-        - { label: 'Weekdays (day group)', name: dayWeekday, widget: string }
-        - { label: 'Email address field', name: emailAddress, widget: string }
-        - { label: 'Events heading', name: eventsTitle, widget: string }
-        - { label: 'Facility request link text', name: facilityRequest, widget: string }
-        - { label: 'Untranslated-page notice', name: fallbackBanner, widget: text }
-        - { label: 'First-name field', name: firstName, widget: string }
-        - { label: 'Follow us', name: followUs, widget: string }
+        - { label: 'Get-in-touch card title', name: contactCard, widget: string, i18n: true, required: false }
+        - { label: 'Contact section heading', name: contactSection, widget: string, i18n: true, required: false }
+        - { label: 'Saturday (day group)', name: daySaturday, widget: string, i18n: true, required: false }
+        - { label: 'Sunday (day group)', name: daySunday, widget: string, i18n: true, required: false }
+        - { label: 'Weekdays (day group)', name: dayWeekday, widget: string, i18n: true, required: false }
+        - { label: 'Email address field', name: emailAddress, widget: string, i18n: true, required: false }
+        - { label: 'Events heading', name: eventsTitle, widget: string, i18n: true, required: false }
+        - { label: 'Facility request link text', name: facilityRequest, widget: string, i18n: true, required: false }
+        - { label: 'Untranslated-page notice', name: fallbackBanner, widget: text, i18n: true, required: false }
+        - { label: 'First-name field', name: firstName, widget: string, i18n: true, required: false }
+        - { label: 'Follow us', name: followUs, widget: string, i18n: true, required: false }
         - label: 'Footer'
           name: footer
           widget: object
+          i18n: true
+          required: false
           fields:
-            - { label: 'Footer: address heading', name: address, widget: string }
-            - { label: 'Footer: email heading', name: email, widget: string }
-            - { label: 'Footer: emergency heading', name: emergency, widget: string }
-            - { label: 'Footer: office heading', name: office, widget: string }
-            - { label: 'Footer: parish name', name: parish, widget: string }
-            - { label: 'Footer: phone heading', name: phone, widget: string }
-        - { label: 'Full-calendar button', name: fullCalendar, widget: string }
-        - { label: 'Word for “goal”', name: goalWord, widget: string }
+            - { label: 'Footer: address heading', name: address, widget: string, i18n: true, required: false }
+            - { label: 'Footer: email heading', name: email, widget: string, i18n: true, required: false }
+            - { label: 'Footer: emergency heading', name: emergency, widget: string, i18n: true, required: false }
+            - { label: 'Footer: office heading', name: office, widget: string, i18n: true, required: false }
+            - { label: 'Footer: parish name', name: parish, widget: string, i18n: true, required: false }
+            - { label: 'Footer: phone heading', name: phone, widget: string, i18n: true, required: false }
+        - { label: 'Full-calendar button', name: fullCalendar, widget: string, i18n: true, required: false }
+        - { label: 'Word for “goal”', name: goalWord, widget: string, i18n: true, required: false }
         - label: 'Hero'
           name: hero
           widget: object
+          i18n: true
+          required: false
           fields:
-            - { label: 'Welcome subtitle', name: subtitle, widget: string }
-            - { label: 'Welcome title', name: welcome, widget: string }
-        - { label: 'Footer History link', name: historyLink, widget: string }
-        - { label: 'Last-name field', name: lastName, widget: string }
-        - { label: 'Map link', name: mapLink, widget: string }
-        - { label: 'Mobile-phone field', name: mobilePhone, widget: string }
+            - { label: 'Welcome subtitle', name: subtitle, widget: string, i18n: true, required: false }
+            - { label: 'Welcome title', name: welcome, widget: string, i18n: true, required: false }
+        - { label: 'Footer History link', name: historyLink, widget: string, i18n: true, required: false }
+        - { label: 'Last-name field', name: lastName, widget: string, i18n: true, required: false }
+        - { label: 'Map link', name: mapLink, widget: string, i18n: true, required: false }
+        - { label: 'Mobile-phone field', name: mobilePhone, widget: string, i18n: true, required: false }
         - label: 'Nav'
           name: nav
           widget: object
+          i18n: true
+          required: false
           fields:
-            - { label: 'Menu: Call button', name: call, widget: string }
-            - { label: 'Menu: Contact', name: contact, widget: string }
-            - { label: 'Menu: Giving button', name: giving, widget: string }
-            - { label: 'Menu: Request Forms', name: requests, widget: string }
-        - { label: '“Next” arrow label', name: nextSlide, widget: string }
-        - { label: 'English-home link (404 page)', name: notFoundEn, widget: string }
-        - { label: 'Spanish-home link (404 page)', name: notFoundEs, widget: string }
-        - { label: '“Page not found” heading', name: notFoundTitle, widget: string }
-        - { label: 'Vietnamese-home link (404 page)', name: notFoundVi, widget: string }
-        - { label: 'Word for “of” (in 41% of goal)', name: ofWord, widget: string }
-        - { label: '“Phone” label', name: phoneLabel, widget: string }
-        - { label: 'Footer Photos link', name: photosLink, widget: string }
-        - { label: '“Raised as of” label', name: pledgedAsOf, widget: string }
-        - { label: '“Previous” arrow label', name: prevSlide, widget: string }
+            - { label: 'Menu: Call button', name: call, widget: string, i18n: true, required: false }
+            - { label: 'Menu: Contact', name: contact, widget: string, i18n: true, required: false }
+            - { label: 'Menu: Giving button', name: giving, widget: string, i18n: true, required: false }
+            - { label: 'Menu: Request Forms', name: requests, widget: string, i18n: true, required: false }
+        - { label: '“Next” arrow label', name: nextSlide, widget: string, i18n: true, required: false }
+        - { label: 'English-home link (404 page)', name: notFoundEn, widget: string, i18n: true, required: false }
+        - { label: 'Spanish-home link (404 page)', name: notFoundEs, widget: string, i18n: true, required: false }
+        - { label: '“Page not found” heading', name: notFoundTitle, widget: string, i18n: true, required: false }
+        - { label: 'Vietnamese-home link (404 page)', name: notFoundVi, widget: string, i18n: true, required: false }
+        - { label: 'Word for “of” (in 41% of goal)', name: ofWord, widget: string, i18n: true, required: false }
+        - { label: '“Phone” label', name: phoneLabel, widget: string, i18n: true, required: false }
+        - { label: 'Footer Photos link', name: photosLink, widget: string, i18n: true, required: false }
+        - { label: '“Raised as of” label', name: pledgedAsOf, widget: string, i18n: true, required: false }
+        - { label: '“Previous” arrow label', name: prevSlide, widget: string, i18n: true, required: false }
         - label: 'Schedule'
           name: schedule
           widget: object
+          i18n: true
+          required: false
           fields:
-            - { label: 'Filter: All languages', name: all, widget: string }
-            - { label: 'Confession heading', name: confession, widget: string }
-            - { label: 'Filter label', name: filterBy, widget: string }
-            - { label: 'Mass schedule heading', name: massTimes, widget: string }
-            - { label: 'Office hours heading', name: office, widget: string }
-            - { label: '“See full schedule” button', name: seeAll, widget: string }
-            - { label: '“Stream Mass” button', name: stream, widget: string }
+            - { label: 'Filter: All languages', name: all, widget: string, i18n: true, required: false }
+            - { label: 'Confession heading', name: confession, widget: string, i18n: true, required: false }
+            - { label: 'Filter label', name: filterBy, widget: string, i18n: true, required: false }
+            - { label: 'Mass schedule heading', name: massTimes, widget: string, i18n: true, required: false }
+            - { label: 'Office hours heading', name: office, widget: string, i18n: true, required: false }
+            - { label: '“See full schedule” button', name: seeAll, widget: string, i18n: true, required: false }
+            - { label: '“Stream Mass” button', name: stream, widget: string, i18n: true, required: false }
         - label: 'Search'
           name: search
           widget: object
+          i18n: true
+          required: false
           fields:
-            - { label: 'Search heading', name: label, widget: string }
-        - { label: 'Search loading message', name: searchBuilding, widget: string }
-        - { label: 'Slide button label (blind visitors)', name: showSlide, widget: string }
-        - { label: '“Sign me up” button', name: signUp, widget: string }
-        - { label: '“Skip to content” link (blind visitors)', name: skipLink, widget: string }
-        - { label: '“Staff directory” button', name: staffDir, widget: string }
-        - { label: 'Footer Staff link', name: staffLink, widget: string }
-        - { label: 'Staff heading', name: staffTitle, widget: string }
-        - { label: 'Signup explanation', name: stayText, widget: string }
-        - { label: 'Signup heading', name: stayTitle, widget: string }
-        - { label: 'Table column: Language', name: tableLang, widget: string }
-        - { label: 'Table column: Location', name: tablePlace, widget: string }
-        - { label: 'Table column: Presider', name: tablePresider, widget: string }
-        - { label: 'Table column: Service', name: tableService, widget: string }
-        - { label: 'Table column: Day/Time', name: tableTime, widget: string }
-        - { label: '“To be decided” label', name: tbd, widget: string }
-        - { label: '“Today’s events” button', name: todayEvents, widget: string }
-        - { label: '“View calendar” link', name: viewFacilities, widget: string }
-        - { label: '“View profile” link', name: viewProfile, widget: string }
-        - { label: 'Visit title', name: visitTitle, widget: string }
-      - name: ui-es
-        label: Button & heading words (Español)
-        file: src/data/ui.es.json
-        description: 'WARNING: wording only — never rename, remove, or add rows, or buttons and headings across the site go blank. A missing translation shows English automatically.'
-        fields:
-        - { label: 'Get-in-touch card title', name: contactCard, widget: string }
-        - { label: 'Contact section heading', name: contactSection, widget: string }
-        - { label: 'Saturday (day group)', name: daySaturday, widget: string }
-        - { label: 'Sunday (day group)', name: daySunday, widget: string }
-        - { label: 'Weekdays (day group)', name: dayWeekday, widget: string }
-        - { label: 'Email address field', name: emailAddress, widget: string }
-        - { label: 'Events heading', name: eventsTitle, widget: string }
-        - { label: 'Facility request link text', name: facilityRequest, widget: string }
-        - { label: 'Untranslated-page notice', name: fallbackBanner, widget: text }
-        - { label: 'First-name field', name: firstName, widget: string }
-        - { label: 'Follow us', name: followUs, widget: string }
-        - label: 'Footer'
-          name: footer
-          widget: object
-          fields:
-            - { label: 'Footer: address heading', name: address, widget: string }
-            - { label: 'Footer: email heading', name: email, widget: string }
-            - { label: 'Footer: emergency heading', name: emergency, widget: string }
-            - { label: 'Footer: office heading', name: office, widget: string }
-            - { label: 'Footer: parish name', name: parish, widget: string }
-            - { label: 'Footer: phone heading', name: phone, widget: string }
-        - { label: 'Full-calendar button', name: fullCalendar, widget: string }
-        - { label: 'Word for “goal”', name: goalWord, widget: string }
-        - label: 'Hero'
-          name: hero
-          widget: object
-          fields:
-            - { label: 'Welcome subtitle', name: subtitle, widget: string }
-            - { label: 'Welcome title', name: welcome, widget: string }
-        - { label: 'Footer History link', name: historyLink, widget: string }
-        - { label: 'Last-name field', name: lastName, widget: string }
-        - { label: 'Map link', name: mapLink, widget: string }
-        - { label: 'Mobile-phone field', name: mobilePhone, widget: string }
-        - label: 'Nav'
-          name: nav
-          widget: object
-          fields:
-            - { label: 'Menu: Call button', name: call, widget: string }
-            - { label: 'Menu: Contact', name: contact, widget: string }
-            - { label: 'Menu: Giving button', name: giving, widget: string }
-            - { label: 'Menu: Request Forms', name: requests, widget: string }
-        - { label: '“Next” arrow label', name: nextSlide, widget: string }
-        - { label: 'English-home link (404 page)', name: notFoundEn, widget: string }
-        - { label: 'Spanish-home link (404 page)', name: notFoundEs, widget: string }
-        - { label: '“Page not found” heading', name: notFoundTitle, widget: string }
-        - { label: 'Vietnamese-home link (404 page)', name: notFoundVi, widget: string }
-        - { label: 'Word for “of” (in 41% of goal)', name: ofWord, widget: string }
-        - { label: '“Phone” label', name: phoneLabel, widget: string }
-        - { label: 'Footer Photos link', name: photosLink, widget: string }
-        - { label: '“Raised as of” label', name: pledgedAsOf, widget: string }
-        - { label: '“Previous” arrow label', name: prevSlide, widget: string }
-        - label: 'Schedule'
-          name: schedule
-          widget: object
-          fields:
-            - { label: 'Filter: All languages', name: all, widget: string }
-            - { label: 'Confession heading', name: confession, widget: string }
-            - { label: 'Filter label', name: filterBy, widget: string }
-            - { label: 'Mass schedule heading', name: massTimes, widget: string }
-            - { label: 'Office hours heading', name: office, widget: string }
-            - { label: '“See full schedule” button', name: seeAll, widget: string }
-            - { label: '“Stream Mass” button', name: stream, widget: string }
-        - label: 'Search'
-          name: search
-          widget: object
-          fields:
-            - { label: 'Search heading', name: label, widget: string }
-        - { label: 'Search loading message', name: searchBuilding, widget: string }
-        - { label: 'Slide button label (blind visitors)', name: showSlide, widget: string }
-        - { label: '“Sign me up” button', name: signUp, widget: string }
-        - { label: '“Skip to content” link (blind visitors)', name: skipLink, widget: string }
-        - { label: '“Staff directory” button', name: staffDir, widget: string }
-        - { label: 'Footer Staff link', name: staffLink, widget: string }
-        - { label: 'Staff heading', name: staffTitle, widget: string }
-        - { label: 'Signup explanation', name: stayText, widget: string }
-        - { label: 'Signup heading', name: stayTitle, widget: string }
-        - { label: 'Table column: Language', name: tableLang, widget: string }
-        - { label: 'Table column: Location', name: tablePlace, widget: string }
-        - { label: 'Table column: Presider', name: tablePresider, widget: string }
-        - { label: 'Table column: Service', name: tableService, widget: string }
-        - { label: 'Table column: Day/Time', name: tableTime, widget: string }
-        - { label: '“To be decided” label', name: tbd, widget: string }
-        - { label: '“Today’s events” button', name: todayEvents, widget: string }
-        - { label: '“View calendar” link', name: viewFacilities, widget: string }
-        - { label: '“View profile” link', name: viewProfile, widget: string }
-        - { label: 'Visit title', name: visitTitle, widget: string }
-      - name: ui-vi
-        label: Button & heading words (Tiếng Việt)
-        file: src/data/ui.vi.json
-        description: 'WARNING: wording only — never rename, remove, or add rows, or buttons and headings across the site go blank. A missing translation shows English automatically.'
-        fields:
-        - { label: 'Get-in-touch card title', name: contactCard, widget: string }
-        - { label: 'Contact section heading', name: contactSection, widget: string }
-        - { label: 'Saturday (day group)', name: daySaturday, widget: string }
-        - { label: 'Sunday (day group)', name: daySunday, widget: string }
-        - { label: 'Weekdays (day group)', name: dayWeekday, widget: string }
-        - { label: 'Email address field', name: emailAddress, widget: string }
-        - { label: 'Events heading', name: eventsTitle, widget: string }
-        - { label: 'Facility request link text', name: facilityRequest, widget: string }
-        - { label: 'Untranslated-page notice', name: fallbackBanner, widget: text }
-        - { label: 'First-name field', name: firstName, widget: string }
-        - { label: 'Follow us', name: followUs, widget: string }
-        - label: 'Footer'
-          name: footer
-          widget: object
-          fields:
-            - { label: 'Footer: address heading', name: address, widget: string }
-            - { label: 'Footer: email heading', name: email, widget: string }
-            - { label: 'Footer: emergency heading', name: emergency, widget: string }
-            - { label: 'Footer: office heading', name: office, widget: string }
-            - { label: 'Footer: parish name', name: parish, widget: string }
-            - { label: 'Footer: phone heading', name: phone, widget: string }
-        - { label: 'Full-calendar button', name: fullCalendar, widget: string }
-        - { label: 'Word for “goal”', name: goalWord, widget: string }
-        - label: 'Hero'
-          name: hero
-          widget: object
-          fields:
-            - { label: 'Welcome subtitle', name: subtitle, widget: string }
-            - { label: 'Welcome title', name: welcome, widget: string }
-        - { label: 'Footer History link', name: historyLink, widget: string }
-        - { label: 'Last-name field', name: lastName, widget: string }
-        - { label: 'Map link', name: mapLink, widget: string }
-        - { label: 'Mobile-phone field', name: mobilePhone, widget: string }
-        - label: 'Nav'
-          name: nav
-          widget: object
-          fields:
-            - { label: 'Menu: Call button', name: call, widget: string }
-            - { label: 'Menu: Contact', name: contact, widget: string }
-            - { label: 'Menu: Giving button', name: giving, widget: string }
-            - { label: 'Menu: Request Forms', name: requests, widget: string }
-        - { label: '“Next” arrow label', name: nextSlide, widget: string }
-        - { label: 'English-home link (404 page)', name: notFoundEn, widget: string }
-        - { label: 'Spanish-home link (404 page)', name: notFoundEs, widget: string }
-        - { label: '“Page not found” heading', name: notFoundTitle, widget: string }
-        - { label: 'Vietnamese-home link (404 page)', name: notFoundVi, widget: string }
-        - { label: 'Word for “of” (in 41% of goal)', name: ofWord, widget: string }
-        - { label: '“Phone” label', name: phoneLabel, widget: string }
-        - { label: 'Footer Photos link', name: photosLink, widget: string }
-        - { label: '“Raised as of” label', name: pledgedAsOf, widget: string }
-        - { label: '“Previous” arrow label', name: prevSlide, widget: string }
-        - label: 'Schedule'
-          name: schedule
-          widget: object
-          fields:
-            - { label: 'Filter: All languages', name: all, widget: string }
-            - { label: 'Confession heading', name: confession, widget: string }
-            - { label: 'Filter label', name: filterBy, widget: string }
-            - { label: 'Mass schedule heading', name: massTimes, widget: string }
-            - { label: 'Office hours heading', name: office, widget: string }
-            - { label: '“See full schedule” button', name: seeAll, widget: string }
-            - { label: '“Stream Mass” button', name: stream, widget: string }
-        - label: 'Search'
-          name: search
-          widget: object
-          fields:
-            - { label: 'Search heading', name: label, widget: string }
-        - { label: 'Search loading message', name: searchBuilding, widget: string }
-        - { label: 'Slide button label (blind visitors)', name: showSlide, widget: string }
-        - { label: '“Sign me up” button', name: signUp, widget: string }
-        - { label: '“Skip to content” link (blind visitors)', name: skipLink, widget: string }
-        - { label: '“Staff directory” button', name: staffDir, widget: string }
-        - { label: 'Footer Staff link', name: staffLink, widget: string }
-        - { label: 'Staff heading', name: staffTitle, widget: string }
-        - { label: 'Signup explanation', name: stayText, widget: string }
-        - { label: 'Signup heading', name: stayTitle, widget: string }
-        - { label: 'Table column: Language', name: tableLang, widget: string }
-        - { label: 'Table column: Location', name: tablePlace, widget: string }
-        - { label: 'Table column: Presider', name: tablePresider, widget: string }
-        - { label: 'Table column: Service', name: tableService, widget: string }
-        - { label: 'Table column: Day/Time', name: tableTime, widget: string }
-        - { label: '“To be decided” label', name: tbd, widget: string }
-        - { label: '“Today’s events” button', name: todayEvents, widget: string }
-        - { label: '“View calendar” link', name: viewFacilities, widget: string }
-        - { label: '“View profile” link', name: viewProfile, widget: string }
-        - { label: 'Visit title', name: visitTitle, widget: string }
+            - { label: 'Search heading', name: label, widget: string, i18n: true, required: false }
+        - { label: 'Search loading message', name: searchBuilding, widget: string, i18n: true, required: false }
+        - { label: 'Slide button label (blind visitors)', name: showSlide, widget: string, i18n: true, required: false }
+        - { label: '“Sign me up” button', name: signUp, widget: string, i18n: true, required: false }
+        - { label: '“Skip to content” link (blind visitors)', name: skipLink, widget: string, i18n: true, required: false }
+        - { label: '“Staff directory” button', name: staffDir, widget: string, i18n: true, required: false }
+        - { label: 'Footer Staff link', name: staffLink, widget: string, i18n: true, required: false }
+        - { label: 'Staff heading', name: staffTitle, widget: string, i18n: true, required: false }
+        - { label: 'Signup explanation', name: stayText, widget: string, i18n: true, required: false }
+        - { label: 'Signup heading', name: stayTitle, widget: string, i18n: true, required: false }
+        - { label: 'Table column: Language', name: tableLang, widget: string, i18n: true, required: false }
+        - { label: 'Table column: Location', name: tablePlace, widget: string, i18n: true, required: false }
+        - { label: 'Table column: Presider', name: tablePresider, widget: string, i18n: true, required: false }
+        - { label: 'Table column: Service', name: tableService, widget: string, i18n: true, required: false }
+        - { label: 'Table column: Day/Time', name: tableTime, widget: string, i18n: true, required: false }
+        - { label: '“To be decided” label', name: tbd, widget: string, i18n: true, required: false }
+        - { label: '“Today’s events” button', name: todayEvents, widget: string, i18n: true, required: false }
+        - { label: '“View calendar” link', name: viewFacilities, widget: string, i18n: true, required: false }
+        - { label: '“View profile” link', name: viewProfile, widget: string, i18n: true, required: false }
+        - { label: 'Visit title', name: visitTitle, widget: string, i18n: true, required: false }

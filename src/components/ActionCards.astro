@@ -1,11 +1,14 @@
 ---
-import actionsData from '../data/actions.json';
+import actionsEn from '../data/actions.en.json';
+import actionsEs from '../data/actions.es.json';
+import actionsVi from '../data/actions.vi.json';
+import { pickLocale } from '../lib/i18n';
 import BulletinList from './BulletinList.astro';
 import Icon from './Icon.astro';
 import { resolveLink, type Lang } from '../config';
 interface Props { lang: Lang; ui: any; }
 const { lang, ui } = Astro.props;
-const cards = ((actionsData as any).cards as Array<any>) ?? [];
+const cards = ((pickLocale({ en: actionsEn, es: actionsEs, vi: actionsVi }, lang) as any).cards as Array<any>) ?? [];
 const btnClass = (s: string) =>
   s === 'gold' ? 'btn btn-gold' : s === 'outline' ? 'btn btn-outline' : 'btn btn-primary';
 const hrefFor = (link: string) => resolveLink(link, lang);
@@ -13,17 +16,17 @@ const hrefFor = (link: string) => resolveLink(link, lang);
 <div class="cards four">
   {cards.map((c) => (
     <article class="card">
-      {c.icon ? <div class="card-head"><Icon name={c.icon} /><h2>{c.title?.[lang] || c.title?.en}</h2></div> : <h2>{c.title?.[lang] || c.title?.en}</h2>}
+      {c.icon ? <div class="card-head"><Icon name={c.icon} /><h2>{c.title}</h2></div> : <h2>{c.title}</h2>}
       {c.kind === 'bulletins' ? (
-        <BulletinList limit={5} />
+        <BulletinList limit={5} lang={lang} />
       ) : (
         <>
-          {(c.text?.[lang] || c.text?.en) && <p>{c.text?.[lang] || c.text?.en}</p>}
+          {(c.text) && <p>{c.text}</p>}
           {c.kind === 'link' && c.link?.trim() ? (
-            <p><a class={btnClass(c.style)} href={hrefFor(c.link.trim())}>{c.link_label?.[lang] || c.link_label?.en || c.title?.[lang] || c.title?.en}</a></p>
+            <p><a class={btnClass(c.style)} href={hrefFor(c.link.trim())}>{c.link_label || c.title}</a></p>
           ) : null}
           {c.extra_link?.trim() ? (
-            <p><a href={hrefFor(c.extra_link.trim())}>{c.extra_label?.[lang] || c.extra_label?.en}</a></p>
+            <p><a href={hrefFor(c.extra_link.trim())}>{c.extra_label}</a></p>
           ) : null}
         </>
       )}

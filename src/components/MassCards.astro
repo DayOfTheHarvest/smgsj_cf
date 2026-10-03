@@ -17,7 +17,9 @@ const presiderOf = (r: any): string => (r.presider || '').trim();
 // Home summary: day groups (Mon–Fri / Saturday / Sunday). Saturday evening
 // vigils read under Sunday; the language filter defaults to the page language
 // so one language shows at a time. All 21 Masses appear under "All" (including
-// Friday 7pm Spanish and First Friday Tagalog).
+// Friday 7pm Spanish and First Friday Tagalog). Weekday rows with a specific
+// day (Friday, 1st Friday) show the day qualifier; plain Mon–Fri rows inherit
+// it from the group heading, matching the full /mass-times table.
 const dayGroups = [
   { name: ui.dayWeekday, rows: MASS_ROWS.filter((r) => r.service === 'Weekday') },
   { name: ui.daySaturday, rows: MASS_ROWS.filter((r) => r.day === 'Saturday') },
@@ -33,7 +35,7 @@ const filters = [{ value: 'all', label: ui.schedule.all }].concat(
   [...new Set(MASS_ROWS.map((r) => r.lang))].map((l) => ({ value: l, label: LANG_LABELS[l] || l })),
 );
 // Image-swap mode: staff can replace the whole schedule block with an uploaded
-// image for a special week (Decap: Mass schedule → Display). Table page unaffected.
+// image for a special week (Sveltia: Mass schedule → Display). Table page unaffected.
 const display = SCHEDULE_DISPLAY as any;
 const showImage = compact && display.mode === 'image' && display.image?.trim();
 ---
@@ -63,7 +65,7 @@ const showImage = compact && display.mode === 'image' && display.image?.trim();
           <dl class="my-2">
             {g.rows.map((r) => (
               <div data-lang={r.lang}>
-                <dt>{r.time}{r.suffix ? ` ${r.suffix}` : ''}{r.note ? ` — ${r.note}` : ''} <span class={chipClass(r.lang)}>{langName(r.lang)}</span></dt>
+                <dt>{r.service === 'Weekday' && r.day !== 'Mon-Fri' ? <>{dayName(r.day, lang)}{' '}</> : null}{r.time}{r.suffix ? ` ${r.suffix}` : ''}{r.note ? ` — ${r.note}` : ''} <span class={chipClass(r.lang)}>{langName(r.lang)}</span></dt>
                 <dd>{serviceName(r.service, lang)} · {locName(r.location, lang)}{presiderOf(r) ? ` · ${presiderOf(r)}` : ''}</dd>
               </div>
             ))}

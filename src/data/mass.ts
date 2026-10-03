@@ -4,18 +4,38 @@
 
 import type { Lang } from '../config';
 import massesData from './masses.json';
-import scheduleInfo from './schedule-info.json';
-import officeData from './office.json';
+import scheduleInfoEn from './schedule-info.en.json';
+import scheduleInfoEs from './schedule-info.es.json';
+import scheduleInfoVi from './schedule-info.vi.json';
+import officeEn from './office.en.json';
+import officeEs from './office.es.json';
+import officeVi from './office.vi.json';
 
-import locationsData from './locations.json';
+import locationsEn from './locations.en.json';
+import locationsEs from './locations.es.json';
+import locationsVi from './locations.vi.json';
+import { localize } from '../lib/i18n';
 
-// Location names in each language (staff-managed in Decap: Mass schedule &
-// presiders → Location names). `name` must match the English location used in
-// the Mass list exactly — Decap offers it as a dropdown so it can't be mistyped.
+// Location names per language (staff-managed in Sveltia: Mass schedule &
+// presiders → Location names, one screen per language). `name` is the stable
+// row key; missing translations fall back to English, then to the key itself
+// (same guarantee the old `?? loc` fallback gave).
+const locMerged = {
+  en: locationsEn as any,
+  es: localize(locationsEn, locationsEs) as any,
+  vi: localize(locationsEn, locationsVi) as any,
+};
+const locText = (lang: Lang, name: string, fallback: string): string =>
+  (locMerged[lang].locations as Array<{ name: string; text: string }>).find(
+    (r) => r.name === name,
+  )?.text ||
+  fallback ||
+  name;
 const LOCALES: Record<string, Record<Lang, string>> = Object.fromEntries(
-  ((locationsData as any).locations as Array<{ name: string; en: string; es: string; vi: string }>).map(
-    (l) => [l.name, { en: l.en, es: l.es, vi: l.vi }],
-  ),
+  (locMerged.en.locations as Array<{ name: string; text: string }>).map((l) => [
+    l.name,
+    { en: locText('en', l.name, ''), es: locText('es', l.name, l.text), vi: locText('vi', l.name, l.text) },
+  ]),
 );
 
 export function locName(loc: string, lang: Lang): string {
@@ -57,7 +77,7 @@ export function serviceName(service: string, lang: Lang): string {
 
 export interface MassRow {
   service: string;
-  /** Canonical day — Decap dropdown, never typed. Matches presiders via massKey. */
+  /** Canonical day — Sveltia dropdown, never typed. Day/time are data keys. */
   day: string;
   /** Start time only, e.g. 4:00pm. Validated format, never typed freely. */
   time: string;
@@ -74,13 +94,26 @@ export function massKey(r: { day: string; time: string; suffix?: string }): stri
   return r.day + ' ' + r.time + (r.suffix ? ' ' + r.suffix : '');
 }
 
-// Schedule content lives in Decap-managed JSON so office staff (non-technical)
+// Schedule content lives in Sveltia-managed JSON so office staff (non-technical)
 // can edit Mass times, locations, notes, confession and office hours at /admin.
 // mass.ts keeps only the location translations (developer-owned).
 export const MASS_ROWS: MassRow[] = (massesData as any).masses;
 export const SCHEDULE_DISPLAY: { mode?: string; image?: string; link?: string } =
   (massesData as any).display ?? {};
-export const CONFESSION: { day: Record<string, string>; time: Record<string, string> } = (
-  scheduleInfo as any
-).confession;
-export const OFFICE_HOURS: Record<string, string> = (officeData as any) as Record<string, string>;
+// Confession + office hours keep their old shapes ({day[lang]}, Record<lang>)
+// so all templates work untouched; values come from the per-locale files.
+const schedMerged = {
+  en: scheduleInfoEn as any,
+  es: localize(scheduleInfoEn, scheduleInfoEs) as any,
+  vi: localize(scheduleInfoEn, scheduleInfoVi) as any,
+};
+export const CONFESSION: { day: Record<string, string>; time: Record<string, string> } = {
+  day: { en: schedMerged.en.confession.day, es: schedMerged.es.confession.day, vi: schedMerged.vi.confession.day },
+  time: { en: schedMerged.en.confession.time, es: schedMerged.es.confession.time, vi: schedMerged.vi.confession.time },
+};
+const officeMerged = {
+  en: (officeEn as any).text as string,
+  es: (localize(officeEn, officeEs) as any).text as string,
+  vi: (localize(officeEn, officeVi) as any).text as string,
+};
+export const OFFICE_HOURS: Record<string, string> = officeMerged;

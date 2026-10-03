@@ -8,21 +8,21 @@ errors = []
 ts = open('src/config.ts', encoding='utf-8').read()
 m = re.search(r"AUTH_PROVIDER:\s*AuthProvider\s*=\s*'([^']+)'", ts)
 provider = m.group(1) if m else None
-if provider not in ('netlify-identity', 'cloudflare-worker', 'none'):
+if provider not in ('cloudflare-worker', 'none'):
     errors.append(f'src/config.ts AUTH_PROVIDER unparseable: {provider}')
 
 yml = open('public/admin/config.yml', encoding='utf-8').read()
 backend = re.search(r'backend:\s*\n\s*name:\s*([\w-]+)', yml)
 backend = backend.group(1) if backend else None
-expected_backend = {'netlify-identity': 'git-gateway'}.get(provider, provider)
+expected_backend = {'cloudflare-worker': 'github'}.get(provider, provider)
 if backend != expected_backend:
     errors.append(f'config.yml backend={backend!r} disagrees with AUTH_PROVIDER={provider!r}')
+if backend == 'github' and 'base_url:' not in yml:
+    errors.append('config.yml backend=github missing base_url (Cloudflare Worker auth URL)')
 
 html = open('public/admin/index.html', encoding='utf-8').read()
 has_widget = 'netlify-identity-widget' in html
-if provider == 'netlify-identity' and not has_widget:
-    errors.append('admin/index.html missing Netlify Identity widget')
-if provider != 'netlify-identity' and has_widget:
+if has_widget:
     errors.append('admin/index.html still loads Netlify widget for provider ' + str(provider))
 
 if errors:

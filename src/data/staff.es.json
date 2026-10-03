@@ -1,0 +1,108 @@
+{
+  "members": [
+    {
+      "slug": "andrew-nguyen",
+      "name": "Rev. Andrew C. Nguyen",
+      "role": "Pastor",
+      "phone": "408-363-2305",
+      "photo": "/uploads/staff-andrew-nguyen.jpg",
+      "bio": "My mother and our six siblings left Vietnam when I was 13, shortly after our father's passing, and we have been in San Jose ever since. I graduated from Andrew Hill High School, U.C. Davis, and St. Patrick's Seminary. I was ordained along with my two friends on June 4th, 2011. I served at these churches during my seminary years: St. Joseph of Cupertino, Holy Spirit, Queen of Apostles, and St. Justin. Then, as a priest at these communities: St. Christopher Parish, Our Lady of La Vang Parish, and St. Thomas of Canterbury. In addition to parish ministry, I was happy helping with the Vocations Office during the past three years. St. Maria Goretti is my home parish, where my family and I have been members ever since coming to the U.S. in 1993."
+    },
+    {
+      "slug": "pedro-perez-sencion",
+      "name": "Rev. Pedro Perez-Sencion",
+      "role": "Parochial Vicar",
+      "phone": "408-363-2300 ext. 1006",
+      "photo": "",
+      "bio": ""
+    },
+    {
+      "slug": "pedro-tejeda",
+      "name": "Rev. Pedro Tejeda",
+      "role": "Parochial Vicar",
+      "phone": "(408) 363-2300 ext. 1008",
+      "photo": "/uploads/staff-pedro-tejeda.jpg",
+      "bio": "Father Pedro was born in Jalisco, México. He entered the Seminary when he was 18 years old and studied at the Diocesan Seminary in Guadalajara. He was ordained as a priest on May 5, 1984, and served in the Diocese of San Juan de los Lagos, the Archdiocese of Oaxaca, and the Diocese of Tenancingo in México. He came to the United States in 2018; his first assignment was our St. Maria Goretti Parish, then Sacred Heart Parish for two years. Now he is back with us as Parochial Vicar."
+    },
+    {
+      "slug": "hung-vu",
+      "name": "Rev. Hung Vu",
+      "role": "Parochial Vicar",
+      "phone": "408-363-2300 x 1007",
+      "photo": "/uploads/staff-hung-vu.jpg",
+      "bio": "Father John Baotixita Vu Ngoc Hung was born June 30, 1980, in Ho Nai, Vietnam. After university and work, he entered St. Joseph Xuan Loc Seminary, graduating in 2016. He was ordained a priest on July 20, 2017, and served the parishes of Loc Hoa and Tan Mai of Xuan Loc diocese in Vietnam. In the United States he served Our Lady of La Vang parish, and now St. Maria Goretti, where his family used to participate in activities."
+    },
+    {
+      "slug": "anthony-pham",
+      "name": "Rev. Mr. Anthony Diem Pham",
+      "role": "Deacon",
+      "phone": "(408) 646-7370",
+      "photo": "/uploads/staff-anthony-pham.png",
+      "bio": ""
+    },
+    {
+      "slug": "trang-nguyen",
+      "name": "Sr. Mary Magdalene Trang Nguyen",
+      "role": "Vietnamese Catechetical Coordinator",
+      "phone": "(408) 363-2300 ext. 1010",
+      "photo": "/uploads/staff-trang-nguyen.jpg",
+      "bio": ""
+    },
+    {
+      "slug": "araceli-zarate",
+      "name": "Mrs. Araceli Zarate",
+      "role": "Pastoral Associate",
+      "phone": "(408) 363-2300 ext. 1009",
+      "photo": "/uploads/staff-araceli-zarate.png",
+      "bio": ""
+    },
+    {
+      "slug": "maria-alonso",
+      "name": "Mrs. Maria Socorro Alonso",
+      "role": "Administrative Assistant",
+      "phone": "(408) 363-2300 ext. 1001",
+      "photo": "",
+      "bio": ""
+    },
+    {
+      "slug": "sugar-vo",
+      "name": "Sr. Sugar Vo",
+      "role": "Administrative Assistant",
+      "phone": "408-363-2302",
+      "photo": "",
+      "bio": ""
+    },
+    {
+      "slug": "angie-nguyen",
+      "name": "Angie Nguyen",
+      "role": "Facility Coordinator",
+      "phone": "408-363-2303",
+      "photo": "",
+      "bio": ""
+    },
+    {
+      "slug": "olga-ramos",
+      "name": "Mrs. Olga Ramos",
+      "role": "Receptionist",
+      "phone": "408-363-2300",
+      "photo": "",
+      "bio": ""
+    },
+    {
+      "slug": "anton-vu",
+      "name": "Mr. Anton Vu",
+      "role": "Finance Office",
+      "phone": "(408) 363-2300",
+      "photo": "",
+      "bio": ""
+    },
+    {
+      "slug": "tam-tran",
+      "name": "Ms. Tam Tran",
+      "role": "Office Manager",
+      "phone": "(408) 363-2306",
+      "photo": "",
+      "bio": ""
+    }
+  ]
+}

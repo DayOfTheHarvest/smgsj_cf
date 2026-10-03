@@ -13,35 +13,50 @@ import CalendarEmbeds from '../../components/CalendarEmbeds.astro';
 import Icon from '../../components/Icon.astro';
 import { PHONE, EMAIL, EXTERNAL, ADDRESS, SHRINE_ADDRESS, resolveLink } from '../../config';
 import formsData from '../../data/forms.json';
-import galleriesData from '../../data/galleries.json';
+import galleriesEn from '../../data/galleries.en.json';
+import galleriesEs from '../../data/galleries.es.json';
+import galleriesVi from '../../data/galleries.vi.json';
+import { pickLocale } from '../../lib/i18n';
 import { renderMd } from '../../lib/md';
+import { bundlePages, localize } from '../../lib/i18n';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
   const langs: Lang[] = ['en', 'es', 'vi'];
-  return pages
-    .filter((p) => p.slug !== 'home' && !p.data.draft)
-    .flatMap((p) => langs.map((lang) => ({ params: { lang, slug: p.slug }, props: { id: p.id } })));
+  const paths = [];
+  for (const bundle of bundlePages(pages).values()) {
+    if (bundle.slug === 'home' || bundle.en.data.draft) continue;
+    for (const lang of langs) paths.push({ params: { lang, slug: bundle.slug } });
+  }
+  return paths;
 }
 const { lang, slug } = Astro.params as { lang: Lang; slug: string };
 const ui = lang === 'es' ? es : lang === 'vi' ? vi : en;
 const pages = await getCollection('pages');
-const entry = pages.find((p) => p.slug === slug);
-if (!entry) return Astro.redirect('/en/', 404);
-const titleLoc = ((entry.data as any)[`title_${lang}`] as string)?.trim()
-  || entry.data.title_en;
-const bodyLoc = ((entry.data as any)[`body_${lang}`] as string)?.trim();
+const bundle = bundlePages(pages).get(slug);
+if (!bundle) return Astro.redirect('/en/', 404);
+// Per-locale files; missing/empty non-English content falls back to English
+// + banner — same semantics the old title_es/body_es fields had.
+const enEntry = bundle.en;
+const locEntry = (bundle as any)[lang] ?? enEntry;
+const titleLoc = (locEntry.data.title as string)?.trim() || (enEntry.data.title as string);
+const bodyLoc = (locEntry.body as string)?.trim();
 const fallback = lang !== 'en' && !bodyLoc;
-const html = renderMd(fallback ? entry.body : (bodyLoc || entry.body));
+const html = renderMd(lang === 'en' ? enEntry.body : (fallback ? enEntry.body : (bodyLoc || enEntry.body)));
+// Optional page widgets, merged across locales (missing translations fall
+// back to English, like everything else).
+const enBlocks = ((enEntry.data as any).blocks as Array<any>) ?? [];
+const locBlocks = ((locEntry.data as any).blocks as Array<any>) ?? [];
+const fundraiser = localize(enBlocks, locBlocks).find((b: any) => b?.type === 'fundraiser');
 const formList = ((formsData as any).forms as Array<any>) ?? [];
-const galleryList = ((galleriesData as any).galleries as Array<any>) ?? [];
+const galleryList = ((pickLocale({ en: galleriesEn, es: galleriesEs, vi: galleriesVi }, lang) as any).galleries as Array<any>) ?? [];
 ---
 <Base lang={lang} slug={slug} title={titleLoc} fallback={fallback}>
   <h1>{titleLoc}</h1>
   <article class="prose" data-pagefind-body data-pagefind-meta={`lang:${lang}`} set:html={html} />
 
   {slug === 'mass-times' && <MassCards lang={lang} ui={ui} />}
-  <FundraiserProgress ui={ui} lang={lang} slug={slug} />
+  <FundraiserProgress ui={ui} title={titleLoc} fundraiser={fundraiser} />
   {slug === 'calendar' && <CalendarEmbeds ui={ui} />}
   {slug === 'contact' && (
     <>

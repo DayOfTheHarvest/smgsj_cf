@@ -1,0 +1,187 @@
+{
+  "groups": [
+    {
+      "id": "about",
+      "label": "About",
+      "href": "/about-us/",
+      "children": [
+        {
+          "label": "Staff",
+          "href": "/staff/"
+        },
+        {
+          "label": "Patron Saint",
+          "href": "/patron-saint/"
+        },
+        {
+          "label": "History",
+          "href": "/about-us/"
+        },
+        {
+          "label": "Photos",
+          "href": "/photos/"
+        }
+      ]
+    },
+    {
+      "id": "sacraments",
+      "label": "Sacraments",
+      "href": "/sacraments/",
+      "children": [
+        {
+          "label": "Baptism",
+          "href": "/baptism/"
+        },
+        {
+          "label": "Reconciliation",
+          "href": "/reconciliation/"
+        },
+        {
+          "label": "Eucharist",
+          "href": "/eucharist/"
+        },
+        {
+          "label": "Confirmation",
+          "href": "/confirmation/"
+        },
+        {
+          "label": "Marriage",
+          "href": "/marriage/"
+        },
+        {
+          "label": "Anointing",
+          "href": "/anointing/"
+        },
+        {
+          "label": "Holy Orders",
+          "href": "/orders/"
+        }
+      ]
+    },
+    {
+      "id": "formation",
+      "label": "Faith Formation",
+      "href": "/formation/",
+      "children": [
+        {
+          "label": "Baptism Prep",
+          "href": "/baptism-prep/"
+        },
+        {
+          "label": "Catechetical Ministries",
+          "href": "/catechetical-ministries/"
+        },
+        {
+          "label": "OCIA / RCIA",
+          "href": "/rcia/"
+        },
+        {
+          "label": "Initiation of Children",
+          "href": "/rcia-children/"
+        },
+        {
+          "label": "Children",
+          "href": "/religious-ed-children/"
+        },
+        {
+          "label": "Children's Liturgy",
+          "href": "/children-liturgy/"
+        },
+        {
+          "label": "Breaking Open the Word",
+          "href": "/breaking-word/"
+        },
+        {
+          "label": "ILM",
+          "href": "/ilm/"
+        },
+        {
+          "label": "GLVN",
+          "href": "/glvn/"
+        },
+        {
+          "label": "GLVN Books",
+          "href": "/glvn-books/"
+        },
+        {
+          "label": "GLVN Live",
+          "href": "/glvn-live/"
+        },
+        {
+          "label": "GLVN Video",
+          "href": "/glvn-video/"
+        },
+        {
+          "label": "Eucharistic Miracles",
+          "href": "/glvn-miracles/"
+        }
+      ]
+    },
+    {
+      "id": "ministry",
+      "label": "Join Us",
+      "href": "/join/",
+      "children": [
+        {
+          "label": "Join",
+          "href": "/join/"
+        },
+        {
+          "label": "Volunteer",
+          "href": "/volunteer/"
+        }
+      ]
+    },
+    {
+      "id": "facility",
+      "label": "Facility",
+      "href": "/facility/",
+      "children": [
+        {
+          "label": "Today's Events",
+          "href": "/calendar/#today"
+        },
+        {
+          "label": "Calendar",
+          "href": "/calendar/"
+        },
+        {
+          "label": "Facility Reservation Request",
+          "href": "https://www.calendarwiz.com/cwsuggest/cwsuggestform.php?crd=smgsj"
+        },
+        {
+          "label": "Before-Event Walkthrough",
+          "href": "https://script.google.com/macros/s/AKfycbzPfSdWV_Vdaz8eu9NtRbgGgvUZT23qgS4gqGhVLZ1e2PqhsDc/exec?action=sign&formId=1SoOFzxZRFbEqaQBHIMXa5BYT5vsUokb6JroFeGTAzSo&editorUUID=a4e4f132-76a6-4488-b5b8-055911dfb699"
+        },
+        {
+          "label": "After-Event Walkthrough",
+          "href": "https://script.google.com/macros/s/AKfycbzPfSdWV_Vdaz8eu9NtRbgGgvUZT23qgS4gqGhVLZ1e2PqhsDc/exec?action=sign&formId=1lllZ4cRVPscnwIaOTxqTcgHDB9CO4k28snbV-PKo11I&editorUUID=a4e4f132-76a6-4488-b5b8-055911dfb699"
+        },
+        {
+          "label": "Hall Rental",
+          "href": "/hall-rental/"
+        },
+        {
+          "label": "Use Agreement",
+          "href": "/facility-agreement/"
+        },
+        {
+          "label": "Online Payment",
+          "href": "@payment"
+        }
+      ]
+    },
+    {
+      "id": "mass-times",
+      "label": "Mass Times",
+      "href": "/mass-times/",
+      "children": []
+    },
+    {
+      "id": "contact",
+      "label": "Contact",
+      "href": "/contact/",
+      "children": []
+    }
+  ]
+}

@@ -7,8 +7,9 @@
   anything behind the scenes (logins, design, emergencies). Call this person
   when a step below says so.
 
-**Website address for editing:** `www.smgsj.org/admin`. Log in with the email
-address you were invited with.
+**Website address for editing:** `www.smgsj.org/admin`. Sign in with GitHub —
+you need a GitHub account with parish access (ask the web volunteer to add
+you if you don't have one).
 **Use a laptop.** You can look at the website on a phone, but always do your
 editing on a laptop.
 **Saving puts your change live.** There is no approval step. The website
@@ -51,32 +52,33 @@ every page of the site.
 
 | What you want to change | Where to go in the editing screen |
 |---|---|
-| Page text (41 topics, English/Spanish/Vietnamese) | Pages → pick the topic. English is required; if Spanish or Vietnamese is empty, visitors see the English with a small note (never a broken page). **New page:** Pages → New Page → set its address once (lowercase-with-dashes), write the English, save — it appears in all 3 languages at once. Then link it from another page. The website itself checks for duplicate addresses — if you made one, the web developer volunteer will see an error and help fix it. |
+| Page text (41 topics, English/Spanish/Vietnamese) | Pages → pick the topic, then switch language with the button in the top-right corner. English is required; if Spanish or Vietnamese is empty, visitors see the English with a small note (never a broken page). **New page:** Pages → New Page → set its address once (lowercase-with-dashes), write the English, save — it appears in all 3 languages at once. Then link it from another page. The website itself checks for duplicate addresses — if you made one, the web developer volunteer will see an error and help fix it. |
 | Mass times, places, notes | Mass schedule → Mass times, places & presiders. Day, language, and place are picked from lists. Each row also holds that Mass's presider name, so nothing can silently mismatch. |
 | Confession wording | Mass schedule → Confession text. Shows beside the Mass schedule. |
 | Office hours wording | Parish info → Office hours. Hours update everywhere at once (homepage Contact section, bottom of every page, contact page). |
-| Staff names, job titles, phone numbers, biographies | Staff directory. Photos: press Choose image, never type an address. Empty biography = no personal page. |
-| Homepage moving pictures | Homepage carousel. The first picture shows on load; each picture has its own seconds and size (leave sizes at 1920×480 unless the web developer volunteer says otherwise). Upload wide pictures (about 1920 wide) under Media first. |
+| Staff names, job titles, phone numbers, biographies | Staff directory. Job titles and biographies in each language — switch top-right; empty shows English. Photos: press Choose image, never type an address. Empty biography = no personal page. |
+| Homepage moving pictures | Homepage carousel. The first picture shows on load; each picture has its own seconds and size (leave sizes at 1920×480 unless the web developer volunteer says otherwise). Upload wide pictures (about 1920 wide) under Media first. Captions and alt text in each language — switch top-right; empty shows English. |
 | Homepage boxes (Bulletin, Giving, Payment, Requests) | Site settings → Homepage action cards. Kinds: bulletin list (only ONE box), link button, text only. Web addresses for parish pages must start AND end with `/`. You can also type a @shortcut word (@giving, @payment, @calendar-suggest, @calendar-view, @flocknote, @youtube) instead of an address — those follow Site settings automatically. |
-| Homepage order | Site settings → Homepage welcome → Page layout. Drag sections to reorder; add a section under Hidden to remove it without deleting it. |
+| Homepage order | Site settings → Homepage welcome → Sections. Drag rows to reorder; uncheck Visible to hide a section (it keeps its place, re-check to show it again). Never change a Theme section's name — only its visibility. |
 | Welcome text, buttons, events, facility line, church icons | Site settings → Homepage welcome (welcome / events / facility / church blocks). The pastor's words should stay as he wrote them. |
 | Top menu | Site settings → Header menu structure. Links must start AND end with `/`. Add a temporary entry (for example a fundraiser) and remove it when done. |
 | Phone, email, address, Giving/Payment, Calendar, YouTube, social media | Site settings → Contact info & external links. A wrong address here shows on every page — double-check. |
 | Request forms, photo albums | Notices, forms & galleries. Update form addresses when yearly sign-ups roll over; paste Google Photos album addresses as albums move over. |
-| Fundraisers (capital campaign and future ones) | Site settings → Fundraisers. Each row powers one fundraiser page (thermometer + donate button). Update goal, raised, date, donate link any time. New fundraiser: create its page under Pages first, add its money row with the same address, feature it with a carousel slide. Finished fundraiser: remove its carousel slide and its money row, then rewrite the page as a thank-you note — no volunteer needed. |
-| Button and heading wording (all 3 languages) | Interface words. **Wording only — never rename, remove, or add rows**, or text across the site goes blank. |
+| Fundraisers (capital campaign and future ones) | On the fundraiser page itself → Page widgets → Add “Fundraiser thermometer” and fill goal, raised, date, donate link (and the title + button label in each language via the top-right switcher). New fundraiser: create its page under Pages first, then add its thermometer widget, feature it with a carousel slide. Finished fundraiser: delete the thermometer row, remove its carousel slide, then rewrite the page as a thank-you note — no volunteer needed. |
+| Button and heading wording (all 3 languages) | Interface words — one screen for all languages; switch language with the button in the top-right corner. **Wording only — never rename, remove, or add rows**, or text across the site goes blank. |
 
 ## Photos and files
 
 **Media** → Upload. Rules of thumb: PDFs under 5 MB, photos under 1 MB,
-wide banners about 1920 wide. Every upload lands in `/uploads/` — copy its
+wide banners about 1920 wide. Big files stay as external links — ask the
+web developer volunteer before uploading those. Every upload lands in `/uploads/` — copy its
 address into the bulletin list, moving pictures, or page. Big files (weekly
 bulletins over 5 MB) stay as links — ask the web developer volunteer before
 uploading those.
 
 ## What NOT to touch (tell the web developer volunteer)
 
-Page design, colors and fonts, logins, the `netlify.toml` file, redirects,
+Page design, colors and fonts, logins, the build settings, redirects,
 the Flocknote group address, visitor statistics. If the editing screen shows an
 error you do not understand, stop and tell — do not guess.
 
@@ -108,5 +110,5 @@ error you do not understand, stop and tell — do not guess.
 ## Special-week Mass image + custom homepage blocks
 Mass schedule → Mass times: flip Display to Image and pick an uploaded picture
 to replace the whole schedule block for a special week (switch back after).
-Homepage welcome → Custom sections: add freeform cards (picture and/or heading
-and/or text and/or button), then place the Custom block in Page layout order.
+Homepage welcome → Sections → Add “Custom block” where you want it on the page:
+freeform cards (picture and/or heading and/or text and/or button).

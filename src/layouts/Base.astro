@@ -1,7 +1,10 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import noticeData from '../data/notice.json';
+import noticeEn from '../data/notice.en.json';
+import noticeEs from '../data/notice.es.json';
+import noticeVi from '../data/notice.vi.json';
+import { pickLocale } from '../lib/i18n';
 import '../styles/global.css';
 import type { Lang } from '../config';
 import { SITE_NAME } from '../config';
@@ -22,9 +25,9 @@ const { lang, slug, title, description, fallback = false, canonicalPath } = Astr
 const ui = lang === 'es' ? es : lang === 'vi' ? vi : en;
 const base = import.meta.env.SITE ?? 'https://www.smgsj.org';
 const canonical = `${base}${canonicalPath ?? `/${lang}${slug && slug !== 'home' ? '/' + slug : ''}`}`;
-const notice = noticeData as any;
-const noticeText: string = (notice.text?.[lang] || notice.text?.en || '').trim();
-const noticeLabel: string = (notice.link_label?.[lang] || notice.link_label?.en || '').trim();
+const notice = pickLocale({ en: noticeEn, es: noticeEs, vi: noticeVi }, lang) as any;
+const noticeText: string = (notice.text || '').trim();
+const noticeLabel: string = (notice.link_label || '').trim();
 const showNotice = Boolean(notice.enabled) && noticeText.length > 0;
 ---
 <!doctype html>
@@ -40,9 +43,6 @@ const showNotice = Boolean(notice.enabled) && noticeText.length > 0;
   <link rel="alternate" hreflang="vi" href={`${base}/vi${slug && slug !== 'home' ? '/' + slug : ''}`} />
   <link rel="alternate" hreflang="x-default" href={`${base}/`} />
   <link rel="icon" href="/favicon.ico" />
-  <!-- Netlify Identity: catches invite/recovery tokens site-wide (invite emails
-       land on /#invite_token=… with no login code) and forwards to /admin/. -->
-  <script is:inline src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <!-- Visitor stats: undecided (old GA UA-135786317-1 is dead). Either register for Cloudflare Web Analytics and replace SMGSJ_REPLACE_ME, or swap in a DNS-independent counter. See DEPLOY.md. -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "SMGSJ_REPLACE_ME"}'></script>
 </head>
@@ -62,22 +62,5 @@ const showNotice = Boolean(notice.enabled) && noticeText.length > 0;
     <slot />
   </main>
   <Footer lang={lang} ui={ui} />
-  <script>
-    // Invite/recovery tokens are handled strictly AFTER the widget initializes;
-    // opening earlier renders an empty overlay. The widget also auto-detects
-    // tokens on init — this only guarantees the right modal + /admin landing.
-    try {
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on('init', function (user) {
-          var h = location.hash || '';
-          if (!user) {
-            if (/invite_token|confirmation_token/.test(h)) window.netlifyIdentity.open('signup');
-            else if (/recovery_token|email_change_token/.test(h)) window.netlifyIdentity.open('login');
-            window.netlifyIdentity.on('login', function () { document.location.href = '/admin/'; });
-          }
-        });
-      }
-    } catch(e) {}
-  </script>
 </body>
 </html>

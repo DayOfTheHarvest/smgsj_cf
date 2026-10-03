@@ -17,11 +17,11 @@ to keep the repo lean — `MIGRATION.md` records what came from where.
 |---|---|---|
 | Site generator | Astro 4 (static output, no adapter) | `astro.config.mjs`, `site: https://www.smgsj.org` |
 | Styling | Tailwind CSS 3 (`tailwind.config.mjs` + `src/styles/global.css`) | Parish navy/gold tokens; purges to ~26KB |
-| CMS | Decap CMS 3 (`public/admin/`) | Email login, no approval flow |
-| Content | Markdown (`src/content/pages/*.md`) + JSON (`src/data/*.json`) | One file per topic, EN required, ES/VI optional with fallback banner |
+| CMS | Sveltia CMS (`public/admin/`) | Sign in with GitHub (OAuth via Cloudflare Worker), no approval flow |
+| Content | Markdown (`src/content/pages/*.<locale>.md`) + JSON (`src/data/*.<locale>.json`) | One file per topic per language, EN required, ES/VI optional with fallback banner |
 | Markdown rendering | `marked` (`src/lib/md.ts`) | GFM tables |
 | Search | Pagefind static index (`dist/pagefind/`) | Built by `npm run build` |
-| Hosting | Netlify (build + Identity + Git Gateway) | `netlify.toml`: `npm run build` → `dist/` (no web forms on site; contact page uses call/email cards) |
+| Hosting | Cloudflare Pages (static site + headers/redirects) | `npm run build` → `dist/`; `public/_redirects` + `public/_headers` ship verbatim (no web forms on site; contact page uses call/email cards) |
 | DNS | Network Solutions (domain + DNS, account `webaccount@smgsj.org`) | See `DEPLOY.md` |
 | Analytics | Undecided (beacon placeholder in `src/layouts/Base.astro`) | Must work without moving DNS; see `DEPLOY.md §5` |
 
@@ -38,12 +38,14 @@ src/layouts/Base.astro           Shell: hreflang/canonical, header, notice bar, 
 src/components/                  Header, Footer, MassCards, StaffCards, Carousel,
                                  ActionCards, BulletinList, CalendarEmbeds,
                                  FundraiserProgress, FlocknoteSignup, OfficeSection, Icon
-src/content/pages/*.md           41 topics: frontmatter (titles, body_es/vi) + English body
+src/content/pages/*.<locale>.md   41 topics × EN/ES/VI: frontmatter (address, title) + body
 src/data/*.json                  Schedule, presiders, staff, bulletins, nav, settings,
                                  homepage copy, forms, galleries, notice, UI words
-src/data/ui.*.json               Button/heading wording, 3 languages (Decap: Interface words)
+src/data/*.{en,es,vi}.json       Per-language data files (native Sveltia i18n);
+                                 missing text falls back to English (see src/lib/i18n.ts)
+src/data/ui.*.json               Button/heading wording, 3 languages (Sveltia: Interface words)
 public/uploads/                  Local media (headshots, banners, docs <5MB)
-public/admin/                    Decap CMS (config.yml + index.html)
+public/admin/                    Sveltia CMS (config.yml + index.html)
 public/_redirects                74 legacy redirects: old `.html` → `/en/<slug>` (+ staff/photo/contact IDs, news)
 scripts/migrate.py               Old-site → Markdown migration (one-off, rerunnable)
 scripts/sitemap.py               Post-build sitemap.xml with hreflang alternates
@@ -52,14 +54,15 @@ scripts/sitemap.py               Post-build sitemap.xml with hreflang alternates
 ## Content model (the 30-second version)
 
 - **Slugs stay English** (`/en/mass-times`, `/es/mass-times`, `/vi/mass-times`).
-- Each topic = one Markdown file; `body_en` is the file body, ES/VI live in
-  frontmatter. Empty ES/VI → page renders English + a small "parts may not be
-  translated" banner (never a 404).
+- Each topic = one file per language (`mass-times.en.md`, `.es.md`, `.vi.md`;
+  native Sveltia i18n, `multiple_files`). Empty/missing ES/VI content renders
+  English + a small "parts may not be translated" banner (never a 404).
+  The address (`slug_key`) is shared by all languages — set once, never change it.
 - Repeating/weekly content (Mass times, presiders, bulletins, staff, forms,
   carousel, nav, homepage copy) lives in `src/data/*.json`, every file wired to
-  a Decap screen. Shared link logic (`resolveLink`, `@giving`/`@youtube`/…
+  a CMS screen. Shared link logic (`resolveLink`, `@giving`/`@youtube`/…
   aliases) lives in `src/config.ts`.
-- Staff never touch `src/components`, `tailwind.config.mjs`, or `netlify.toml`.
+- Staff never touch `src/components`, `tailwind.config.mjs`, or build/redirect files.
 
 ## Local development (verified 2026-10-02, Node v22)
 
@@ -87,7 +90,7 @@ verified list in `DEPLOY.md`).
 
 ## Portability
 
-Netlify-only pieces are isolated: auth (`AUTH_PROVIDER`), forms
-(`FORM_ENDPOINT`), media base (`MEDIA_BASE`) in `src/config.ts`; no Netlify
-functions/edge code; content is plain Markdown/JSON. Moving hosts (e.g. Cloudflare Pages)
+Host-specific pieces are isolated: auth (`AUTH_PROVIDER`), forms
+(`FORM_ENDPOINT`), media base (`MEDIA_BASE`) in `src/config.ts`; no
+serverless functions/edge code; content is plain Markdown/JSON. Moving hosts
 = point DNS + swap those three values (see `DEPLOY.md §7`).

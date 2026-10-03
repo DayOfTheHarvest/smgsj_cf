@@ -1,0 +1,30 @@
+{
+  "bulletins": [
+    {
+      "date": "2026-10-04",
+      "label": "October 4, 2026",
+      "url": "https://uploads.weconnect.com/mce/fbbf192d8343f1afa97f7a91d44cac3057f6a46f/Bulletin/2026/20261004B.pdf"
+    },
+    {
+      "date": "2026-09-27",
+      "label": "September 27, 2026",
+      "url": "https://uploads.weconnect.com/mce/fbbf192d8343f1afa97f7a91d44cac3057f6a46f/Bulletin/2026/20260927B.pdf"
+    },
+    {
+      "date": "2026-09-20",
+      "label": "September 20, 2026",
+      "url": "https://uploads.weconnect.com/mce/fbbf192d8343f1afa97f7a91d44cac3057f6a46f/Bulletin/2026/20260920B.pdf"
+    },
+    {
+      "date": "2026-09-13",
+      "label": "September 13, 2026",
+      "url": "https://uploads.weconnect.com/mce/fbbf192d8343f1afa97f7a91d44cac3057f6a46f/Bulletin/2026/20260913B.pdf"
+    },
+    {
+      "date": "2026-09-06",
+      "label": "September 6, 2026",
+      "url": "https://uploads.weconnect.com/mce/fbbf192d8343f1afa97f7a91d44cac3057f6a46f/Bulletin/2026/20260906B.pdf"
+    }
+  ],
+  "weeks": 3
+}

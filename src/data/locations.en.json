@@ -1,0 +1,20 @@
+{
+  "locations": [
+    {
+      "name": "Church",
+      "text": "Church"
+    },
+    {
+      "name": "Patio",
+      "text": "Patio"
+    },
+    {
+      "name": "Divine Mercy Chapel",
+      "text": "Divine Mercy Chapel"
+    },
+    {
+      "name": "Viet. Martyr's Shrine",
+      "text": "Viet. Martyr's Shrine"
+    }
+  ]
+}

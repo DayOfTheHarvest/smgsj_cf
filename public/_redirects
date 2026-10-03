@@ -65,7 +65,7 @@
 /volunteer.html /en/volunteer/ 301
 /capital-campaign-.html /en/campaign/ 301
 # Drop: news?page=N (Vatican auto-feed, retired)
-/news* /en/about-us/ 301
+/news/* /en/about-us/ 301
 /photos/view/id/27805 /en/photos/ 301
 /photos/view/id/28471 /en/photos/ 301
 /photos/view/id/28673 /en/photos/ 301
@@ -74,3 +74,4 @@
 /photos/view/id/35044 /en/photos/ 301
 /photos/view/id/36195 /en/photos/ 301
 /contact/index/id/* /en/contact/ 301
+/admin/* /admin/index.html 200

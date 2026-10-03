@@ -12,7 +12,7 @@ Thumbs.db
 .idea/
 
 # ---> Secrets: service keys must NEVER be committed.
-# Keep tokens in Netlify environment variables, not in files.
+# Keep tokens in Cloudflare Worker environment variables, not in files.
 .env
 .env.*
 !.env.example

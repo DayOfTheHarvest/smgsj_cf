@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Migrate old LPi crawl -> src/content/pages/*.md (body_en).
-Parses content-wrapper / panelcontent, strips inline styles, keeps links.
-Run: python3 scripts/migrate.py
+"""HISTORICAL — one-off LPi crawl -> src/content/pages/*.md migration (2026-10-02).
+Do NOT rerun as-is: it emits the pre-i18n layout (title_en/body_es frontmatter),
+while pages are now per-locale files (<slug>.<locale>.md, native Sveltia i18n).
+Kept for provenance only.
 """
 import os, re, html as ihtml
 from html.parser import HTMLParser

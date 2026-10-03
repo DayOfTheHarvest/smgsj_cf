@@ -1,8 +1,0 @@
-{
-  "locations": [
-    { "name": "Church", "en": "Church", "es": "Templo", "vi": "Nhà thờ" },
-    { "name": "Patio", "en": "Patio", "es": "Patio", "vi": "Nhà gỗ" },
-    { "name": "Divine Mercy Chapel", "en": "Divine Mercy Chapel", "es": "Divine Mercy Chapel", "vi": "Nguyện Đường" },
-    { "name": "Viet. Martyr's Shrine", "en": "Viet. Martyr's Shrine", "es": "Viet. Martyr's Shrine", "vi": "Nguyện Đường Các Thánh Tử Đạo" }
-  ]
-}

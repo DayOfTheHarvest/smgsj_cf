@@ -1,8 +1,11 @@
 ---
-import staffData from '../data/staff.json';
+import staffEn from '../data/staff.en.json';
+import staffEs from '../data/staff.es.json';
+import staffVi from '../data/staff.vi.json';
+import { pickLocale } from '../lib/i18n';
 interface Props { lang: string; ui: any; }
 const { lang, ui } = Astro.props;
-const members = ((staffData as any).members as Array<{
+const members = ((pickLocale({ en: staffEn, es: staffEs, vi: staffVi }, lang as any) as any).members as Array<{
   slug: string; name: string; role: string; phone: string; photo: string; bio: string;
 }>) ?? [];
 const initials = (name: string) =>

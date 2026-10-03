@@ -1,0 +1,187 @@
+{
+  "groups": [
+    {
+      "id": "about",
+      "label": "Giới Thiệu",
+      "href": "/about-us/",
+      "children": [
+        {
+          "label": "Nhân Sự",
+          "href": "/staff/"
+        },
+        {
+          "label": "Thánh Quan Thầy",
+          "href": "/patron-saint/"
+        },
+        {
+          "label": "Lịch Sử",
+          "href": "/about-us/"
+        },
+        {
+          "label": "Hình Ảnh",
+          "href": "/photos/"
+        }
+      ]
+    },
+    {
+      "id": "sacraments",
+      "label": "Các Bí Tích",
+      "href": "/sacraments/",
+      "children": [
+        {
+          "label": "Rửa Tội",
+          "href": "/baptism/"
+        },
+        {
+          "label": "Giải Tội",
+          "href": "/reconciliation/"
+        },
+        {
+          "label": "Thánh Thể",
+          "href": "/eucharist/"
+        },
+        {
+          "label": "Thêm Sức",
+          "href": "/confirmation/"
+        },
+        {
+          "label": "Hôn Phối",
+          "href": "/marriage/"
+        },
+        {
+          "label": "Xức Dầu",
+          "href": "/anointing/"
+        },
+        {
+          "label": "Chức Thánh",
+          "href": "/orders/"
+        }
+      ]
+    },
+    {
+      "id": "formation",
+      "label": "Giáo Lý Đức Tin",
+      "href": "/formation/",
+      "children": [
+        {
+          "label": "Dự Bị Rửa Tội",
+          "href": "/baptism-prep/"
+        },
+        {
+          "label": "Ban Giáo Lý",
+          "href": "/catechetical-ministries/"
+        },
+        {
+          "label": "OCIA / RCIA",
+          "href": "/rcia/"
+        },
+        {
+          "label": "Khai Tâm Trẻ Em",
+          "href": "/rcia-children/"
+        },
+        {
+          "label": "Thiếu Nhi",
+          "href": "/religious-ed-children/"
+        },
+        {
+          "label": "Phụng Vụ Thiếu Nhi",
+          "href": "/children-liturgy/"
+        },
+        {
+          "label": "Chia Sẻ Lời Chúa",
+          "href": "/breaking-word/"
+        },
+        {
+          "label": "ILM",
+          "href": "/ilm/"
+        },
+        {
+          "label": "GLVN",
+          "href": "/glvn/"
+        },
+        {
+          "label": "Sách GLVN",
+          "href": "/glvn-books/"
+        },
+        {
+          "label": "Sống GLVN",
+          "href": "/glvn-live/"
+        },
+        {
+          "label": "Phim GLVN",
+          "href": "/glvn-video/"
+        },
+        {
+          "label": "Phép Lạ Thánh Thể",
+          "href": "/glvn-miracles/"
+        }
+      ]
+    },
+    {
+      "id": "ministry",
+      "label": "Tham Gia",
+      "href": "/join/",
+      "children": [
+        {
+          "label": "Gia Nhập",
+          "href": "/join/"
+        },
+        {
+          "label": "Tình Nguyện",
+          "href": "/volunteer/"
+        }
+      ]
+    },
+    {
+      "id": "facility",
+      "label": "Cơ Sở Vật Chất",
+      "href": "/facility/",
+      "children": [
+        {
+          "label": "Sự Kiện Hôm Nay",
+          "href": "/calendar/#today"
+        },
+        {
+          "label": "Lịch",
+          "href": "/calendar/"
+        },
+        {
+          "label": "Yêu cầu đặt chỗ",
+          "href": "https://www.calendarwiz.com/cwsuggest/cwsuggestform.php?crd=smgsj"
+        },
+        {
+          "label": "Kiểm tra trước sự kiện",
+          "href": "https://script.google.com/macros/s/AKfycbzPfSdWV_Vdaz8eu9NtRbgGgvUZT23qgS4gqGhVLZ1e2PqhsDc/exec?action=sign&formId=1SoOFzxZRFbEqaQBHIMXa5BYT5vsUokb6JroFeGTAzSo&editorUUID=a4e4f132-76a6-4488-b5b8-055911dfb699"
+        },
+        {
+          "label": "Kiểm tra sau sự kiện",
+          "href": "https://script.google.com/macros/s/AKfycbzPfSdWV_Vdaz8eu9NtRbgGgvUZT23qgS4gqGhVLZ1e2PqhsDc/exec?action=sign&formId=1lllZ4cRVPscnwIaOTxqTcgHDB9CO4k28snbV-PKo11I&editorUUID=a4e4f132-76a6-4488-b5b8-055911dfb699"
+        },
+        {
+          "label": "Thuê Hội Trường",
+          "href": "/hall-rental/"
+        },
+        {
+          "label": "Thỏa Thuận Sử Dụng",
+          "href": "/facility-agreement/"
+        },
+        {
+          "label": "Thanh Toán Online",
+          "href": "@payment"
+        }
+      ]
+    },
+    {
+      "id": "mass-times",
+      "label": "Giờ Lễ",
+      "href": "/mass-times/",
+      "children": []
+    },
+    {
+      "id": "contact",
+      "label": "Liên Lạc",
+      "href": "/contact/",
+      "children": []
+    }
+  ]
+}

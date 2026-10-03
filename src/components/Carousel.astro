@@ -1,9 +1,12 @@
 ---
-import slidesData from '../data/announcements.json';
+import slidesEn from '../data/announcements.en.json';
+import slidesEs from '../data/announcements.es.json';
+import slidesVi from '../data/announcements.vi.json';
+import { pickLocale } from '../lib/i18n';
 import { resolveLink, type Lang } from '../config';
 interface Props { lang: Lang; ui: any; }
 const { lang, ui } = Astro.props;
-const slides = ((slidesData as any).slides as Array<{ image: string; alt: string; link: string; caption: string; seconds?: number }>) ?? [];
+const slides = ((pickLocale({ en: slidesEn, es: slidesEs, vi: slidesVi }, lang) as any).slides as Array<{ image: string; alt: string; link: string; caption: string; seconds?: number }>) ?? [];
 const hrefFor = (link: string) => resolveLink(link, lang);
 ---
 {slides.length > 0 && (
