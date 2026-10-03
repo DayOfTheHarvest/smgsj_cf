@@ -32,12 +32,12 @@
     },
     {
       "type": "preset",
-      "id": "flocknote",
+      "id": "office",
       "visible": true
     },
     {
       "type": "preset",
-      "id": "office",
+      "id": "flocknote",
       "visible": true
     },
     {
