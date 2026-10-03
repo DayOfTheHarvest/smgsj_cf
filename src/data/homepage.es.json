@@ -1,81 +1,4 @@
 {
-  "pastor_quote": "I am delighted to welcome you as you visit our parish website. This is a place where we stay connected and support one another in our life of faith. — Pastor Andrew C. Nguyen",
-  "events": [
-    {
-      "title": "Picnic Parroquial",
-      "text": "Consulte el boletín para la fecha y los detalles.",
-      "link": "",
-      "link_label": "",
-      "icon": "users"
-    },
-    {
-      "title": "Grupo de Oración",
-      "text": "Consulte el boletín para los horarios de reunión.",
-      "link": "",
-      "link_label": "",
-      "icon": "church"
-    },
-    {
-      "title": "Se Necesitan Voluntarios — Ujieres",
-      "text": "Responda al llamado a servir.",
-      "link": "/volunteer/",
-      "link_label": "Voluntariado",
-      "icon": "star"
-    }
-  ],
-  "hero": {
-    "eyebrow": "San Jose, California · Est. 1961",
-    "title": "¡Bienvenidos a la Parroquia Santa María Goretti!",
-    "subtitle": "Una vibrante comunidad católica trilingüe en Senter Road — todos son bienvenidos.",
-    "buttons": [
-      {
-        "label": "Horario de Misas",
-        "link": "/mass-times/",
-        "style": "gold"
-      },
-      {
-        "label": "Misa en vivo",
-        "link": "@youtube",
-        "style": "light"
-      },
-      {
-        "label": "Ministerios",
-        "link": "/join/",
-        "style": "light"
-      }
-    ]
-  },
-  "facility": {
-    "link_label": "Solicitud de reserva de instalaciones",
-    "tail": "Para eventos individuales, llame a la oficina parroquial."
-  },
-  "catholic": {
-    "ethics_name": "EthicsPoint (Niños y Adultos Vulnerables)",
-    "ethics_report": "Denunciar en línea",
-    "icons": [
-      {
-        "image": "/uploads/icon-usccb.png",
-        "alt": "United States Conference of Catholic Bishops",
-        "link": "https://www.usccb.org",
-        "width": 140,
-        "height": 140
-      },
-      {
-        "image": "/uploads/icon-dsj.png",
-        "alt": "Diocese of San José",
-        "link": "https://www.dsj.org/about-us/",
-        "width": 116,
-        "height": 140
-      },
-      {
-        "image": "/uploads/icon-vatican.png",
-        "alt": "The Holy See",
-        "link": "https://w2.vatican.va/content/vatican/en.html",
-        "width": 109,
-        "height": 140
-      }
-    ]
-  },
   "sections": [
     {
       "type": "preset",
@@ -109,12 +32,12 @@
     },
     {
       "type": "preset",
-      "id": "office",
+      "id": "flocknote",
       "visible": true
     },
     {
       "type": "preset",
-      "id": "flocknote",
+      "id": "office",
       "visible": true
     },
     {
@@ -122,5 +45,82 @@
       "id": "catholic",
       "visible": true
     }
-  ]
+  ],
+  "hero": {
+    "eyebrow": "San Jose, California · Est. 1961",
+    "title": "¡Bienvenidos a la Parroquia Santa María Goretti!",
+    "subtitle": "Una vibrante comunidad católica trilingüe en Senter Road — todos son bienvenidos.",
+    "buttons": [
+      {
+        "label": "Horario de Misas",
+        "link": "/mass-times/",
+        "style": "gold"
+      },
+      {
+        "label": "Misa en vivo",
+        "link": "@youtube",
+        "style": "light"
+      },
+      {
+        "label": "Ministerios",
+        "link": "/join/",
+        "style": "light"
+      }
+    ]
+  },
+  "pastor_quote": "I am delighted to welcome you as you visit our parish website. This is a place where we stay connected and support one another in our life of faith. — Pastor Andrew C. Nguyen",
+  "events": [
+    {
+      "icon": "users",
+      "title": "Picnic Parroquial",
+      "text": "Consulte el boletín para la fecha y los detalles.",
+      "link": "",
+      "link_label": ""
+    },
+    {
+      "icon": "church",
+      "title": "Grupo de Oración",
+      "text": "Consulte el boletín para los horarios de reunión.",
+      "link": "",
+      "link_label": ""
+    },
+    {
+      "icon": "star",
+      "title": "Se Necesitan Voluntarios — Ujieres",
+      "text": "Responda al llamado a servir.",
+      "link": "/volunteer/",
+      "link_label": "Voluntariado"
+    }
+  ],
+  "facility": {
+    "link_label": "Solicitud de reserva de instalaciones",
+    "tail": "Para eventos individuales, llame a la oficina parroquial."
+  },
+  "catholic": {
+    "icons": [
+      {
+        "image": "/uploads/icon-usccb.png",
+        "alt": "United States Conference of Catholic Bishops",
+        "link": "https://www.usccb.org",
+        "width": 140,
+        "height": 140
+      },
+      {
+        "image": "/uploads/icon-dsj.png",
+        "alt": "Diocese of San José",
+        "link": "https://www.dsj.org/about-us/",
+        "width": 116,
+        "height": 140
+      },
+      {
+        "image": "/uploads/icon-vatican.png",
+        "alt": "The Holy See",
+        "link": "https://w2.vatican.va/content/vatican/en.html",
+        "width": 109,
+        "height": 140
+      }
+    ],
+    "ethics_name": "EthicsPoint (Niños y Adultos Vulnerables)",
+    "ethics_report": "Denunciar en línea"
+  }
 }
