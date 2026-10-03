@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: <ORG>/smgsj-site
+  repo: DayOfTheHarvest/smgsj_cf
   branch: main
   base_url: https://sveltia-cms-auth.dncle02.workers.dev
   site_domain: www.smgsj.org
