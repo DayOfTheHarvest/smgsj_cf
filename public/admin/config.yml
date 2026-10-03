@@ -2,7 +2,7 @@ backend:
   name: github
   repo: <ORG>/smgsj-site
   branch: main
-  base_url: https://<worker>.workers.dev
+  base_url: https://sveltia-cms-auth.dncle02.workers.dev
   site_domain: www.smgsj.org
   auth_methods: [oauth]
 
