@@ -1,18 +1,45 @@
 ---
-import { EXTERNAL } from '../config';
-interface Props { ui: any; }
-const { ui } = Astro.props;
+import { EXTERNAL, type Lang } from '../config';
+import formEn from '../data/signup-form.en.json';
+import formEs from '../data/signup-form.es.json';
+import formVi from '../data/signup-form.vi.json';
+import { pickLocale } from '../lib/i18n';
+interface Props { ui: any; lang?: Lang; }
+const { ui, lang = 'en' } = Astro.props;
+// Data-driven form (Sveltia: Site settings -> Signup form). Add/remove fields
+// with no code change. Falls back to legacy ui labels + endpoint if missing.
+const form = pickLocale({ en: formEn, es: formEs, vi: formVi }, lang as Lang) as any;
+const title = (form?.title as string)?.trim() || ui.stayTitle;
+const text = (form?.text as string)?.trim() || ui.stayText;
+const action = (form?.action as string)?.trim() || EXTERNAL.flocknote_signup;
+const method = form?.method === 'get' ? 'get' : 'post';
+const target = (form?.target as string)?.trim() || '_blank';
+const fields = (Array.isArray(form?.fields) && form.fields.length ? form.fields : [
+  { name: 'fname', label: ui.firstName, type: 'text', autocomplete: 'given-name' },
+  { name: 'lname', label: ui.lastName, type: 'text', autocomplete: 'family-name' },
+  { name: 'email', label: ui.emailAddress, type: 'email', autocomplete: 'email' },
+  { name: 'mobile_phone', label: ui.mobilePhone, type: 'tel', autocomplete: 'tel' },
+]) as Array<any>;
+const submitLabel = (form?.submit_label as string)?.trim() || ui.signUp;
+const visibleFields = fields.filter((f) => f?.type !== 'hidden');
+const hiddenFields = fields.filter((f) => f?.type === 'hidden');
 ---
-<section aria-label={ui.stayTitle}>
-  <h2>{ui.stayTitle}</h2>
-  <p>{ui.stayText}</p>
-  <form action={EXTERNAL.flocknote_signup} method="post" target="_blank" rel="noopener">
+<section aria-label={title}>
+  <h2>{title}</h2>
+  <p>{text}</p>
+  <form action={action} method={method} target={target} rel="noopener">
+    {hiddenFields.map((f) => (
+      <input name={f.name} type="hidden" value={f.value || ''} />
+    ))}
     <div class="grid grid-cols-1 gap-3 text-left sm:grid-cols-2">
-      <p class="m-0"><label>{ui.firstName}<br /><input name="fname" type="text" autocomplete="given-name" placeholder={ui.firstName} /></label></p>
-      <p class="m-0"><label>{ui.lastName}<br /><input name="lname" type="text" autocomplete="family-name" placeholder={ui.lastName} /></label></p>
-      <p class="m-0"><label>{ui.emailAddress}<br /><input name="email" type="email" autocomplete="email" placeholder={ui.emailAddress} /></label></p>
-      <p class="m-0"><label>{ui.mobilePhone}<br /><input name="mobile_phone" type="tel" autocomplete="tel" placeholder={ui.mobilePhone} /></label></p>
+      {visibleFields.map((f) => (
+        f.type === 'checkbox' ? (
+          <p class="m-0"><label><input name={f.name} type="checkbox" value={f.value || 'yes'} required={!!f.required} />{' '}{f.label}</label></p>
+        ) : (
+          <p class="m-0"><label>{f.label}<br /><input name={f.name} type={f.type || 'text'} autocomplete={f.autocomplete || undefined} placeholder={f.label} required={!!f.required} /></label></p>
+        )
+      ))}
     </div>
-    <p><button class="btn btn-gold" type="submit">{ui.signUp}</button></p>
+    <p><button class="btn btn-gold" type="submit">{submitLabel}</button></p>
   </form>
 </section>

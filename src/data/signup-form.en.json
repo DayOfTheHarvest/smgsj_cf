@@ -1,0 +1,38 @@
+{
+  "title": "Stay Connected with SMG",
+  "text": "Enter contact info below to receive e-mail and text message from the parish.",
+  "action": "https://app.flocknote.com/group/346213/addToGroupFromOutside",
+  "method": "post",
+  "target": "_blank",
+  "fields": [
+    {
+      "name": "fname",
+      "label": "First Name",
+      "type": "text",
+      "required": false,
+      "autocomplete": "given-name"
+    },
+    {
+      "name": "lname",
+      "label": "Last Name",
+      "type": "text",
+      "required": false,
+      "autocomplete": "family-name"
+    },
+    {
+      "name": "email",
+      "label": "Email Address",
+      "type": "email",
+      "required": false,
+      "autocomplete": "email"
+    },
+    {
+      "name": "mobile_phone",
+      "label": "Mobile Phone",
+      "type": "tel",
+      "required": false,
+      "autocomplete": "tel"
+    }
+  ],
+  "submit_label": "Sign Me Up"
+}

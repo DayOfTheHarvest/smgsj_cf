@@ -1,0 +1,38 @@
+{
+  "title": "Mantente Conectado con SMG",
+  "text": "Ingrese sus datos abajo para recibir correos y mensajes de texto de la parroquia.",
+  "action": "https://app.flocknote.com/group/346213/addToGroupFromOutside",
+  "method": "post",
+  "target": "_blank",
+  "fields": [
+    {
+      "name": "fname",
+      "label": "Nombre",
+      "type": "text",
+      "required": false,
+      "autocomplete": "given-name"
+    },
+    {
+      "name": "lname",
+      "label": "Apellido",
+      "type": "text",
+      "required": false,
+      "autocomplete": "family-name"
+    },
+    {
+      "name": "email",
+      "label": "Correo electrónico",
+      "type": "email",
+      "required": false,
+      "autocomplete": "email"
+    },
+    {
+      "name": "mobile_phone",
+      "label": "Teléfono móvil",
+      "type": "tel",
+      "required": false,
+      "autocomplete": "tel"
+    }
+  ],
+  "submit_label": "Registrarme"
+}

@@ -8,8 +8,7 @@ import en from '../../data/ui.en.json';
 import es from '../../data/ui.es.json';
 import vi from '../../data/ui.vi.json';
 import StaffCards from '../../components/StaffCards.astro';
-import FundraiserProgress from '../../components/FundraiserProgress.astro';
-import CalendarEmbeds from '../../components/CalendarEmbeds.astro';
+import PageBlocks from '../../components/PageBlocks.astro';
 import Icon from '../../components/Icon.astro';
 import { PHONE, EMAIL, EXTERNAL, ADDRESS, SHRINE_ADDRESS, resolveLink } from '../../config';
 import formsData from '../../data/forms.json';
@@ -43,11 +42,14 @@ const titleLoc = (locEntry.data.title as string)?.trim() || (enEntry.data.title 
 const bodyLoc = (locEntry.body as string)?.trim();
 const fallback = lang !== 'en' && !bodyLoc;
 const html = renderMd(lang === 'en' ? enEntry.body : (fallback ? enEntry.body : (bodyLoc || enEntry.body)));
-// Optional page widgets, merged across locales (missing translations fall
-// back to English, like everything else).
+// Optional page widgets + sections, merged across locales (missing
+// translations fall back to English, like everything else).
 const enBlocks = ((enEntry.data as any).blocks as Array<any>) ?? [];
 const locBlocks = ((locEntry.data as any).blocks as Array<any>) ?? [];
-const fundraiser = localize(enBlocks, locBlocks).find((b: any) => b?.type === 'fundraiser');
+const blocks = localize(enBlocks, locBlocks);
+const enSections = ((enEntry.data as any).sections as Array<any>) ?? [];
+const locSections = ((locEntry.data as any).sections as Array<any>) ?? [];
+const sections = localize(enSections, locSections);
 const formList = ((formsData as any).forms as Array<any>) ?? [];
 const galleryList = ((pickLocale({ en: galleriesEn, es: galleriesEs, vi: galleriesVi }, lang) as any).galleries as Array<any>) ?? [];
 ---
@@ -56,8 +58,7 @@ const galleryList = ((pickLocale({ en: galleriesEn, es: galleriesEs, vi: galleri
   <article class="prose" data-pagefind-body data-pagefind-meta={`lang:${lang}`} set:html={html} />
 
   {slug === 'mass-times' && <MassCards lang={lang} ui={ui} />}
-  <FundraiserProgress ui={ui} title={titleLoc} fundraiser={fundraiser} />
-  {slug === 'calendar' && <CalendarEmbeds ui={ui} />}
+  <PageBlocks lang={lang} ui={ui} title={titleLoc} blocks={blocks} sections={sections} />
   {slug === 'contact' && (
     <>
       <section aria-label="Visit us">
