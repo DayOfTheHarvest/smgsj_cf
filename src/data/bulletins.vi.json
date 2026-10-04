@@ -1,4 +1,5 @@
 {
+  "weeks": 4,
   "bulletins": [
     {
       "date": "2026-10-04",
@@ -25,6 +26,5 @@
       "label": "",
       "url": "https://uploads.weconnect.com/mce/fbbf192d8343f1afa97f7a91d44cac3057f6a46f/Bulletin/2026/20260906B.pdf"
     }
-  ],
-  "weeks": 3
+  ]
 }
