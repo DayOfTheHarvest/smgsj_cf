@@ -68,6 +68,10 @@
       ],
       "blocks": [
         {
+          "type": "richtext",
+          "body": "For individual events, please call the parish office."
+        },
+        {
           "type": "button",
           "label": "Today's Events",
           "link": "/calendar/#today",
@@ -78,10 +82,6 @@
           "label": "Full Calendar",
           "link": "/calendar/",
           "style": "outline"
-        },
-        {
-          "type": "richtext",
-          "body": "For individual events, please call the parish office."
         },
         {
           "type": "button",

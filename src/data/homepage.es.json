@@ -68,6 +68,10 @@
       ],
       "blocks": [
         {
+          "type": "richtext",
+          "body": "Para eventos individuales, llame a la oficina parroquial."
+        },
+        {
           "type": "button",
           "label": "Eventos de Hoy",
           "link": "/calendar/#today",
@@ -78,10 +82,6 @@
           "label": "Calendario Completo",
           "link": "/calendar/",
           "style": "outline"
-        },
-        {
-          "type": "richtext",
-          "body": "Para eventos individuales, llame a la oficina parroquial."
         },
         {
           "type": "button",

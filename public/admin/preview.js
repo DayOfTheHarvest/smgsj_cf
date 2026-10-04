@@ -592,14 +592,6 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
                     href: previewHref(e.link, loc, aliases)
                   }, e.link_label || e.title)) : null);
             })),
-          h('p', { className: 'btn-row' },
-            h('a', {
-              className: 'btn btn-primary',
-              href: previewHref('/calendar/#today', loc, aliases)
-            }, ui.todayEvents || "Today's Events"),
-            h('a', {
-              className: 'btn btn-outline', href: previewHref('/calendar/', loc, aliases)
-            }, ui.fullCalendar || 'Full Calendar')),
           extra ? h('div', {
             dangerouslySetInnerHTML: { __html: extra }
           }) : null);
