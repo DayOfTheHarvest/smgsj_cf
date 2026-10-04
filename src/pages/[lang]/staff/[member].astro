@@ -28,6 +28,5 @@ if (!person) return Astro.redirect(`/${lang}/staff/`, 404);
   <p class="text-soft"><strong>{person.role}</strong></p>
   {person.photo && <img src={person.photo} alt={person.name} width="240" loading="lazy" style="border-radius:.75rem" />}
   <p>{ui.phoneLabel}: <a href={`tel:${person.phone.replace(/[^0-9]/g, '')}`}>{person.phone}</a></p>
-  <p><a class="btn btn-primary" href={`/${lang}/contact/`}>{ui.nav.contact}</a></p>
   {person.bio && <article class="prose" data-pagefind-body><p>{person.bio}</p></article>}
 </Base>

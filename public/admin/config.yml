@@ -471,26 +471,6 @@ collections:
                     name: href
                     widget: string
                     i18n: duplicate
-          - label: 'Quick links (Mass Times + Contact buttons)'
-            name: quick_links
-            widget: list
-            label_singular: 'Link'
-            i18n: true
-            summary: '{{label}}'
-            fields:
-              - label: 'Link code (leave alone — used behind the scenes)'
-                name: id
-                widget: string
-                i18n: duplicate
-              - label: 'Link name (this language)'
-                name: label
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Link (e.g. /mass-times/)'
-                name: href
-                widget: string
-                i18n: duplicate
       - name: homepage-text
         label: Homepage welcome & events
         icon: home

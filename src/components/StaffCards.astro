@@ -22,9 +22,11 @@ const initials = (name: string) =>
       <h3>{s.name}</h3>
       <p class="staff-role">{s.role}</p>
       <p class="my-1"><a href={`tel:${s.phone.replace(/[^0-9]/g, '')}`}>{s.phone}</a></p>
-      <p class="my-1">
-        {s.bio ? <a class="btn btn-outline" href={`/${lang}/staff/${s.slug}/`}>{ui.viewProfile}</a> : <a class="btn btn-outline" href={`/${lang}/contact/`}>{ui.nav.contact}</a>}
-      </p>
+      {s.bio ? (
+        <p class="my-1">
+          <a class="btn btn-outline" href={`/${lang}/staff/${s.slug}/`}>{ui.viewProfile}</a>
+        </p>
+      ) : null}
     </article>
   ))}
 </div>

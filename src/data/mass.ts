@@ -1,4 +1,4 @@
-// Full trilingual Mass source: old crawl mass-times.html (22 rows).
+// Full Mass source: old crawl mass-times.html (22 rows).
 // Office sign-off confirmed: keep old 22-row table (plan Sec 3).
 // Live /main EN-only subset is intentionally NOT used as source.
 
