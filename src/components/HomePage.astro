@@ -43,8 +43,8 @@ const homepage = pickLocale({ en: homepageEn, es: homepageEs, vi: homepageVi }, 
 // Lookups take the first row of each type; the render loop below uses the
 // row it is rendering so repeated rows each show their own content.
 const sections = (homepage.sections as Array<any>) ?? [];
-const btnClassFor = (s: string) =>
-  s === 'gold' ? 'btn btn-gold' : s === 'primary' ? 'btn btn-primary' : s === 'outline' ? 'btn btn-outline' : 'btn btn-light';
+// Button colors come from the shared renderer (single implementation with
+// the CMS preview) — no local copy to drift.
 const hrefFor = (link: string) => resolveLink(link, lang);
 // Generic content blocks (events extras, custom rows) render with the same
 // shared renderer as Pages sections: same widgets, same markup.
