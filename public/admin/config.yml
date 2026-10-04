@@ -643,7 +643,6 @@ collections:
                     options:
                       - { label: 'Carousel — rotating banner slides', value: carousel }
                       - { label: 'Actions — action cards row', value: actions }
-                      - { label: 'Schedule — Mass times + schedule buttons', value: schedule }
                       - { label: 'Body — homepage page text', value: body }
                       - { label: 'Office — contact + office hours cards', value: office }
                       - { label: 'Flocknote — signup form', value: flocknote }
@@ -652,6 +651,45 @@ collections:
                     widget: boolean
                     default: true
                     i18n: duplicate
+              - name: schedule
+                label: Schedule Block
+                summary: 'Mass schedule'
+                fields:
+                  - label: 'Visible'
+                    name: visible
+                    widget: boolean
+                    default: true
+                    i18n: duplicate
+                  - label: 'Buttons under the schedule'
+                    name: buttons
+                    widget: list
+                    i18n: duplicate
+                    summary: '{{label}}'
+                    hint: 'Links under the Mass times, e.g. the full schedule and the stream. Drag to reorder. Add, remove, or reorder buttons in English only.'
+                    fields:
+                      - label: 'Label (this language)'
+                        name: label
+                        widget: string
+                        i18n: true
+                        required: false
+                      - label: 'Link'
+                        name: link
+                        widget: string
+                        i18n: duplicate
+                        hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
+                      - label: 'Color'
+                        name: style
+                        widget: select
+                        i18n: duplicate
+                        options: ['gold', 'light', 'primary', 'outline']
+                      - label: 'Size'
+                        name: size
+                        widget: select
+                        i18n: duplicate
+                        options:
+                          - { label: 'Standard', value: standard }
+                          - { label: 'Large', value: large }
+                        default: standard
               - name: hero
                 label: Hero Banner
                 summary: '{{title}}'
@@ -712,6 +750,11 @@ collections:
                     widget: boolean
                     default: true
                     i18n: duplicate
+                  - label: 'Heading (this language, optional — blank shows Events)'
+                    name: title
+                    widget: string
+                    i18n: true
+                    required: false
                   - label: 'Event cards'
                     name: events
                     widget: list
@@ -1614,7 +1657,6 @@ collections:
             - { label: 'Footer: office heading', name: office, widget: string, i18n: true, required: false }
             - { label: 'Footer: parish name', name: parish, widget: string, i18n: true, required: false }
             - { label: 'Footer: phone heading', name: phone, widget: string, i18n: true, required: false }
-        - { label: 'Full-calendar button', name: fullCalendar, widget: string, i18n: true, required: false }
         - { label: 'Word for “goal”', name: goalWord, widget: string, i18n: true, required: false }
         - label: 'Hero'
           name: hero
@@ -1662,8 +1704,6 @@ collections:
             - { label: 'Filter label', name: filterBy, widget: string, i18n: true, required: false }
             - { label: 'Mass schedule heading', name: massTimes, widget: string, i18n: true, required: false }
             - { label: 'Office hours heading', name: office, widget: string, i18n: true, required: false }
-            - { label: '“See full schedule” button', name: seeAll, widget: string, i18n: true, required: false }
-            - { label: '“Stream Mass” button', name: stream, widget: string, i18n: true, required: false }
         - label: 'Search'
           name: search
           widget: object
@@ -1686,7 +1726,6 @@ collections:
         - { label: 'Table column: Service', name: tableService, widget: string, i18n: true, required: false }
         - { label: 'Table column: Day/Time', name: tableTime, widget: string, i18n: true, required: false }
         - { label: '“To be decided” label', name: tbd, widget: string, i18n: true, required: false }
-        - { label: '“Today’s events” button', name: todayEvents, widget: string, i18n: true, required: false }
         - { label: '“View calendar” link', name: viewFacilities, widget: string, i18n: true, required: false }
         - { label: '“View profile” link', name: viewProfile, widget: string, i18n: true, required: false }
         - { label: 'Visit title', name: visitTitle, widget: string, i18n: true, required: false }

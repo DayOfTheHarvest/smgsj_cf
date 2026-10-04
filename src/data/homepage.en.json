@@ -36,9 +36,22 @@
       "visible": true
     },
     {
-      "type": "preset",
-      "id": "schedule",
-      "visible": true
+      "type": "schedule",
+      "visible": true,
+      "buttons": [
+        {
+          "label": "See full schedule →",
+          "link": "/mass-times/",
+          "style": "primary",
+          "size": "large"
+        },
+        {
+          "label": "▶ Stream Mass: @smgsjca",
+          "link": "@youtube",
+          "style": "outline",
+          "size": "standard"
+        }
+      ]
     },
     {
       "type": "events",

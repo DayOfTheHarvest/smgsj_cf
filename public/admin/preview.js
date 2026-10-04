@@ -501,6 +501,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       var rows = (data.sections && data.sections.length) ? data.sections :
         HOMEPAGE_ORDER.map(function (id) {
           if (id === 'hero') return { type: 'hero', visible: true };
+          if (id === 'schedule') return { type: 'schedule', visible: true, buttons: [] };
           if (id === 'events') return { type: 'events', visible: true, events: [], facility: {} };
           if (id === 'catholic') return { type: 'catholic', visible: true, icons: [] };
           return { type: 'preset', id: id, visible: true };
@@ -577,9 +578,10 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       }
       function eventsNode(s, si) {
         var kp = 'sections.' + si;
-        var extra = blocksHtml(ui.eventsTitle || 'Events', s.blocks);
+        var heading = s.title || ui.eventsTitle || 'Events';
+        var extra = blocksHtml(heading, s.blocks);
         return h('div', { key: 's' + si, 'data-key-path': kp, tabIndex: 0 },
-          h('h2', {}, ui.eventsTitle || 'Events'),
+          h('h2', {}, heading),
           h('div', { className: 'cards', 'data-key-path': kp + '.events', tabIndex: 0 },
             ((s.events || [])).map(function (e, i) {
               return h('article', { key: i, className: 'card', 'data-key-path': kp + '.events.' + i, tabIndex: 0 },
@@ -651,25 +653,28 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
             dangerouslySetInnerHTML: { __html: extra }
           }) : null);
       }
-      function scheduleNode(si) {
+      function scheduleNode(s, si) {
         var m = st.masses;
         if (!m) return placeholder(si, PRESET_INFO.schedule, '(loading…)');
         var rows = m.masses || [];
         var conf = st.confession || {};
+        var buttons = ((s && s.buttons) || []).map(function (b) {
+          var label = (b.label || '').trim();
+          var link = (b.link || '').trim();
+          if (!label || !link) return null;
+          return h('a', {
+            key: label + link,
+            className: btnClassFor(b.style) + (b.size === 'large' ? ' px-8 text-lg' : ''),
+            href: previewHref(link, loc, aliases)
+          }, label);
+        });
         return h('div', { key: 's' + si, 'data-key-path': 'sections.' + si, tabIndex: 0 },
           h('h2', {}, (ui.schedule && ui.schedule.massTimes) || 'Mass Times'),
           massTable(rows, st.langs, st.locs),
           (conf.day || conf.time) ? h('p', {},
             h('strong', {}, ((ui.schedule && ui.schedule.confession) || 'Confession') + ': '),
             (conf.day || '') + (conf.day && conf.time ? ' · ' : '') + (conf.time || '')) : null,
-          h('p', { className: 'btn-row' },
-            h('a', {
-              className: 'btn btn-primary',
-              href: previewHref('/mass-times/', loc, aliases)
-            }, ((ui.schedule && ui.schedule.seeAll) || 'See all')),
-            settings.youtube ? h('a', {
-              className: 'btn btn-outline', href: settings.youtube
-            }, '▶ ' + ((ui.schedule && ui.schedule.stream) || 'Stream')) : null));
+          buttons.length ? h('p', { className: 'btn-row' }, buttons) : null);
       }
       function officeNode(si) {
         if (!st.office) return placeholder(si, PRESET_INFO.office, '(loading…)');
@@ -746,6 +751,9 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
         if (s.type === 'events') {
           return s.visible === false ? null : eventsNode(s, si);
         }
+        if (s.type === 'schedule') {
+          return s.visible === false ? null : scheduleNode(s, si);
+        }
         if (s.type === 'catholic') {
           return s.visible === false ? null : catholicNode(s, si);
         }
@@ -765,7 +773,6 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
                 actionCards(st.actions.cards || [], live, aliases, loc, 'sections.' + si + '.cards'))
               : placeholder(si, PRESET_INFO.actions, '(loading…)');
           }
-          if (s.id === 'schedule') return scheduleNode(si);
           if (s.id === 'body') {
             return st.homeBody
               ? h('div', {

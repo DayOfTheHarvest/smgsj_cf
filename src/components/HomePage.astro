@@ -103,7 +103,7 @@ const DEFAULT_ORDER = ['carousel', 'hero', 'actions', 'schedule', 'events', 'bod
 const present = new Set(
   sections.flatMap((s) => {
     if (s?.type === 'preset' && typeof s.id === 'string') return [s.id];
-    if (s?.type === 'hero' || s?.type === 'events' || s?.type === 'catholic') return [s.type];
+    if (s?.type === 'hero' || s?.type === 'schedule' || s?.type === 'events' || s?.type === 'catholic') return [s.type];
     return [];
   }),
 );
@@ -111,11 +111,16 @@ const ordered = [...sections];
 for (const id of DEFAULT_ORDER) {
   if (!present.has(id)) {
     if (id === 'hero') ordered.push({ type: 'hero', visible: true });
+    else if (id === 'schedule') ordered.push({ type: 'schedule', visible: true, buttons: [] });
     else if (id === 'events') ordered.push({ type: 'events', visible: true, events: [], facility: {} });
     else if (id === 'catholic') ordered.push({ type: 'catholic', visible: true, icons: [] });
     else ordered.push({ type: 'preset', id, visible: true });
   }
 }
+// Schedule buttons are staff-owned rows (CMS: Homepage Welcome & Events ->
+// Schedule Block); Large keeps the old emphasized first-button look.
+const scheduleBtnClass = (b: any) =>
+  btnClassFor(b?.style) + (b?.size === 'large' ? ' px-8 text-lg' : '');
 ---
 <Base lang={lang} slug="home" title={typeof titleVal === 'string' ? titleVal : ui.hero.welcome} fallback={false} canonicalPath={isRoot ? '/' : undefined}>
   {ordered.map((s, si) => (
@@ -155,18 +160,23 @@ for (const id of DEFAULT_ORDER) {
         </section>
       )}
       {s.id === 'actions' && <ActionCards lang={lang} ui={ui} />}
-      {s.id === 'schedule' && (
+      {s.type === 'schedule' && (
         <>
           <MassCards lang={lang} ui={ui} compact />
-          <p class="mt-5 flex flex-wrap justify-start gap-2">
-            <a class="btn btn-primary px-8 text-lg" href={`/${lang}/mass-times/`}>{ui.schedule.seeAll} →</a>
-            <a class="btn btn-outline" href={EXTERNAL.youtube}>▶ {ui.schedule.stream}: @smgsjca</a>
-          </p>
+          {((s.buttons ?? []) as any[]).length > 0 && (
+            <p class="mt-5 flex flex-wrap justify-start gap-2">
+              {((s.buttons ?? []) as any[]).map((b) => (
+                (b.label?.trim() && b.link?.trim()) ? (
+                  <a class={scheduleBtnClass(b)} href={hrefFor(b.link.trim())}>{b.label.trim()}</a>
+                ) : null
+              ))}
+            </p>
+          )}
         </>
       )}
       {s.type === 'events' && (
         <section aria-label="Events">
-          <h2>{ui.eventsTitle}</h2>
+          <h2>{s.title || ui.eventsTitle}</h2>
           <div class="cards">
             {((s.events ?? []) as any[]).map((e) => (
               <article class="card">
@@ -175,7 +185,7 @@ for (const id of DEFAULT_ORDER) {
               </article>
             ))}
           </div>
-          {blocksHtml(ui.eventsTitle, s.blocks) && <div set:html={blocksHtml(ui.eventsTitle, s.blocks)} />}
+          {blocksHtml(s.title || ui.eventsTitle, s.blocks) && <div set:html={blocksHtml(s.title || ui.eventsTitle, s.blocks)} />}
         </section>
       )}
       {s.id === 'body' && body && (

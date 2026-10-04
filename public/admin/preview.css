@@ -103,6 +103,9 @@ table.mass tbody tr:nth-child(even) { background: #f5f6f8; }
 iframe.preview-embed { width: 100%; border: 0; }
 .text-soft { color: #5b6270; font-size: 0.875rem; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+/* Large schedule buttons mirror the site (btn + Tailwind sizing). */
+.px-8 { padding-left: 2rem; padding-right: 2rem; }
+.text-lg { font-size: 1.125rem; }
 
 /* Bulletin rows. */
 .bulletin-list { margin: 0; list-style: none; padding: 0; }

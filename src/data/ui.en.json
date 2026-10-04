@@ -17,8 +17,6 @@
     "massTimes": "Mass Times",
     "confession": "Confession Times",
     "office": "Office Hours",
-    "stream": "Stream Mass",
-    "seeAll": "See full schedule",
     "filterBy": "Show Masses in:",
     "all": "All languages"
   },
@@ -47,8 +45,6 @@
   "signUp": "Sign Me Up",
   "contactSection": "Contact & Office Hours",
   "contactCard": "Get in Touch",
-  "todayEvents": "Today's Events",
-  "fullCalendar": "Full Calendar",
   "tableService": "Service",
   "tableTime": "Day / Time",
   "tableLang": "Language",

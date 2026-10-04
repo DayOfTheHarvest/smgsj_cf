@@ -17,8 +17,6 @@
     "massTimes": "Horario de Misas",
     "confession": "Horario de Confesiones",
     "office": "Horario de Oficina",
-    "stream": "Misa en vivo",
-    "seeAll": "Ver horario completo",
     "filterBy": "Mostrar Misas en:",
     "all": "Todos los idiomas"
   },
@@ -47,8 +45,6 @@
   "signUp": "Registrarme",
   "contactSection": "Contacto y Horario de Oficina",
   "contactCard": "Comuníquese",
-  "todayEvents": "Eventos de Hoy",
-  "fullCalendar": "Calendario Completo",
   "tableService": "Servicio",
   "tableTime": "Día / Hora",
   "tableLang": "Idioma",

@@ -17,8 +17,6 @@
     "massTimes": "Giờ Lễ",
     "confession": "Giờ Giải Tội",
     "office": "Giờ Văn Phòng",
-    "stream": "Thánh Lễ Trực Tuyến",
-    "seeAll": "Xem lịch đầy đủ",
     "filterBy": "Xem Lễ theo:",
     "all": "Tất cả ngôn ngữ"
   },
@@ -47,8 +45,6 @@
   "signUp": "Đăng Ký",
   "contactSection": "Liên Lạc & Giờ Văn Phòng",
   "contactCard": "Liên Hệ",
-  "todayEvents": "Sự Kiện Hôm Nay",
-  "fullCalendar": "Lịch Đầy Đủ",
   "tableService": "Thánh Lễ",
   "tableTime": "Ngày / Giờ",
   "tableLang": "Ngôn Ngữ",
