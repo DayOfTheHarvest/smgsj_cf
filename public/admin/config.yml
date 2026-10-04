@@ -156,6 +156,7 @@ collections:
                         name: link
                         widget: string
                         i18n: duplicate
+                        hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
                       - label: 'Color'
                         name: style
                         widget: select
@@ -222,6 +223,7 @@ collections:
                             name: link
                             widget: string
                             i18n: duplicate
+                            hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
                           - label: 'Color'
                             name: style
                             widget: select
@@ -317,6 +319,7 @@ collections:
                         name: link
                         widget: string
                         i18n: duplicate
+                        hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
                       - label: 'Color'
                         name: style
                         widget: select
@@ -383,6 +386,7 @@ collections:
                             name: link
                             widget: string
                             i18n: duplicate
+                            hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
                           - label: 'Color'
                             name: style
                             widget: select
@@ -688,6 +692,7 @@ collections:
                         widget: string
                         required: false
                         i18n: duplicate
+                        hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
                       - label: 'Button label (this language)'
                         name: link_label
                         widget: string
@@ -730,6 +735,7 @@ collections:
                     name: link
                     widget: string
                     i18n: duplicate
+                    hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
                   - label: 'Color'
                     name: style
                     widget: select
@@ -770,7 +776,7 @@ collections:
                 widget: string
                 required: false
                 i18n: duplicate
-                hint: 'WARNING: parish page addresses must start AND end with / . You can also type a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube) — those follow Site settings automatically. A wrong address makes a dead button.'
+                hint: 'WARNING: parish page addresses must start AND end with / . You can also type a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube) — those follow Site settings automatically. A wrong address makes a dead button. See “Contact Info & External Links” for what each @shortcut opens.'
               - label: 'Link label (this language)'
                 name: link_label
                 widget: string
@@ -889,7 +895,7 @@ collections:
                 widget: string
                 required: false
                 i18n: duplicate
-                hint: 'A parish page (/requests/), a full web address, or a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube).'
+                hint: 'A parish page (/requests/), a full web address, or a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube). See “Contact Info & External Links” for what each @shortcut opens.'
               - label: 'Button label (this language)'
                 name: link_label
                 widget: string
@@ -905,6 +911,7 @@ collections:
                 widget: string
                 required: false
                 i18n: duplicate
+                hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
               - label: 'Second link label (this language)'
                 name: extra_label
                 widget: string
@@ -943,7 +950,7 @@ collections:
                 required: false
               - { label: 'Image width in pixels (1920 matches the current banners)', name: width, widget: number, required: false, i18n: duplicate }
               - { label: 'Image height in pixels (480 matches the current banners)', name: height, widget: number, required: false, i18n: duplicate }
-              - { label: 'Link (/campaign/ for parish pages, full URL for PDFs)', name: link, widget: string, i18n: duplicate }
+              - { label: 'Link (/campaign/ for parish pages, full URL for PDFs)', name: link, widget: string, i18n: duplicate, hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.' }
               - label: 'Caption (read aloud for blind visitors, this language)'
                 name: caption
                 widget: string
@@ -973,6 +980,11 @@ collections:
           Phone, email, address, emergency numbers, Giving/Payment, Calendar,
           YouTube, Facebook, Flocknote. Double-check every character — a wrong
           link here breaks donations and contact site-wide.
+          Link shortcuts staff can type in any link field: @giving (Online
+          Giving), @payment (Online Payment), @calendar-suggest (facility
+          request form), @calendar-view (public calendar), @flocknote
+          (Flocknote signup), @youtube (YouTube channel) — each follows its
+          URL on this screen automatically.
         fields:
           - { label: 'Phone (e.g. 408-363-2300)', name: phone, widget: string }
           - { label: 'Header logo (pick from uploads)', name: logo, widget: image }
@@ -1169,7 +1181,7 @@ collections:
             summary: '{{label}}'
             fields:
               - { label: 'Label (keep all 3 languages in one line)', name: label, widget: string }
-              - { label: 'Link', name: url, widget: string, hint: 'A parish page, a full web address, or a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube).' }
+              - { label: 'Link', name: url, widget: string, hint: 'A parish page, a full web address, or a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube). See “Contact Info & External Links” for what each @shortcut opens.' }
       - name: galleries
         label: Photo Galleries
         icon: photo_library
@@ -1348,6 +1360,7 @@ singletons:
             name: href
             widget: string
             i18n: duplicate
+            hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
           - label: 'Submenu links'
             name: children
             widget: list
@@ -1364,6 +1377,7 @@ singletons:
                 name: href
                 widget: string
                 i18n: duplicate
+                hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
   - name: staff
     label: Staff Members
     file: src/data/staff.{{locale}}.json
