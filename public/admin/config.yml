@@ -620,39 +620,211 @@ collections:
         file: src/data/homepage.{{locale}}.json
         i18n: true
         description: >-
-          The pastor's welcome quote and the three event cards on the homepage.
-          Changing the pastor's words needs the pastor's approval first.
-          Switch languages top-right; add/remove/reorder rows in English only.
+          The homepage, top to bottom. Each row is a section with its own
+          settings inside — open a row to edit it. Theme sections pull their
+          content from their own files. Changing the pastor's words needs the
+          pastor's approval first. Switch languages top-right;
+          add/remove/reorder rows in English only.
         fields:
-          - label: 'Homepage sections (order, visibility + custom blocks)'
+          - label: 'Homepage sections (order, visibility + content)'
             name: sections
             widget: list
             i18n: duplicate
-            hint: 'Drag rows to reorder the homepage. Uncheck Visible to hide a section without deleting it (it keeps its place). Add a Custom block row anywhere for new titled card blocks. Never change a Theme section name — only its visibility. Add/remove rows in English only.'
+            hint: 'Pick a row type when you add a row — the settings for that section live inside the row. Drag rows to reorder the homepage. Uncheck Visible to hide a section without deleting it (everything is kept). WARNING: never change a row type after filling it in — that clears the row. Add/remove rows in English only.'
             types:
               - name: preset
                 label: Theme section
                 summary: '{{id}}'
                 fields:
-                  - label: 'Section'
+                  - label: 'Section (content lives in its own file)'
                     name: id
                     widget: select
                     i18n: duplicate
                     options:
                       - { label: 'Carousel — rotating banner slides', value: carousel }
-                      - { label: 'Hero — welcome title, subtitle + buttons', value: hero }
                       - { label: 'Actions — action cards row', value: actions }
                       - { label: 'Schedule — Mass times + schedule buttons', value: schedule }
-                      - { label: 'Events — event cards + calendar buttons', value: events }
                       - { label: 'Body — homepage page text', value: body }
                       - { label: 'Office — contact + office hours cards', value: office }
                       - { label: 'Flocknote — signup form', value: flocknote }
-                      - { label: 'Catholic — diocesan icons + EthicsPoint line', value: catholic }
                   - label: 'Visible'
                     name: visible
                     widget: boolean
                     default: true
                     i18n: duplicate
+              - name: hero
+                label: Hero Banner
+                summary: '{{title}}'
+                fields:
+                  - label: 'Visible'
+                    name: visible
+                    widget: boolean
+                    default: true
+                    i18n: duplicate
+                  - label: 'Eyebrow line (small caps above title)'
+                    name: eyebrow
+                    widget: string
+                    required: false
+                    i18n: duplicate
+                  - label: 'Title (this language)'
+                    name: title
+                    widget: string
+                    i18n: true
+                    required: false
+                  - label: 'Subtitle (this language)'
+                    name: subtitle
+                    widget: text
+                    i18n: true
+                    required: false
+                  - label: 'Hero buttons'
+                    name: buttons
+                    widget: list
+                    i18n: duplicate
+                    summary: '{{label}}'
+                    hint: 'WARNING: parish links must start AND end with / . A wrong link makes a dead button. Add/remove buttons in English only.'
+                    fields:
+                      - label: 'Label (this language)'
+                        name: label
+                        widget: string
+                        i18n: true
+                        required: false
+                      - label: 'Link'
+                        name: link
+                        widget: string
+                        i18n: duplicate
+                        hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
+                      - label: 'Color'
+                        name: style
+                        widget: select
+                        i18n: duplicate
+                        options: ['gold', 'light', 'primary', 'outline']
+                  - label: "Pastor's welcome quote (this language — needs the pastor's approval to change)"
+                    name: pastor_quote
+                    widget: text
+                    i18n: true
+                    required: false
+              - name: events
+                label: Event Cards
+                summary: 'Event cards'
+                fields:
+                  - label: 'Visible'
+                    name: visible
+                    widget: boolean
+                    default: true
+                    i18n: duplicate
+                  - label: 'Event cards'
+                    name: events
+                    widget: list
+                    collapsed: auto
+                    label_singular: 'Event'
+                    i18n: duplicate
+                    summary: '{{title}}'
+                    hint: 'Add, remove or reorder cards in English only — other languages follow the same cards.'
+                    fields:
+                      - label: 'Icon (pick from the list)'
+                        name: icon
+                        widget: select
+                        i18n: duplicate
+                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                        required: false
+                      - label: 'Title (this language)'
+                        name: title
+                        widget: string
+                        i18n: true
+                        required: false
+                      - label: 'Text (this language)'
+                        name: text
+                        widget: text
+                        i18n: true
+                        required: false
+                      - label: 'Link (a parish page like /volunteer/, a full web address, or a @shortcut word — blank = no link)'
+                        name: link
+                        widget: string
+                        required: false
+                        i18n: duplicate
+                        hint: 'WARNING: parish page addresses must start AND end with / . You can also type a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube) — those follow Site settings automatically. A wrong address makes a dead button. See “Contact Info & External Links” for what each @shortcut opens.'
+                      - label: 'Link label (this language)'
+                        name: link_label
+                        widget: string
+                        required: false
+                        i18n: true
+                  - label: 'Facility line (under event cards)'
+                    name: facility
+                    widget: object
+                    i18n: true
+                    required: false
+                    fields:
+                      - label: 'Reservation link label (this language)'
+                        name: link_label
+                        widget: string
+                        i18n: true
+                        required: false
+                      - label: 'Closing sentence (this language)'
+                        name: tail
+                        widget: text
+                        i18n: true
+                        required: false
+              - name: catholic
+                label: Catholic Block
+                summary: '{{ethics_name}}'
+                fields:
+                  - label: 'Visible'
+                    name: visible
+                    widget: boolean
+                    default: true
+                    i18n: duplicate
+                  - label: 'Icon links (add, remove, or reorder)'
+                    name: icons
+                    widget: list
+                    label_singular: 'Icon'
+                    i18n: duplicate
+                    summary: '{{alt}}'
+                    hint: 'WARNING: use the Media library images already uploaded. Deleting all rows removes the icon row. All icons show at the same height. Add/remove rows in English only.'
+                    fields:
+                      - { label: 'Image (pick from uploads)', name: image, widget: image, i18n: duplicate }
+                      - label: 'Alt text (this language)'
+                        name: alt
+                        widget: string
+                        i18n: true
+                        required: false
+                      - label: 'Link'
+                        name: link
+                        widget: string
+                        i18n: duplicate
+                      - label: 'Width in pixels (keeps proportions)'
+                        name: width
+                        widget: number
+                        i18n: duplicate
+                      - label: 'Height in pixels'
+                        name: height
+                        widget: number
+                        i18n: duplicate
+                  - label: 'EthicsPoint name (this language)'
+                    name: ethics_name
+                    widget: string
+                    i18n: true
+                    required: false
+                  - label: 'Report-online label (this language)'
+                    name: ethics_report
+                    widget: string
+                    i18n: true
+                    required: false
+                  - label: 'EthicsPoint custom note (optional — blank = show standard line)'
+                    name: ethics_note
+                    widget: markdown
+                    i18n: true
+                    required: false
+                    hint: 'If filled, this replaces the standard EthicsPoint line for this language. Leave blank to keep the standard line.'
+                    buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                    editor_components: [image, code-block]
+                    modes: [rich_text, raw]
+                  - label: 'Show EthicsPoint phone'
+                    name: show_phone
+                    widget: boolean
+                    i18n: duplicate
+                    default: true
+                    required: false
+                    hint: 'Uncheck to hide the phone link (both in standard and custom-note display).'
               - name: custom
                 label: Custom block
                 summary: '{{title}}'
@@ -698,164 +870,6 @@ collections:
                         widget: string
                         required: false
                         i18n: true
-          - label: 'Hero banner (top welcome block)'
-            name: hero
-            widget: object
-            i18n: true
-            required: false
-            fields:
-              - label: 'Eyebrow line (small caps above title)'
-                name: eyebrow
-                widget: string
-                required: false
-                i18n: duplicate
-              - label: 'Title (this language)'
-                name: title
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Subtitle (this language)'
-                name: subtitle
-                widget: text
-                i18n: true
-                required: false
-              - label: 'Hero buttons'
-                name: buttons
-                widget: list
-                i18n: duplicate
-                summary: '{{label}}'
-                hint: 'WARNING: parish links must start AND end with / . A wrong link makes a dead button. Add/remove buttons in English only.'
-                fields:
-                  - label: 'Label (this language)'
-                    name: label
-                    widget: string
-                    i18n: true
-                    required: false
-                  - label: 'Link'
-                    name: link
-                    widget: string
-                    i18n: duplicate
-                    hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
-                  - label: 'Color'
-                    name: style
-                    widget: select
-                    i18n: duplicate
-                    options: ['gold', 'light', 'primary', 'outline']
-          - label: "Pastor's welcome quote (all languages — translate each)"
-            name: pastor_quote
-            widget: text
-            i18n: true
-            required: false
-          - label: 'Event cards'
-            name: events
-            widget: list
-            collapsed: auto
-            label_singular: 'Event'
-            i18n: duplicate
-            summary: '{{title}}'
-            hint: 'Add, remove or reorder cards in English only — other languages follow the same cards.'
-            fields:
-              - label: 'Icon (pick from the list)'
-                name: icon
-                widget: select
-                i18n: duplicate
-                options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
-                required: false
-              - label: 'Title (this language)'
-                name: title
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Text (this language)'
-                name: text
-                widget: text
-                i18n: true
-                required: false
-              - label: 'Link (a parish page like /volunteer/, a full web address, or a @shortcut word — blank = no link)'
-                name: link
-                widget: string
-                required: false
-                i18n: duplicate
-                hint: 'WARNING: parish page addresses must start AND end with / . You can also type a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube) — those follow Site settings automatically. A wrong address makes a dead button. See “Contact Info & External Links” for what each @shortcut opens.'
-              - label: 'Link label (this language)'
-                name: link_label
-                widget: string
-                required: false
-                i18n: true
-          - label: 'Facility line (under event cards)'
-            name: facility
-            widget: object
-            i18n: true
-            required: false
-            fields:
-              - label: 'Reservation link label (this language)'
-                name: link_label
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Closing sentence (this language)'
-                name: tail
-                widget: text
-                i18n: true
-                required: false
-          - label: 'Diocesan block (icons at page end)'
-            name: catholic
-            widget: object
-            i18n: true
-            required: false
-            fields:
-              - label: 'Icon links (add, remove, or reorder)'
-                name: icons
-                widget: list
-                label_singular: 'Icon'
-                i18n: duplicate
-                summary: '{{alt}}'
-                hint: 'WARNING: use the Media library images already uploaded. Deleting all rows removes the icon row. All icons show at the same height. Add/remove rows in English only.'
-                fields:
-                  - { label: 'Image (pick from uploads)', name: image, widget: image, i18n: duplicate }
-                  - label: 'Alt text (this language)'
-                    name: alt
-                    widget: string
-                    i18n: true
-                    required: false
-                  - label: 'Link'
-                    name: link
-                    widget: string
-                    i18n: duplicate
-                  - label: 'Width in pixels (keeps proportions)'
-                    name: width
-                    widget: number
-                    i18n: duplicate
-                  - label: 'Height in pixels'
-                    name: height
-                    widget: number
-                    i18n: duplicate
-              - label: 'EthicsPoint name (this language)'
-                name: ethics_name
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Report-online label (this language)'
-                name: ethics_report
-                widget: string
-                i18n: true
-                required: false
-              - label: 'EthicsPoint custom note (optional — blank = show standard line)'
-                name: ethics_note
-                widget: markdown
-                i18n: true
-                required: false
-                hint: 'If filled, this replaces the standard EthicsPoint line for this language. Leave blank to keep the standard line.'
-                buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
-                editor_components: [image, code-block]
-                modes: [rich_text, raw]
-              - label: 'Show EthicsPoint phone'
-                name: show_phone
-                widget: boolean
-                i18n: duplicate
-                default: true
-                required: false
-                hint: 'Uncheck to hide the phone link (both in standard and custom-note display).'
       - name: action-cards
         label: Homepage Action Cards
         icon: dashboard

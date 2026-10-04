@@ -195,6 +195,95 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       : 'btn btn-primary';
   }
 
+  /* Shared composed-section renderers: the standalone file previews and the
+     full homepage preview render the same elements (no `this` inside the
+     list callbacks — plain functions get undefined `this` in modules). */
+  function slideFigures(slides, loc, getAsset) {
+    return (slides || []).map(function (s, i) {
+      var asset = s.image && getAsset ? getAsset(s.image) : null;
+      var img = h('img', {
+        src: (asset && asset.url) || s.image, alt: s.alt || '',
+        loading: 'lazy', style: { borderRadius: '.5rem' }
+      });
+      return h('figure', { key: i, 'data-key-path': 'slides.' + i, tabIndex: 0 },
+        s.link ? h('a', { href: previewHref(s.link, loc, null) }, img) : img,
+        h('figcaption', { className: 'text-soft' },
+          s.caption || '', s.seconds ? ' (' + s.seconds + 's)' : ''));
+    });
+  }
+
+  function actionCards(cards, live, aliases, loc, kpBase) {
+    var kp = kpBase || 'cards';
+    return h('div', { className: 'cards' },
+      (cards || []).map(function (c, i) {
+        var head = c.icon
+          ? h('div', { className: 'card-head' },
+            h('span', { dangerouslySetInnerHTML: { __html: iconBadge(c.icon) } }),
+            h('h3', {}, c.title || ''))
+          : (c.title ? h('h3', {}, c.title) : null);
+        var body = null;
+        if (c.kind === 'bulletins') {
+          body = live ? h('div', {
+            dangerouslySetInnerHTML: {
+              __html: renderBulletinList(live, loc, true)
+            }
+          }) : h('p', { className: 'text-soft' }, 'Bulletin list (loading…)');
+        } else {
+          body = h('div', {},
+            c.text ? h('p', {}, c.text) : null,
+            c.kind === 'link' && c.link ? h('p', {},
+              h('a', {
+                className: actionBtnClass(c.style),
+                href: previewHref(c.link, loc, aliases)
+              }, c.link_label || c.title)) : null,
+            c.extra_link ? h('p', {},
+              h('a', { href: previewHref(c.extra_link, loc, aliases) }, c.extra_label)) : null);
+        }
+        return h('article', {
+          key: i, className: 'card', 'data-key-path': kp + '.' + i, tabIndex: 0
+        }, head, body);
+      }));
+  }
+
+  function langOf(langs, code) {
+    for (var i = 0; i < (langs || []).length; i++) {
+      if (langs[i] && langs[i].code === code) return langs[i];
+    }
+    return {};
+  }
+
+  function locNameOf(locs, key) {
+    for (var i = 0; i < (locs || []).length; i++) {
+      var l = locs[i] || {};
+      if (l.key !== key && !(l.en && l.en.key === key)) continue;
+      return (l.en && l.en.name) || l.name || key;
+    }
+    return key;
+  }
+
+  function massTable(rows, langs, locs) {
+    return h('div', { className: 'table-scroll' },
+      h('table', { className: 'mass' },
+        h('thead', {},
+          h('tr', {},
+            h('th', {}, 'Service'), h('th', {}, 'Day / Time'), h('th', {}, 'Language'),
+            h('th', {}, 'Location'), h('th', {}, 'Presider'))),
+        h('tbody', {},
+          (rows || []).map(function (r, i) {
+            var L = langOf(langs, r.lang) || {};
+            var chipStyle = L.color
+              ? { backgroundColor: L.color, color: L.text_color || undefined }
+              : undefined;
+            return h('tr', { key: i, 'data-key-path': 'masses.' + i, tabIndex: 0 },
+              h('td', {}, r.service),
+              h('td', {}, h('strong', {}, (r.day || '') + ' ' + (r.time || ''))),
+              h('td', {},
+                h('span', { className: 'chip', style: chipStyle }, L.autonym || r.lang)),
+              h('td', {}, locNameOf(locs, r.location)),
+              h('td', {}, (r.presider || '').trim() || 'TBD'));
+          }))));
+  }
+
   /* ---- Homepage carousel file: the slides as visitors see them ---- */
   var SlidesPreview = createClass({
     render: function () {
@@ -203,20 +292,11 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       var data = (raw && raw.toJS) ? raw.toJS() : (raw || {});
       var slides = data.slides || [];
       var loc = previewLocale(props.entry.get('path'));
+      var getAsset = function (p) { return props.getAsset ? props.getAsset(p) : null; };
       return h('div', { className: 'wrap' },
         h('h1', { 'data-key-path': 'slides', tabIndex: 0 }, 'Carousel preview'),
         h('p', { className: 'text-soft' }, 'First slide shows on load; slides rotate on the site.'),
-        slides.map(function (s, i) {
-          var asset = s.image && props.getAsset ? props.getAsset(s.image) : null;
-          var img = h('img', {
-            src: (asset && asset.url) || s.image, alt: s.alt || '',
-            loading: 'lazy', style: { borderRadius: '.5rem' }
-          });
-          return h('figure', { key: i, 'data-key-path': 'slides.' + i, tabIndex: 0 },
-            s.link ? h('a', { href: previewHref(s.link, loc, null) }, img) : img,
-            h('figcaption', { className: 'text-soft' },
-              s.caption || '', s.seconds ? ' (' + s.seconds + 's)' : ''));
-        }));
+        slideFigures(slides, loc, getAsset));
     }
   });
 
@@ -247,35 +327,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
         Number(bd.weeks == null ? 3 : bd.weeks), Date.now()).slice(0, 5) : null;
       return h('div', { className: 'wrap' },
         h('h1', { 'data-key-path': 'cards', tabIndex: 0 }, 'Action cards preview'),
-        h('div', { className: 'cards' },
-          cards.map(function (c, i) {
-            var head = c.icon
-              ? h('div', { className: 'card-head' },
-                h('span', { dangerouslySetInnerHTML: { __html: iconBadge(c.icon) } }),
-                h('h3', {}, c.title || ''))
-              : (c.title ? h('h3', {}, c.title) : null);
-            var body = null;
-            if (c.kind === 'bulletins') {
-              body = live ? h('div', {
-                dangerouslySetInnerHTML: {
-                  __html: renderBulletinList(live, loc, true)
-                }
-              }) : h('p', { className: 'text-soft' }, 'Bulletin list (loading…)');
-            } else {
-              body = h('div', {},
-                c.text ? h('p', {}, c.text) : null,
-                c.kind === 'link' && c.link ? h('p', {},
-                  h('a', {
-                    className: actionBtnClass(c.style),
-                    href: previewHref(c.link, loc, aliases)
-                  }, c.link_label || c.title)) : null,
-                c.extra_link ? h('p', {},
-                  h('a', { href: previewHref(c.extra_link, loc, aliases) }, c.extra_label)) : null);
-            }
-            return h('article', {
-              key: i, className: 'card', 'data-key-path': 'cards.' + i, tabIndex: 0
-            }, head, body);
-          })));
+        actionCards(cards, live, aliases, loc, 'cards'));
     }
   });
   var HeaderPreview = createClass({
@@ -377,185 +429,325 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       var entry = this.props.entry;
       var rows = plain(entry.getIn(['data', 'masses'])) || [];
       if (!Array.isArray(rows)) rows = [];
-      var langs = this.state.langs;
-      var locs = this.state.locs;
-      function langOf(code) {
-        for (var i = 0; i < langs.length; i++) {
-          if (langs[i] && langs[i].code === code) return langs[i];
-        }
-        return {};
-      }
-      function locName(key) {
-        for (var i = 0; i < locs.length; i++) {
-          var l = locs[i] || {};
-          if (l.key !== key && !(l.en && l.en.key === key)) continue;
-          return (l.en && l.en.name) || l.name || key;
-        }
-        return key;
-      }
       return h('div', { className: 'wrap' },
         h('h1', { 'data-key-path': 'masses', tabIndex: 0 }, 'Mass schedule preview'),
-        h('div', { className: 'table-scroll' },
-          h('table', { className: 'mass' },
-            h('thead', {},
-              h('tr', {},
-                h('th', {}, 'Service'), h('th', {}, 'Day / Time'), h('th', {}, 'Language'),
-                h('th', {}, 'Location'), h('th', {}, 'Presider'))),
-            h('tbody', {},
-              rows.map(function (r, i) {
-                var L = langOf(r.lang) || {};
-                var chipStyle = L.color
-                  ? { backgroundColor: L.color, color: L.text_color || undefined }
-                  : undefined;
-                return h('tr', { key: i, 'data-key-path': 'masses.' + i, tabIndex: 0 },
-                  h('td', {}, r.service),
-                  h('td', {}, h('strong', {}, (r.day || '') + ' ' + (r.time || ''))),
-                  h('td', {},
-                    h('span', { className: 'chip', style: chipStyle }, L.autonym || r.lang)),
-                  h('td', {}, locName(r.location)),
-                  h('td', {}, (r.presider || '').trim() || 'TBD'));
-              })))));
+        massTable(rows, this.state.langs, this.state.locs));
     }
   });
 
-  /* ---- Homepage welcome file: hero, events, facility, diocesan block ----
-     Theme (preset) sections compose live regions from other collections, so
-     they preview as labeled placeholders; custom blocks render for real. */
+  /* ---- Homepage welcome file: the whole homepage, in row order ----
+     Rows are self-contained (hero/events/catholic carry their own settings);
+     theme rows compose live regions from other collections, fetched here.
+     Anything still loading (or failing to load) renders as a labeled
+     placeholder, so a bad lookup can never blank the preview. */
+  var HOMEPAGE_ORDER = ['carousel', 'hero', 'actions', 'schedule', 'events',
+    'body', 'office', 'flocknote', 'catholic'];
+
+  /* First entry wins: each getCollection call below resolves one entry. */
+  function firstEntry(entry) {
+    if (Array.isArray(entry)) entry = entry[0];
+    var data = entry && (entry.get ? entry.get('data') : entry.data);
+    return plain(data);
+  }
+
   var HomepagePreview = createClass({
     getInitialState: function () {
-      return { settings: null, ui: null };
+      return { settings: null, ui: null, actions: null, slides: null,
+        bulletins: null, masses: null, langs: [], locs: [],
+        confession: null, office: null, signup: null, homeBody: null };
     },
     componentDidMount: function () {
       var self = this;
-      safeGet(this.props, 'site', 'settings').then(function (entry) {
-        if (Array.isArray(entry)) entry = entry[0];
-        var data = entry && (entry.get ? entry.get('data') : entry.data);
-        self.setState({ settings: plain(data) });
+      function pull(promise, key, pick) {
+        promise.then(function (entry) {
+          var patch = {};
+          var d = firstEntry(entry);
+          patch[key] = pick ? pick(d) : d;
+          self.setState(patch);
+        }, function () {});
+      }
+      pull(safeGet(this.props, 'site', 'settings'), 'settings');
+      pull(safeGet(this.props, 'interface', 'ui'), 'ui');
+      pull(safeGet(this.props, 'homepage', 'action-cards'), 'actions');
+      pull(safeGet(this.props, 'homepage', 'slides'), 'slides');
+      pull(safeGet(this.props, 'bulletins', 'bulletin-list'), 'bulletins');
+      pull(safeGet(this.props, 'schedule', 'masses'), 'masses');
+      pull(safeGet(this.props, 'schedule', 'schedule-info'), 'confession',
+        function (d) { return (d && d.confession) || null; });
+      pull(safeGet(this.props, 'site', 'office-hours'), 'office');
+      pull(safeGet(this.props, 'site', 'signup-form'), 'signup');
+      safeGet(this.props, 'mass_languages').then(function (entries) {
+        self.setState({ langs: collectItems(entries) });
       }, function () {});
-      safeGet(this.props, 'interface', 'ui').then(function (entry) {
-        if (Array.isArray(entry)) entry = entry[0];
-        var data = entry && (entry.get ? entry.get('data') : entry.data);
-        self.setState({ ui: plain(data) });
+      safeGet(this.props, 'locations').then(function (entries) {
+        self.setState({ locs: collectItems(entries) });
+      }, function () {});
+      safeGet(this.props, 'pages', 'home').then(function (entry) {
+        var d = firstEntry(entry) || {};
+        self.setState({ homeBody: d.body || null });
       }, function () {});
     },
     render: function () {
       var props = this.props;
       var raw = props.entry.get('data');
       var data = (raw && raw.toJS) ? raw.toJS() : (raw || {});
-      var settings = this.state.settings || {};
-      var ui = this.state.ui || {};
+      var st = this.state;
+      var settings = st.settings || {};
+      var ui = st.ui || {};
       var loc = previewLocale(props.entry.get('path'));
       var aliases = aliasesFrom(settings);
-      var hero = data.hero || {};
-      var kids = [
-        h('div', { key: 'hero', className: 'preview-hero', 'data-key-path': 'hero', tabIndex: 0 },
-          hero.eyebrow ? h('p', { className: 'hero-eyebrow' }, hero.eyebrow) : null,
-          h('h1', {}, hero.title || ''),
-          hero.subtitle ? h('p', {}, hero.subtitle) : null,
-          data.pastor_quote ? h('p', {
-            className: 'preview-quote', 'data-key-path': 'pastor_quote', tabIndex: 0
-          }, data.pastor_quote) : null,
+      var getAsset = function (p) { return props.getAsset ? props.getAsset(p) : null; };
+      var rows = (data.sections && data.sections.length) ? data.sections :
+        HOMEPAGE_ORDER.map(function (id) {
+          if (id === 'hero') return { type: 'hero', visible: true };
+          if (id === 'events') return { type: 'events', visible: true, events: [], facility: {} };
+          if (id === 'catholic') return { type: 'catholic', visible: true, icons: [] };
+          return { type: 'preset', id: id, visible: true };
+        });
+      var bd = st.bulletins;
+      var live = bd ? filterBulletins(bd.bulletins || [],
+        Number(bd.weeks == null ? 3 : bd.weeks), Date.now()).slice(0, 5) : null;
+      function placeholder(si, label, extra) {
+        return h('div', {
+          key: 's' + si, className: 'preset-row',
+          'data-key-path': 'sections.' + si, tabIndex: 0
+        },
+          h('strong', {}, label),
+          extra ? h('span', { className: 'text-soft' }, ' ' + extra) : null);
+      }
+      function heroNode(s, si) {
+        var kp = 'sections.' + si;
+        return h('div', { key: 's' + si, className: 'preview-hero', 'data-key-path': kp, tabIndex: 0 },
+          s.eyebrow ? h('p', { className: 'hero-eyebrow' }, s.eyebrow) : null,
+          h('h1', { 'data-key-path': kp + '.title', tabIndex: 0 }, s.title || ''),
+          s.subtitle ? h('p', { 'data-key-path': kp + '.subtitle', tabIndex: 0 }, s.subtitle) : null,
+          s.pastor_quote ? h('p', {
+            className: 'preview-quote', 'data-key-path': kp + '.pastor_quote', tabIndex: 0
+          }, s.pastor_quote) : null,
           h('p', { className: 'btn-row' },
-            (hero.buttons || []).map(function (b, i) {
+            ((s.buttons || []).map(function (b, i) {
               if (!b.label || !b.link) return null;
               return h('a', {
                 key: i, className: 'btn btn-' + (b.style || 'light'),
                 href: previewHref(b.link, loc, aliases)
               }, b.label);
-            })))
-      ];
-      kids.push(h('h2', { key: 'evh' }, 'Event cards'));
-      kids.push(h('div', { key: 'ev', className: 'cards', 'data-key-path': 'events', tabIndex: 0 },
-        (data.events || []).map(function (e, i) {
-          return h('article', { key: i, className: 'card', 'data-key-path': 'events.' + i, tabIndex: 0 },
-            e.icon ? h('div', { className: 'card-head' },
-              h('span', { dangerouslySetInnerHTML: { __html: iconBadge(e.icon) } }),
-              h('h3', {}, e.title || '')) : (e.title ? h('h3', {}, e.title) : null),
-            e.text ? h('p', {}, e.text) : null,
-            e.link ? h('p', {},
-              h('a', {
-                className: 'btn btn-outline',
-                href: previewHref(e.link, loc, aliases)
-              }, e.link_label || e.title)) : null);
-        })));
-      var facility = data.facility || {};
-      kids.push(h('div', { key: 'fac', 'data-key-path': 'facility', tabIndex: 0 },
-        facility.tail ? h('p', {}, facility.tail) : null,
-        h('p', { className: 'btn-row' },
-          h('a', {
-            className: 'btn btn-primary',
-            href: previewHref('/calendar/#today', loc, aliases)
-          }, ui.todayEvents || "Today's Events"),
-          h('a', {
-            className: 'btn btn-outline', href: previewHref('/calendar/', loc, aliases)
-          }, ui.fullCalendar || 'Full Calendar'),
-          facility.link_label ? h('a', {
-            className: 'btn btn-outline', href: settings.calendar_suggest || '#'
-          }, facility.link_label) : null)));
-      var catholic = data.catholic || {};
-      kids.push(h('div', { key: 'cath', 'data-key-path': 'catholic', tabIndex: 0 },
-        h('div', {},
-          (catholic.icons || []).map(function (ic, i) {
-            var asset = ic.image && props.getAsset ? props.getAsset(ic.image) : null;
-            var img = h('img', {
-              className: 'diocesan-icon', src: (asset && asset.url) || ic.image,
-              alt: ic.alt || '', loading: 'lazy'
-            });
-            return ic.link
-              ? h('a', { key: i, href: ic.link }, img)
-              : h('span', { key: i }, img);
-          })),
-        h('p', { className: 'text-soft' },
-          (catholic.ethics_name || 'EthicsPoint') + ': ',
-          h('a', {
-            href: 'tel:' + String(settings.ethicspoint_phone || '').replace(/[^0-9]/g, '')
-          }, settings.ethicspoint_phone || ''),
-          ' · ',
-          h('a', { href: settings.ethicspoint || '#' }, catholic.ethics_report || ''))));
-      kids.push(h('h2', { key: 'sech' }, 'Page sections'));
-      (data.sections || []).forEach(function (s, si) {
-        if (s.type === 'custom') {
-          kids.push(h('section', { key: 's' + si, 'aria-label': s.title || 'Custom block' },
-            s.title ? h('h2', { 'data-key-path': 'sections.' + si + '.title', tabIndex: 0 }, s.title) : null,
-            h('div', { className: 'cards' },
-              (s.cards || []).map(function (c, ci) {
-                var adapted = {
-                  type: 'card', icon: c.icon, title: c.title, text: c.text,
-                  buttons: c.link ? [{
-                    label: c.link_label || c.title, link: c.link, style: 'outline'
-                  }] : []
-                };
-                var inner = renderBlock(adapted, {
-                  title: s.title || '', md: md,
-                  href: function (link) { return previewHref(link, loc, aliases); },
-                  assetUrl: function (p) {
-                    var a = props.getAsset ? props.getAsset(p) : null;
-                    return (a && a.url) || p;
-                  },
-                  t: {}, kp: false
-                });
-                return h('div', {
-                  key: ci,
-                  'data-key-path': 'sections.' + si + '.cards.' + ci,
-                  dangerouslySetInnerHTML: {
-                    __html: (c.image ? '<p><img src="' + (
-                      (props.getAsset && props.getAsset(c.image) || {}).url || c.image
-                    ) + '" alt="" loading="lazy" style="border-radius:.5rem"></p>' : '') + inner
-                  }
-                });
-              }))));
-        } else {
-          kids.push(h('div', {
-            key: 's' + si, className: 'preset-row',
-            'data-key-path': 'sections.' + si, tabIndex: 0
-          },
-            h('strong', {}, PRESET_INFO[s.id] || s.id),
-            s.visible === false ? h('span', { className: 'text-soft' }, ' (hidden)') : null));
+            }))));
+      }
+      function eventsNode(s, si) {
+        var kp = 'sections.' + si;
+        var facility = s.facility || {};
+        return h('div', { key: 's' + si, 'data-key-path': kp, tabIndex: 0 },
+          h('h2', {}, ui.eventsTitle || 'Events'),
+          h('div', { className: 'cards', 'data-key-path': kp + '.events', tabIndex: 0 },
+            ((s.events || [])).map(function (e, i) {
+              return h('article', { key: i, className: 'card', 'data-key-path': kp + '.events.' + i, tabIndex: 0 },
+                e.icon ? h('div', { className: 'card-head' },
+                  h('span', { dangerouslySetInnerHTML: { __html: iconBadge(e.icon) } }),
+                  h('h3', {}, e.title || '')) : (e.title ? h('h3', {}, e.title) : null),
+                e.text ? h('p', {}, e.text) : null,
+                e.link ? h('p', {},
+                  h('a', {
+                    className: 'btn btn-outline',
+                    href: previewHref(e.link, loc, aliases)
+                  }, e.link_label || e.title)) : null);
+            })),
+          facility.tail ? h('p', {}, facility.tail) : null,
+          h('p', { className: 'btn-row' },
+            h('a', {
+              className: 'btn btn-primary',
+              href: previewHref('/calendar/#today', loc, aliases)
+            }, ui.todayEvents || "Today's Events"),
+            h('a', {
+              className: 'btn btn-outline', href: previewHref('/calendar/', loc, aliases)
+            }, ui.fullCalendar || 'Full Calendar'),
+            facility.link_label ? h('a', {
+              className: 'btn btn-outline', href: settings.calendar_suggest || '#'
+            }, facility.link_label) : null));
+      }
+      function catholicNode(s, si) {
+        var kp = 'sections.' + si;
+        return h('div', { key: 's' + si, 'data-key-path': kp, tabIndex: 0 },
+          h('div', {},
+            ((s.icons || [])).map(function (ic, i) {
+              var asset = ic.image && getAsset(ic.image);
+              var img = h('img', {
+                className: 'diocesan-icon', src: (asset && asset.url) || ic.image,
+                alt: ic.alt || '', loading: 'lazy'
+              });
+              return ic.link
+                ? h('a', { key: i, href: ic.link }, img)
+                : h('span', { key: i }, img);
+            })),
+          h('p', { className: 'text-soft' },
+            (s.ethics_name || 'EthicsPoint') + ': ',
+            h('a', {
+              href: 'tel:' + String(settings.ethicspoint_phone || '').replace(/[^0-9]/g, '')
+            }, settings.ethicspoint_phone || ''),
+            ' · ',
+            h('a', { href: settings.ethicspoint || '#' }, s.ethics_report || '')));
+      }
+      function customNode(s, si) {
+        return h('section', { key: 's' + si, 'aria-label': s.title || 'Custom block' },
+          s.title ? h('h2', { 'data-key-path': 'sections.' + si + '.title', tabIndex: 0 }, s.title) : null,
+          h('div', { className: 'cards' },
+            ((s.cards || [])).map(function (c, ci) {
+              var adapted = {
+                type: 'card', icon: c.icon, title: c.title, text: c.text,
+                buttons: c.link ? [{
+                  label: c.link_label || c.title, link: c.link, style: 'outline'
+                }] : []
+              };
+              var inner = renderBlock(adapted, {
+                title: s.title || '', md: md,
+                href: function (link) { return previewHref(link, loc, aliases); },
+                assetUrl: function (p) { var a = getAsset(p); return (a && a.url) || p; },
+                t: {}, kp: false
+              });
+              return h('div', {
+                key: ci,
+                'data-key-path': 'sections.' + si + '.cards.' + ci,
+                dangerouslySetInnerHTML: {
+                  __html: (c.image ? '<p><img src="' + (
+                    (getAsset(c.image) || {}).url || c.image
+                  ) + '" alt="" loading="lazy" style="border-radius:.5rem"></p>' : '') + inner
+                }
+              });
+            })));
+      }
+      function scheduleNode(si) {
+        var m = st.masses;
+        if (!m) return placeholder(si, PRESET_INFO.schedule, '(loading…)');
+        var rows = m.masses || [];
+        var conf = st.confession || {};
+        return h('div', { key: 's' + si, 'data-key-path': 'sections.' + si, tabIndex: 0 },
+          h('h2', {}, (ui.schedule && ui.schedule.massTimes) || 'Mass Times'),
+          massTable(rows, st.langs, st.locs),
+          (conf.day || conf.time) ? h('p', {},
+            h('strong', {}, ((ui.schedule && ui.schedule.confession) || 'Confession') + ': '),
+            (conf.day || '') + (conf.day && conf.time ? ' · ' : '') + (conf.time || '')) : null,
+          h('p', { className: 'btn-row' },
+            h('a', {
+              className: 'btn btn-primary',
+              href: previewHref('/mass-times/', loc, aliases)
+            }, ((ui.schedule && ui.schedule.seeAll) || 'See all')),
+            settings.youtube ? h('a', {
+              className: 'btn btn-outline', href: settings.youtube
+            }, '▶ ' + ((ui.schedule && ui.schedule.stream) || 'Stream')) : null));
+      }
+      function officeNode(si) {
+        if (!st.office) return placeholder(si, PRESET_INFO.office, '(loading…)');
+        var lines = String(st.office.text || '').split('\n').map(function (line) {
+          var i = line.indexOf(':');
+          return i > 0
+            ? { days: line.slice(0, i).trim(), time: line.slice(i + 1).trim() }
+            : { days: line.trim(), time: '' };
+        }).filter(function (r) { return r.days; });
+        var emergencies = settings.emergencies || [];
+        return h('div', { key: 's' + si, 'data-key-path': 'sections.' + si, tabIndex: 0 },
+          h('h2', {}, ui.contactSection || 'Contact & Office Hours'),
+          h('div', { className: 'cards' },
+            h('article', { className: 'card' },
+              h('div', { className: 'card-head' },
+                h('span', { dangerouslySetInnerHTML: { __html: iconBadge('clock') } }),
+                h('h3', {}, (ui.schedule && ui.schedule.office) || 'Office Hours')),
+              lines.map(function (r, i) {
+                return h('p', { key: i, className: 'my-1' },
+                  h('strong', { className: 'text-navy' }, r.days),
+                  r.time ? h('span', {}, ' ' + r.time) : null);
+              })),
+            emergencies.length ? h('article', { className: 'card' },
+              h('div', { className: 'card-head' },
+                h('span', { dangerouslySetInnerHTML: { __html: iconBadge('alert') } }),
+                h('h3', {}, (ui.footer && ui.footer.emergency) || 'Emergency')),
+              emergencies.map(function (e, i) {
+                var label = e['label_' + loc] || e.label_en || '';
+                return h('p', { key: i, className: 'my-1' },
+                  h('strong', { className: 'text-navy' }, label),
+                  h('br', {}),
+                  h('a', { href: 'tel:' + String(e.number || '').replace(/[^0-9]/g, '') }, e.number || ''));
+              })) : null,
+            h('article', { className: 'card' },
+              h('div', { className: 'card-head' },
+                h('span', { dangerouslySetInnerHTML: { __html: iconBadge('phone') } }),
+                h('h3', {}, ui.contactCard || 'Get in Touch')),
+              settings.phone ? h('p', { className: 'my-1' },
+                h('a', { href: 'tel:' + String(settings.phone).replace(/[^0-9]/g, '') }, settings.phone)) : null,
+              settings.email ? h('p', { className: 'my-1' },
+                h('a', { href: 'mailto:' + settings.email }, settings.email)) : null)));
+      }
+      function flocknoteNode(si) {
+        var f = st.signup;
+        if (!f) return placeholder(si, PRESET_INFO.flocknote, '(loading…)');
+        return h('div', { key: 's' + si, 'data-key-path': 'sections.' + si, tabIndex: 0 },
+          h('h2', {}, f.title || 'Stay Connected'),
+          f.text ? h('p', {}, f.text) : null,
+          h('form', { action: f.action || '#', method: f.method || 'post', target: f.target || '_blank' },
+            ((f.fields || [])).map(function (fd, i) {
+              if (!fd || !fd.name) return null;
+              if (fd.type === 'hidden') {
+                return h('input', { key: i, name: fd.name, type: 'hidden', value: fd.value || '' });
+              }
+              return h('p', { key: i, className: 'my-1' },
+                h('label', {},
+                  fd.label || fd.name,
+                  h('br', {}),
+                  fd.type === 'checkbox'
+                    ? h('input', { name: fd.name, type: 'checkbox', value: fd.value || 'yes', required: !!fd.required })
+                    : h('input', {
+                      name: fd.name, type: fd.type || 'text',
+                      placeholder: fd.label || '', required: !!fd.required
+                    })));
+            }),
+            h('p', {},
+              h('button', { className: 'btn btn-gold', type: 'submit' }, f.submit_label || 'Sign Up'))));
+      }
+      var kids = rows.map(function (s, si) {
+        if (!s) return null;
+        if (s.type === 'hero') {
+          return s.visible === false ? null : heroNode(s, si);
         }
+        if (s.type === 'events') {
+          return s.visible === false ? null : eventsNode(s, si);
+        }
+        if (s.type === 'catholic') {
+          return s.visible === false ? null : catholicNode(s, si);
+        }
+        if (s.type === 'custom') {
+          return customNode(s, si);
+        }
+        if (s.type === 'preset' && s.visible !== false) {
+          if (s.id === 'carousel') {
+            return st.slides
+              ? h('div', { key: 's' + si, 'data-key-path': 'sections.' + si, tabIndex: 0 },
+                slideFigures(st.slides.slides || [], loc, getAsset))
+              : placeholder(si, PRESET_INFO.carousel, '(loading…)');
+          }
+          if (s.id === 'actions') {
+            return st.actions
+              ? h('div', { key: 's' + si, 'data-key-path': 'sections.' + si, tabIndex: 0 },
+                actionCards(st.actions.cards || [], live, aliases, loc, 'sections.' + si + '.cards'))
+              : placeholder(si, PRESET_INFO.actions, '(loading…)');
+          }
+          if (s.id === 'schedule') return scheduleNode(si);
+          if (s.id === 'body') {
+            return st.homeBody
+              ? h('div', {
+                key: 's' + si, className: 'prose',
+                'data-key-path': 'sections.' + si, tabIndex: 0,
+                dangerouslySetInnerHTML: { __html: md(st.homeBody) }
+              })
+              : placeholder(si, PRESET_INFO.body, '(page text lives on the Home topic page)');
+          }
+          if (s.id === 'office') return officeNode(si);
+          if (s.id === 'flocknote') return flocknoteNode(si);
+          return placeholder(si, PRESET_INFO[s.id] || s.id);
+        }
+        return null;
       });
       return h('div', { className: 'wrap' }, kids);
     }
   });
+
 
   CMS.registerPreviewTemplate('pages', PagesPreview);
   CMS.registerPreviewTemplate('homepage-text', HomepagePreview);

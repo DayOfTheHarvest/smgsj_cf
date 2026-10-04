@@ -34,27 +34,32 @@ const body = renderMd(lang === 'en' ? bodyEn : (bodyLoc || bodyEn));
 const titleVal = (homeLoc?.data?.title as string)?.trim()
   || homeEn?.data?.title || ui.hero.welcome;
 const homepage = pickLocale({ en: homepageEn, es: homepageEs, vi: homepageVi }, lang) as any;
-const pastorQuote: string = homepage.pastor_quote || '';
-const events = (homepage.events as Array<any>) ?? [];
-const hero = (homepage.hero as any) ?? {};
-const heroButtons = (hero.buttons as Array<any>) ?? [];
-const facility = (homepage.facility as any) ?? {};
-const catholic = (homepage.catholic as any) ?? {};
-const icons = (catholic.icons as Array<any>) ?? [];
+// Section config lives inside each row (CMS: Homepage Welcome & Events).
+// Lookups take the first row of each type; the render loop below uses the
+// row it is rendering so repeated rows each show their own content.
+const sections = (homepage.sections as Array<any>) ?? [];
 const btnClassFor = (s: string) =>
   s === 'gold' ? 'btn btn-gold' : s === 'primary' ? 'btn btn-primary' : s === 'outline' ? 'btn btn-outline' : 'btn btn-light';
 const hrefFor = (link: string) => resolveLink(link, lang);
-// Staff-composed sections (Sveltia: Homepage welcome → Sections): theme rows in
+// Staff-composed sections (Sveltia: Homepage welcome → Sections): rows in
 // display order with visibility toggles, plus custom blocks anywhere. Unknown
-// ids ignored; missing theme sections appended visible in default position.
+// ids ignored; missing sections appended visible in default position.
 const DEFAULT_ORDER = ['carousel', 'hero', 'actions', 'schedule', 'events', 'body', 'office', 'flocknote', 'catholic'];
-const sections = (homepage.sections as Array<any>) ?? [];
 const present = new Set(
-  sections.filter((s) => s?.type === 'preset').map((s) => s.id),
+  sections.flatMap((s) => {
+    if (s?.type === 'preset' && typeof s.id === 'string') return [s.id];
+    if (s?.type === 'hero' || s?.type === 'events' || s?.type === 'catholic') return [s.type];
+    return [];
+  }),
 );
 const ordered = [...sections];
 for (const id of DEFAULT_ORDER) {
-  if (!present.has(id)) ordered.push({ type: 'preset', id, visible: true });
+  if (!present.has(id)) {
+    if (id === 'hero') ordered.push({ type: 'hero', visible: true });
+    else if (id === 'events') ordered.push({ type: 'events', visible: true, events: [], facility: {} });
+    else if (id === 'catholic') ordered.push({ type: 'catholic', visible: true, icons: [] });
+    else ordered.push({ type: 'preset', id, visible: true });
+  }
 }
 ---
 <Base lang={lang} slug="home" title={typeof titleVal === 'string' ? titleVal : ui.hero.welcome} fallback={false} canonicalPath={isRoot ? '/' : undefined}>
@@ -80,14 +85,14 @@ for (const id of DEFAULT_ORDER) {
       ) : s.visible === false ? null : (
       <>
       {s.id === 'carousel' && <Carousel lang={lang} ui={ui} />}
-      {s.id === 'hero' && (
+      {s.type === 'hero' && (
         <section class="hero" aria-label="Welcome">
-          {hero.eyebrow ? <p class="hero-eyebrow">{hero.eyebrow}</p> : null}
-          <h1>{hero.title || ui.hero.welcome}</h1>
-          <p>{hero.subtitle || ui.hero.subtitle}</p>
-          <p class="pastor">{pastorQuote}</p>
+          {s.eyebrow ? <p class="hero-eyebrow">{s.eyebrow}</p> : null}
+          <h1>{s.title || ui.hero.welcome}</h1>
+          <p>{s.subtitle || ui.hero.subtitle}</p>
+          <p class="pastor">{s.pastor_quote || ''}</p>
           <div class="mt-4 flex flex-wrap gap-2">
-            {heroButtons.map((b) => (
+            {((s.buttons ?? []) as any[]).map((b) => (
               <a class={btnClassFor(b.style)} href={hrefFor(b.link)}>{b.label}</a>
             ))}
           </div>
@@ -103,22 +108,22 @@ for (const id of DEFAULT_ORDER) {
           </p>
         </>
       )}
-      {s.id === 'events' && (
+      {s.type === 'events' && (
         <section aria-label="Events">
           <h2>{ui.eventsTitle}</h2>
           <div class="cards">
-            {events.map((e) => (
+            {((s.events ?? []) as any[]).map((e) => (
               <article class="card">
                 {e.icon ? <div class="card-head"><Icon name={e.icon} /><h3>{e.title}</h3></div> : <h3>{e.title}</h3>}
                 <p>{e.text}{e.link ? <> <a href={hrefFor(e.link)}>{e.link_label}</a></> : null}</p>
               </article>
             ))}
           </div>
-          <p>{facility.tail}</p>
+          <p>{(s.facility as any)?.tail}</p>
           <p class="flex flex-wrap gap-2">
             <a class="btn btn-primary" href={`/${lang}/calendar/#today`}>{ui.todayEvents}</a>
             <a class="btn btn-outline" href={`/${lang}/calendar/`}>{ui.fullCalendar}</a>
-            <a class="btn btn-outline" href={EXTERNAL.calendarSuggest}>{facility.link_label}</a>
+            <a class="btn btn-outline" href={EXTERNAL.calendarSuggest}>{(s.facility as any)?.link_label}</a>
           </p>
         </section>
       )}
@@ -130,22 +135,22 @@ for (const id of DEFAULT_ORDER) {
       )}
       {s.id === 'office' && <OfficeSection lang={lang} ui={ui} />}
       {s.id === 'flocknote' && <FlocknoteSignup ui={ui} lang={lang} />}
-      {s.id === 'catholic' && (
+      {s.type === 'catholic' && (
         <section class="mb-2 mt-10 text-center" aria-label="Catholic links">
           <div class="flex flex-wrap items-end justify-center gap-10 md:gap-16">
-            {icons.map((ic) => (
+            {((s.icons ?? []) as any[]).map((ic) => (
               <a href={ic.link}><img src={ic.image} alt={ic.alt} width={ic.width || 140} height={ic.height || 140} loading="lazy" class="diocesan-icon" /></a>
             ))}
           </div>
-          {((catholic.ethics_note || '').trim() ? (
+          {(((s as any).ethics_note || '').trim() ? (
             <div class="mx-auto mt-4 text-sm text-soft">
-              <div set:html={renderMd((catholic.ethics_note || '').trim())} />
-              {catholic.show_phone !== false && (
-                <p><a href={`tel:${EXTERNAL.ethicspoint_phone.replace(/[^0-9]/g, '')}`} class="font-bold">{EXTERNAL.ethicspoint_phone}</a> · <a href={EXTERNAL.ethicspoint}>{catholic.ethics_report || 'Report online'}</a></p>
+              <div set:html={renderMd(((s as any).ethics_note || '').trim())} />
+              {(s as any).show_phone !== false && (
+                <p><a href={`tel:${EXTERNAL.ethicspoint_phone.replace(/[^0-9]/g, '')}`} class="font-bold">{EXTERNAL.ethicspoint_phone}</a> · <a href={EXTERNAL.ethicspoint}>{(s as any).ethics_report || 'Report online'}</a></p>
               )}
             </div>
           ) : (
-            <p class="mx-auto mt-4 text-sm text-soft">{catholic.ethics_name}: {catholic.show_phone !== false && (<><a href={`tel:${EXTERNAL.ethicspoint_phone.replace(/[^0-9]/g, '')}`} class="font-bold">{EXTERNAL.ethicspoint_phone}</a> · </>)}<a href={EXTERNAL.ethicspoint}>{catholic.ethics_report}</a></p>
+            <p class="mx-auto mt-4 text-sm text-soft">{(s as any).ethics_name}: {(s as any).show_phone !== false && (<><a href={`tel:${EXTERNAL.ethicspoint_phone.replace(/[^0-9]/g, '')}`} class="font-bold">{EXTERNAL.ethicspoint_phone}</a> · </>)}<a href={EXTERNAL.ethicspoint}>{(s as any).ethics_report}</a></p>
           ))}
         </section>
       )}

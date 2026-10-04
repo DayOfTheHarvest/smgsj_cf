@@ -6,9 +6,29 @@
       "visible": true
     },
     {
-      "type": "preset",
-      "id": "hero",
-      "visible": true
+      "type": "hero",
+      "visible": true,
+      "eyebrow": "San Jose, California · Est. 1961",
+      "title": "Chào mừng đến Giáo xứ Thánh Maria Goretti!",
+      "subtitle": "Một cộng đoàn Công giáo đầy sức sống trên đường Senter — tất cả đều được chào đón.",
+      "buttons": [
+        {
+          "label": "Giờ Lễ",
+          "link": "/mass-times/",
+          "style": "gold"
+        },
+        {
+          "label": "Thánh Lễ Trực Tuyến",
+          "link": "@youtube",
+          "style": "light"
+        },
+        {
+          "label": "Các Hội Đoàn",
+          "link": "/join/",
+          "style": "light"
+        }
+      ],
+      "pastor_quote": "I am delighted to welcome you as you visit our parish website. This is a place where we stay connected and support one another in our life of faith. — Pastor Andrew C. Nguyen"
     },
     {
       "type": "preset",
@@ -21,9 +41,35 @@
       "visible": true
     },
     {
-      "type": "preset",
-      "id": "events",
-      "visible": true
+      "type": "events",
+      "visible": true,
+      "events": [
+        {
+          "icon": "users",
+          "title": "Picnic Giáo Xứ",
+          "text": "Xem bản tin để biết ngày và chi tiết.",
+          "link": "",
+          "link_label": ""
+        },
+        {
+          "icon": "church",
+          "title": "Nhóm Cầu Nguyện",
+          "text": "Xem bản tin để biết giờ họp.",
+          "link": "",
+          "link_label": ""
+        },
+        {
+          "icon": "star",
+          "title": "Cần Tình Nguyện Viên — Hướng Dẫn",
+          "text": "Hãy đáp lại lời mời phục vụ.",
+          "link": "/volunteer/",
+          "link_label": "Tình Nguyện"
+        }
+      ],
+      "facility": {
+        "link_label": "Yêu cầu đặt cơ sở vật chất",
+        "tail": "Đối với các sự kiện cá nhân, vui lòng gọi văn phòng giáo xứ."
+      }
     },
     {
       "type": "preset",
@@ -41,88 +87,35 @@
       "visible": true
     },
     {
-      "type": "preset",
-      "id": "catholic",
-      "visible": true
+      "type": "catholic",
+      "visible": true,
+      "icons": [
+        {
+          "image": "/uploads/icon-usccb.png",
+          "alt": "United States Conference of Catholic Bishops",
+          "link": "https://www.usccb.org",
+          "width": 140,
+          "height": 140
+        },
+        {
+          "image": "/uploads/icon-dsj.png",
+          "alt": "Diocese of San José",
+          "link": "https://www.dsj.org/about-us/",
+          "width": 116,
+          "height": 140
+        },
+        {
+          "image": "/uploads/icon-vatican.png",
+          "alt": "The Holy See",
+          "link": "https://w2.vatican.va/content/vatican/en.html",
+          "width": 109,
+          "height": 140
+        }
+      ],
+      "ethics_name": "EthicsPoint (Trẻ Em & Người Lớn Dễ Bị Tổn Thương)",
+      "ethics_report": "Báo cáo trực tuyến",
+      "ethics_note": "",
+      "show_phone": true
     }
-  ],
-  "hero": {
-    "eyebrow": "San Jose, California · Est. 1961",
-    "title": "Chào mừng đến Giáo xứ Thánh Maria Goretti!",
-    "subtitle": "Một cộng đoàn Công giáo đầy sức sống trên đường Senter — tất cả đều được chào đón.",
-    "buttons": [
-      {
-        "label": "Giờ Lễ",
-        "link": "/mass-times/",
-        "style": "gold"
-      },
-      {
-        "label": "Thánh Lễ Trực Tuyến",
-        "link": "@youtube",
-        "style": "light"
-      },
-      {
-        "label": "Các Hội Đoàn",
-        "link": "/join/",
-        "style": "light"
-      }
-    ]
-  },
-  "pastor_quote": "I am delighted to welcome you as you visit our parish website. This is a place where we stay connected and support one another in our life of faith. — Pastor Andrew C. Nguyen",
-  "events": [
-    {
-      "icon": "users",
-      "title": "Picnic Giáo Xứ",
-      "text": "Xem bản tin để biết ngày và chi tiết.",
-      "link": "",
-      "link_label": ""
-    },
-    {
-      "icon": "church",
-      "title": "Nhóm Cầu Nguyện",
-      "text": "Xem bản tin để biết giờ họp.",
-      "link": "",
-      "link_label": ""
-    },
-    {
-      "icon": "star",
-      "title": "Cần Tình Nguyện Viên — Hướng Dẫn",
-      "text": "Hãy đáp lại lời mời phục vụ.",
-      "link": "/volunteer/",
-      "link_label": "Tình Nguyện"
-    }
-  ],
-  "facility": {
-    "link_label": "Yêu cầu đặt cơ sở vật chất",
-    "tail": "Đối với các sự kiện cá nhân, vui lòng gọi văn phòng giáo xứ."
-  },
-  "catholic": {
-    "icons": [
-      {
-        "image": "/uploads/icon-usccb.png",
-        "alt": "United States Conference of Catholic Bishops",
-        "link": "https://www.usccb.org",
-        "width": 140,
-        "height": 140
-      },
-      {
-        "image": "/uploads/icon-dsj.png",
-        "alt": "Diocese of San José",
-        "link": "https://www.dsj.org/about-us/",
-        "width": 116,
-        "height": 140
-      },
-      {
-        "image": "/uploads/icon-vatican.png",
-        "alt": "The Holy See",
-        "link": "https://w2.vatican.va/content/vatican/en.html",
-        "width": 109,
-        "height": 140
-      }
-    ],
-    "ethics_name": "EthicsPoint (Trẻ Em & Người Lớn Dễ Bị Tổn Thương)",
-    "ethics_report": "Báo cáo trực tuyến",
-    "ethics_note": "",
-    "show_phone": true
-  }
+  ]
 }
