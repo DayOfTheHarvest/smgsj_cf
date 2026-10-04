@@ -4,6 +4,7 @@ title: ''
 updated: 2026-10-02
 sections:
 - type: content_section
+- type: content_section
   title: ''
   blocks:
   - type: fundraiser

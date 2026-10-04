@@ -14,7 +14,7 @@ import galleriesEn from '../../data/galleries.en.json';
 import galleriesEs from '../../data/galleries.es.json';
 import galleriesVi from '../../data/galleries.vi.json';
 import { pickLocale } from '../../lib/i18n';
-import { bundlePages, localize } from '../../lib/i18n';
+import { bundlePages, localizeSections } from '../../lib/i18n';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
@@ -36,11 +36,12 @@ if (!bundle) return Astro.redirect('/en/', 404);
 const enEntry = bundle.en;
 const locEntry = (bundle as any)[lang] ?? enEntry;
 const titleLoc = (locEntry.data.title as string)?.trim() || (enEntry.data.title as string);
-// Sections are the whole page, top to bottom. Missing/non-English sections
-// fall back to English + banner via localize(), like everything else.
+// Sections are the whole page, top to bottom. The English layout is the
+// source of truth: other locales follow English row order, with missing
+// rows falling back to English and locale-only rows ignored.
 const enSections = ((enEntry.data as any).sections as Array<any>) ?? [];
 const locSections = ((locEntry.data as any).sections as Array<any>) ?? [];
-const sections = localize(enSections, locSections);
+const sections = localizeSections(enSections, locSections);
 const fallback = lang !== 'en' && locSections.length === 0;
 const formList = ((formsData as any).forms as Array<any>) ?? [];
 const galleryList = ((pickLocale({ en: galleriesEn, es: galleriesEs, vi: galleriesVi }, lang) as any).galleries as Array<any>) ?? [];

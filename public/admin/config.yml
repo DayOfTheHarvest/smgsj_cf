@@ -75,7 +75,7 @@ collections:
         widget: list
         i18n: true
         required: false
-        hint: 'Build the page from sections in any order. A section can have a heading, some text, and its own widgets below. Drag rows to reorder the page; delete a row to remove that part.'
+        hint: 'Build the page from sections in any order. A section can have a heading, some text, and its own widgets below. Drag rows to reorder the page; delete a row to remove that part. Add, remove, or reorder rows in English only — other languages follow the English layout.'
         types:
           - name: content_section
             label: Content section
@@ -99,7 +99,7 @@ collections:
                 widget: list
                 i18n: true
                 required: false
-                hint: 'Widgets add special pieces to a section: thermometer, embed, button, text, image, or card. Drag to reorder.'
+                hint: 'Widgets add special pieces to a section: thermometer, embed, button, text, image, or card. Drag to reorder. Add, remove, or reorder rows in English only.'
                 types:
                   - name: fundraiser
                     label: Fundraiser thermometer
@@ -258,7 +258,7 @@ collections:
                 widget: list
                 i18n: true
                 required: false
-                hint: 'Widgets add special pieces to a section: thermometer, embed, button, text, image, or card. Drag to reorder.'
+                hint: 'Widgets add special pieces to a section: thermometer, embed, button, text, image, or card. Drag to reorder. Add, remove, or reorder rows in English only.'
                 types:
                   - name: fundraiser
                     label: Fundraiser thermometer

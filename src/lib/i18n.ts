@@ -72,6 +72,38 @@ export function localize<T>(enData: T, locData: any): T {
   return enData;
 }
 
+// Page sections: the English layout is the source of truth for every locale.
+// Rows pair strictly by index with matching `type`; locale-only rows are
+// ignored and missing rows fall back to English, so structural edits made in
+// another locale can never duplicate or misalign rows. Blocks inside each
+// section merge the same way (card buttons merge positionally — they carry
+// no type discriminator).
+export function localizeSections(enSections: any, locSections: any): any[] {
+  const en = Array.isArray(enSections) ? enSections : [];
+  const loc = Array.isArray(locSections) ? locSections : [];
+  const sameType = (a: any, b: any) =>
+    a && b && typeof a === 'object' && typeof b === 'object' && a.type === b.type;
+  return en.map((enRow, i) => {
+    const locRow = loc[i];
+    const merged = localize(enRow, sameType(enRow, locRow) ? locRow : undefined);
+    const enBlocks = (enRow as any)?.blocks;
+    if (Array.isArray(enBlocks)) {
+      const locBlocks =
+        sameType(enRow, locRow) && Array.isArray((locRow as any).blocks)
+          ? (locRow as any).blocks
+          : [];
+      (merged as any).blocks = enBlocks.map((enB: any, j: number) => {
+        const locB = locBlocks[j];
+        return localize(
+          enB,
+          locB && (locB.type ?? undefined) === (enB?.type ?? undefined) ? locB : undefined,
+        );
+      });
+    }
+    return merged;
+  });
+}
+
 /** Pick the locale file's data, merged over English (English overlays itself). */
 export function pickLocale<T>(files: Record<Lang, T>, lang: Lang): T {
   return localize(files.en, files[lang] ?? files.en);

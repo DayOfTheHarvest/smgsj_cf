@@ -4,6 +4,7 @@ title: ''
 updated: 2026-10-02
 sections:
 - type: content_section
+- type: content_section
   blocks:
   - type: button
     label: Yêu cầu đặt cơ sở vật chất (chỉ các hội đoàn)
