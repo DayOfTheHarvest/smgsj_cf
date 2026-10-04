@@ -43,6 +43,15 @@ git push -u origin main
 4. Note the preview URL `<project>.pages.dev` — smoke-test everything
    there before attaching the custom domain (§4–§5).
 
+> Worker deploys: this project ships via `npx wrangler deploy` as a
+> static-asset Worker (see the deploy log's `Detected Project Settings`).
+> `wrangler.jsonc` is committed on purpose — without it Wrangler mistakes
+> the repo for an Astro SSR app, runs `astro add cloudflare`, and pays for
+> a second hybrid build on every deploy. `wrangler` and `pagefind` are
+> pinned devDependencies so neither is downloaded mid-build. If a future
+> deploy log ever shows `astro add cloudflare` or a second `astro build`,
+> the committed `wrangler.jsonc` has gone missing — restore it.
+
 ## 3. CMS login, forms, redirects/headers (all verified in local `dist/`)
 
 1. **Auth Worker:** deploy `sveltia/sveltia-cms-auth` via its

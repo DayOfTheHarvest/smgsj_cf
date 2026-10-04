@@ -1,0 +1,13 @@
+// Static-asset Worker (this repo builds a fully static `dist/`).
+// Committed so `wrangler deploy` never runs framework detection: without
+// this file Wrangler assumes an Astro SSR app, runs `astro add cloudflare`,
+// and pays for a second hybrid build on every deploy. Keep `main` unset and
+// `assets.directory` pointing at the Astro static output.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "smgsj-test",
+  "compatibility_date": "2026-10-04",
+  "assets": {
+    "directory": "./dist"
+  }
+}
