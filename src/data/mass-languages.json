@@ -1,0 +1,22 @@
+[
+  {
+    "code": "english",
+    "autonym": "English",
+    "chip": "english"
+  },
+  {
+    "code": "spanish",
+    "autonym": "Español",
+    "chip": "es"
+  },
+  {
+    "code": "vietnamese",
+    "autonym": "Tiếng Việt",
+    "chip": "vi"
+  },
+  {
+    "code": "tagalog",
+    "autonym": "Tagalog",
+    "chip": "tagalog"
+  }
+]

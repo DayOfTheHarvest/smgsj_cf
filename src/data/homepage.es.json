@@ -121,6 +121,8 @@
       }
     ],
     "ethics_name": "EthicsPoint (Niños y Adultos Vulnerables)",
-    "ethics_report": "Denunciar en línea"
+    "ethics_report": "Denunciar en línea",
+    "ethics_note": "",
+    "show_phone": true
   }
 }

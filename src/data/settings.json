@@ -19,5 +19,21 @@
   "today_embed": "https://www.calendarwiz.com/calendars/day.php?crd=smgsj&cid[]=all",
   "logo": "/uploads/logo.png",
   "site_name": "St. Maria Goretti Parish",
-  "shrine_address": "685 Singleton Road, San Jose, CA 95111"
+  "shrine_address": "685 Singleton Road, San Jose, CA 95111",
+  "emergencies": [
+    {
+      "id": "en-es",
+      "label_en": "English / Español",
+      "label_es": "English / Español",
+      "label_vi": "English / Español",
+      "number": "408-363-2311"
+    },
+    {
+      "id": "vi",
+      "label_en": "Tiếng Việt",
+      "label_es": "Tiếng Việt",
+      "label_vi": "Tiếng Việt",
+      "number": "408-363-2310"
+    }
+  ]
 }

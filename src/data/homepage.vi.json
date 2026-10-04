@@ -121,6 +121,8 @@
       }
     ],
     "ethics_name": "EthicsPoint (Trẻ Em & Người Lớn Dễ Bị Tổn Thương)",
-    "ethics_report": "Báo cáo trực tuyến"
+    "ethics_report": "Báo cáo trực tuyến",
+    "ethics_note": "",
+    "show_phone": true
   }
 }

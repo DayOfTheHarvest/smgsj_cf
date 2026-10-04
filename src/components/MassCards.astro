@@ -1,14 +1,13 @@
 ---
-import { MASS_ROWS, CONFESSION, locName, dayName, serviceName, SCHEDULE_DISPLAY } from '../data/mass';
+import { MASS_ROWS, CONFESSION, locName, dayName, serviceName, SCHEDULE_DISPLAY, langCode, langAutonym, langChip, defaultLangFilter } from '../data/mass';
 import type { Lang } from '../config';
 interface Props { lang: Lang; compact?: boolean; ui: any; }
 const { lang, compact = false, ui } = Astro.props;
 
-const chipClass = (l: string) =>
-  l === 'English' ? 'chip chip-english' : l === 'Español' ? 'chip chip-es' : l === 'Vietnamese' ? 'chip chip-vi' : 'chip chip-tagalog';
-// Autonyms: every language names itself, so chips need no translation.
-const langName = (l: string) =>
-  l === 'Vietnamese' ? 'Tiếng Việt' : l;
+// Language chips/filters come from the Mass languages collection (Sveltia:
+// Mass languages), not hardcoded maps. Autonyms name each language in itself.
+const chipClass = (l: string) => langChip(l);
+const langName = (l: string) => langAutonym(l);
 
 // Weekly presiders live on each Mass row (blank = TBD). Names need no translation.
 const showPresiders = MASS_ROWS.some((r) => (r.presider || '').trim().length > 0);
@@ -27,12 +26,11 @@ const dayGroups = [
 ];
 
 const initialFilter = compact
-  ? (lang === 'es' ? 'Español' : lang === 'vi' ? 'Vietnamese' : 'English')
+  ? defaultLangFilter(lang)
   : 'all'; // full table page always starts unfiltered
 
-const LANG_LABELS: Record<string, string> = { English: 'English', 'Español': 'Español', Vietnamese: 'Tiếng Việt', Tagalog: 'Tagalog' };
 const filters = [{ value: 'all', label: ui.schedule.all }].concat(
-  [...new Set(MASS_ROWS.map((r) => r.lang))].map((l) => ({ value: l, label: LANG_LABELS[l] || l })),
+  [...new Set(MASS_ROWS.map((r) => langCode(r.lang)))].map((l) => ({ value: l, label: langAutonym(l) })),
 );
 // Image-swap mode: staff can replace the whole schedule block with an uploaded
 // image for a special week (Sveltia: Mass schedule → Display). Table page unaffected.
@@ -64,7 +62,7 @@ const showImage = compact && display.mode === 'image' && display.image?.trim();
           <h3 class="mt-0">{g.name}</h3>
           <dl class="my-2">
             {g.rows.map((r) => (
-              <div data-lang={r.lang}>
+              <div data-lang={langCode(r.lang)}>
                 <dt>{r.service === 'Weekday' && r.day !== 'Mon-Fri' ? <>{dayName(r.day, lang)}{' '}</> : null}{r.time}{r.suffix ? ` ${r.suffix}` : ''}{r.note ? ` — ${r.note}` : ''} <span class={chipClass(r.lang)}>{langName(r.lang)}</span></dt>
                 <dd>{serviceName(r.service, lang)} · {locName(r.location, lang)}{presiderOf(r) ? ` · ${presiderOf(r)}` : ''}</dd>
               </div>
@@ -101,7 +99,7 @@ const showImage = compact && display.mode === 'image' && display.image?.trim();
         </thead>
         <tbody>
           {MASS_ROWS.map((r) => (
-            <tr data-lang={r.lang}>
+            <tr data-lang={langCode(r.lang)}>
               <td>{serviceName(r.service, lang)}</td>
               <td><strong>{dayName(r.day, lang)}{' '}{r.time}{r.suffix ? ` ${r.suffix}` : ''}</strong>{r.note ? <><br /><small class="text-soft">{r.note}</small></> : null}</td>
               <td><span class={chipClass(r.lang)}>{langName(r.lang)}</span></td>

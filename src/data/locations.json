@@ -1,0 +1,50 @@
+[
+  {
+    "key": "church",
+    "en": {
+      "name": "Church"
+    },
+    "es": {
+      "name": "Templo"
+    },
+    "vi": {
+      "name": "Nhà thờ"
+    }
+  },
+  {
+    "key": "patio",
+    "en": {
+      "name": "Patio"
+    },
+    "es": {
+      "name": "Patio"
+    },
+    "vi": {
+      "name": "Nhà gỗ"
+    }
+  },
+  {
+    "key": "divine-mercy-chapel",
+    "en": {
+      "name": "Divine Mercy Chapel"
+    },
+    "es": {
+      "name": "Divine Mercy Chapel"
+    },
+    "vi": {
+      "name": "Nguyện Đường"
+    }
+  },
+  {
+    "key": "viet-martyrs-shrine",
+    "en": {
+      "name": "Viet. Martyr's Shrine"
+    },
+    "es": {
+      "name": "Viet. Martyr's Shrine"
+    },
+    "vi": {
+      "name": "Nguyện Đường Các Thánh Tử Đạo"
+    }
+  }
+]

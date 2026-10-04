@@ -1,9 +1,10 @@
 ---
-import { ADDRESS, PHONE, EMAIL, EMERGENCY_EN_ES, EMERGENCY_VI, EXTERNAL } from '../config';
+import { ADDRESS, PHONE, EMAIL, EMERGENCIES, emergencyLabel, EXTERNAL } from '../config';
 import { OFFICE_HOURS } from '../data/mass';
 import Icon from './Icon.astro';
 interface Props { lang: string; ui: any; }
 const { lang, ui } = Astro.props;
+const tel = (n: string) => (n || '').replace(/[^0-9]/g, '');
 const hours = (OFFICE_HOURS[lang] || OFFICE_HOURS.en).split('\n').map((line: string) => {
   const i = line.indexOf(':');
   return i > 0
@@ -21,7 +22,9 @@ const hours = (OFFICE_HOURS[lang] || OFFICE_HOURS.en).split('\n').map((line: str
     <div>
       <h2>{ui.footer.phone}</h2>
       <p class="my-2 text-[0.95rem]"><a href={`tel:${PHONE.replace(/[^0-9]/g, '')}`} class="font-extrabold">{PHONE}</a></p>
-      <p class="my-2 text-[0.95rem]">{ui.footer.emergency}:<br />EN/ES <a href="tel:4083632311">{EMERGENCY_EN_ES}</a><br />VI <a href="tel:4083632310">{EMERGENCY_VI}</a></p>
+      <p class="my-2 text-[0.95rem]">{ui.footer.emergency}:<br />{EMERGENCIES.map((e, i) => (
+        <span>{emergencyLabel(e, lang as any)}{' '}<a href={`tel:${tel(e.number)}`}>{e.number}</a>{i < EMERGENCIES.length - 1 ? <><br /></> : null}</span>
+      ))}</p>
     </div>
     <div>
       <h2>{ui.footer.email}</h2>

@@ -111,36 +111,66 @@ collections:
         widget: hidden
         i18n: duplicate
 
+  - name: locations
+    label: Mass locations
+    label_singular: Mass location
+    icon: location_on
+    description: 'Add a location once, then pick it in the Mass list. Switch languages top-right to translate each place name.'
+    file: src/data/locations.json
+    identifier_field: key
+    i18n: true
+    summary: '{{name}}'
+    fields:
+      - label: 'Location code (lowercase-with-dashes, e.g. church — set once, then never change)'
+        name: key
+        widget: string
+        i18n: duplicate
+        required: true
+        pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Lowercase letters, numbers, and dashes only']
+        hint: 'WARNING: used behind the scenes to match Masses. Changing it later breaks Mass translations. Shared by all languages — edit in English only.'
+      - label: 'Name (this language)'
+        name: name
+        widget: string
+        i18n: true
+        required: [en]
+        hint: 'How this place reads in this language. Switch languages top-right to translate.'
+
+  - name: mass_languages
+    label: Mass languages
+    label_singular: Mass language
+    icon: translate
+    description: 'Add a language once, then pick it in the Mass list. Names use autonyms so chips need no translation.'
+    file: src/data/mass-languages.json
+    identifier_field: code
+    i18n: false
+    summary: '{{autonym}}'
+    fields:
+      - label: 'Language code (lowercase, e.g. english — set once, then never change)'
+        name: code
+        widget: string
+        i18n: duplicate
+        required: true
+        pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Lowercase letters, numbers, and dashes only']
+        hint: 'WARNING: used behind the scenes to match Masses and filters. Changing it later breaks the schedule. Edit in English only.'
+      - label: 'Name (autonym, e.g. English, Español, Tiếng Việt, Tagalog)'
+        name: autonym
+        widget: string
+        i18n: duplicate
+        required: true
+        hint: 'How the language names itself — shown on chips and filters in every site language.'
+      - label: 'Chip style (optional, e.g. english, es, vi, tagalog)'
+        name: chip
+        widget: string
+        i18n: duplicate
+        required: false
+        hint: 'CSS suffix for the language chip. Blank = default chip.'
+
   - name: schedule
     label: Mass schedule & presiders (weekly)
     icon: calendar_month
     description: 'Each Mass row carries its own presider name, so nothing can silently mismatch.'
     i18n: true
     files:
-      - name: locations
-        label: Location names (translations)
-        icon: location_on
-        file: src/data/locations.{{locale}}.json
-        i18n: true
-        description: 'How each place name reads in this language. Switch languages top-right to translate all four places. Add/remove rows in English only.'
-        fields:
-          - label: 'Locations'
-            name: locations
-            widget: list
-            i18n: true
-            summary: '{{name}}'
-            hint: 'Do not add or remove rows without the web developer volunteer — the Mass list matches by the English name. Add/remove rows in English; other languages follow the same rows.'
-            fields:
-              - label: 'Place (must match Mass list)'
-                name: name
-                widget: select
-                i18n: duplicate
-                options: ['Church', 'Patio', 'Divine Mercy Chapel', "Viet. Martyr's Shrine"]
-              - label: 'Name in this language'
-                name: text
-                widget: string
-                i18n: true
-                required: false
       - name: masses
         label: Mass times, places & presiders
         icon: event
@@ -184,12 +214,20 @@ collections:
                 required: false
               - label: 'Language'
                 name: lang
-                widget: select
-                options: ['English', 'Español', 'Vietnamese', 'Tagalog']
-              - label: "Place (type exactly: Church, Patio, Divine Mercy Chapel, Viet. Martyr's Shrine — or a new place)"
+                widget: relation
+                collection: mass_languages
+                value_field: code
+                display_fields: [autonym]
+                search_fields: [autonym]
+                hint: 'Pick a language — add a new one under Mass languages first if missing.'
+              - label: 'Place'
                 name: location
-                widget: string
-                hint: 'Use one of the four places above so the translation appears automatically. A brand-new place shows exactly as typed until its translations are added under Location names.'
+                widget: relation
+                collection: locations
+                value_field: key
+                display_fields: [name]
+                search_fields: [name]
+                hint: 'Pick a place — add a new one under Mass locations first if missing.'
               - label: 'Note (optional, e.g. Livestream)'
                 name: note
                 widget: string
@@ -303,78 +341,8 @@ collections:
                 i18n: duplicate
                 hint: 'How long this slide shows before rotating. Blank = 5 seconds.'
 
-  # ——— Parish setup (office, staff, site-wide settings) ———
+  # ——— Site-wide settings ———
   - divider: true
-
-  - name: parish
-    label: Parish info
-    icon: business
-    description: 'Office hours in all 3 languages — updates the homepage, footer and contact page at once.'
-    i18n: true
-    files:
-      - name: office-hours
-        label: Office hours (homepage, footer, contact)
-        file: src/data/office.{{locale}}.json
-        i18n: true
-        description: One place — updates the homepage Contact section, the footer on every page, and the contact page automatically. Switch languages top-right.
-        fields:
-          - label: 'Office hours (two lines: open days first, closed days second)'
-            name: text
-            widget: text
-            i18n: true
-            required: false
-            hint: 'Example: Tuesday – Friday: 10:00 a.m. – 5:00 p.m.'
-
-  - name: directory
-    label: Staff directory
-    icon: group
-    description: 'Priests, staff and office contacts — photos via Choose image, never a typed path.'
-    i18n: true
-    files:
-      - name: staff
-        label: Staff members
-        file: src/data/staff.{{locale}}.json
-        i18n: true
-        description: Names, roles, phone numbers, and bios. Photos are managed by the web developer volunteer. Write role and bio in this language — switch top-right.
-        fields:
-          - label: 'Members'
-            name: members
-            widget: list
-            collapsed: auto
-            label_singular: 'Member'
-            i18n: true
-            summary: '{{name}}'
-            thumbnail: photo
-            fields:
-              - label: 'Page code'
-                name: slug
-                widget: string
-                i18n: duplicate
-                hint: 'For a NEW person, type lowercase-with-dashes (e.g. maria-santos). Never change an existing code — profile links would break.'
-              - label: 'Name'
-                name: name
-                widget: string
-                i18n: duplicate
-              - label: 'Role (this language)'
-                name: role
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Phone'
-                name: phone
-                widget: string
-                i18n: duplicate
-              - label: 'Photo'
-                name: photo
-                widget: image
-                required: false
-                i18n: duplicate
-                hint: 'WARNING: do not change unless replacing the portrait. Use Choose image, never type a path.'
-              - label: 'Bio (blank = no profile page link, this language)'
-                name: bio
-                widget: text
-                required: false
-                i18n: true
 
   - name: site
     label: 'Site settings, navigation & homepage — CAREFUL'
@@ -398,8 +366,38 @@ collections:
           - { label: 'Shrine address', name: shrine_address, widget: string }
           - { label: 'Email', name: email, widget: string }
           - { label: 'Address', name: address, widget: string }
-          - { label: 'Emergency EN/ES', name: emergency_en_es, widget: string }
-          - { label: 'Emergency VI', name: emergency_vi, widget: string }
+          - label: 'Emergency numbers (add rows for future languages)'
+            name: emergencies
+            widget: list
+            i18n: false
+            collapsed: auto
+            label_singular: 'Emergency number'
+            summary: '{{number}}'
+            hint: 'One row per emergency line. Labels carry all three translations so numbers stay stored once.'
+            fields:
+              - label: 'Row code (lowercase-with-dashes, e.g. en-es — set once, never change)'
+                name: id
+                widget: string
+                i18n: duplicate
+                required: true
+                pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Lowercase letters, numbers, and dashes only']
+              - label: 'Label (English)'
+                name: label_en
+                widget: string
+                required: false
+              - label: 'Label (Español)'
+                name: label_es
+                widget: string
+                required: false
+              - label: 'Label (Tiếng Việt)'
+                name: label_vi
+                widget: string
+                required: false
+              - label: 'Number (e.g. 408-363-2311)'
+                name: number
+                widget: string
+                i18n: duplicate
+                required: true
           - { label: 'Facility email', name: facility_email, widget: string }
           - { label: 'Online Giving URL', name: giving, widget: string }
           - { label: 'Online Payment URL', name: payment, widget: string }
@@ -686,6 +684,22 @@ collections:
                 widget: string
                 i18n: true
                 required: false
+              - label: 'EthicsPoint custom note (optional — blank = show standard line)'
+                name: ethics_note
+                widget: markdown
+                i18n: true
+                required: false
+                hint: 'If filled, this replaces the standard EthicsPoint line for this language. Leave blank to keep the standard line.'
+                buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                editor_components: [image, code-block]
+                modes: [rich_text, raw]
+              - label: 'Show EthicsPoint phone'
+                name: show_phone
+                widget: boolean
+                i18n: duplicate
+                default: true
+                required: false
+                hint: 'Uncheck to hide the phone link (both in standard and custom-note display).'
       - name: action-cards
         label: Homepage action cards
         icon: dashboard
@@ -944,3 +958,65 @@ collections:
         - { label: '“View calendar” link', name: viewFacilities, widget: string, i18n: true, required: false }
         - { label: '“View profile” link', name: viewProfile, widget: string, i18n: true, required: false }
         - { label: 'Visit title', name: visitTitle, widget: string, i18n: true, required: false }
+
+# Single-entry files, top-level for one-click editing (pilot: office-hours + staff).
+# Paths unchanged so templates work untouched. Relations use collection _singletons.
+singletons:
+  - name: office-hours
+    label: Office hours (homepage, footer, contact)
+    file: src/data/office.{{locale}}.json
+    i18n: true
+    icon: business
+    description: One place — updates the homepage Contact section, the footer on every page, and the contact page automatically. Switch languages top-right.
+    fields:
+      - label: 'Office hours (two lines: open days first, closed days second)'
+        name: text
+        widget: text
+        i18n: true
+        required: false
+        hint: 'Example: Tuesday – Friday: 10:00 a.m. – 5:00 p.m.'
+  - name: staff
+    label: Staff members
+    file: src/data/staff.{{locale}}.json
+    i18n: true
+    icon: group
+    description: Names, roles, phone numbers, and bios. Photos are managed by the web developer volunteer. Write role and bio in this language — switch top-right.
+    fields:
+      - label: 'Members'
+        name: members
+        widget: list
+        collapsed: auto
+        label_singular: 'Member'
+        i18n: true
+        summary: '{{name}}'
+        thumbnail: photo
+        fields:
+          - label: 'Page code'
+            name: slug
+            widget: string
+            i18n: duplicate
+            hint: 'For a NEW person, type lowercase-with-dashes (e.g. maria-santos). Never change an existing code — profile links would break.'
+          - label: 'Name'
+            name: name
+            widget: string
+            i18n: duplicate
+          - label: 'Role (this language)'
+            name: role
+            widget: string
+            i18n: true
+            required: false
+          - label: 'Phone'
+            name: phone
+            widget: string
+            i18n: duplicate
+          - label: 'Photo'
+            name: photo
+            widget: image
+            required: false
+            i18n: duplicate
+            hint: 'WARNING: do not change unless replacing the portrait. Use Choose image, never type a path.'
+          - label: 'Bio (blank = no profile page link, this language)'
+            name: bio
+            widget: text
+            required: false
+            i18n: true

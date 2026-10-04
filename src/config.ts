@@ -14,6 +14,40 @@ export const PHONE: string = settings.phone;
 export const EMAIL: string = settings.email;
 export const EMERGENCY_EN_ES: string = settings.emergency_en_es;
 export const EMERGENCY_VI: string = settings.emergency_vi;
+export interface EmergencyRow {
+  id: string;
+  label_en: string;
+  label_es: string;
+  label_vi: string;
+  number: string;
+}
+// Emergency numbers: flexible list (Sveltia: Site settings -> Emergency numbers).
+// Labels carry EN/ES/VI together so numbers stay stored once; i18n false on list.
+// Falls back to the two legacy strings if the new array is missing (rollback safety).
+export const EMERGENCIES: EmergencyRow[] = Array.isArray((settings as any).emergencies)
+  ? ((settings as any).emergencies as EmergencyRow[])
+  : [
+      {
+        id: 'en-es',
+        label_en: 'English / Español',
+        label_es: 'English / Español',
+        label_vi: 'English / Español',
+        number: settings.emergency_en_es || '',
+      },
+      {
+        id: 'vi',
+        label_en: 'Tiếng Việt',
+        label_es: 'Tiếng Việt',
+        label_vi: 'Tiếng Việt',
+        number: settings.emergency_vi || '',
+      },
+    ];
+
+export function emergencyLabel(row: EmergencyRow, lang: Lang): string {
+  if (lang === 'es') return row.label_es || row.label_en || row.number;
+  if (lang === 'vi') return row.label_vi || row.label_en || row.number;
+  return row.label_en || row.number;
+}
 export const FACILITY_EMAIL: string = settings.facility_email;
 
 // Auth provider for /admin (Sveltia CMS).

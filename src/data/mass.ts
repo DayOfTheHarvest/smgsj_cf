@@ -11,35 +11,63 @@ import officeEn from './office.en.json';
 import officeEs from './office.es.json';
 import officeVi from './office.vi.json';
 
-import locationsEn from './locations.en.json';
-import locationsEs from './locations.es.json';
-import locationsVi from './locations.vi.json';
+import locationsData from './locations.json';
+import massLangsData from './mass-languages.json';
 import { localize } from '../lib/i18n';
 
-// Location names per language (staff-managed in Sveltia: Mass schedule &
-// presiders → Location names, one screen per language). `name` is the stable
-// row key; missing translations fall back to English, then to the key itself
-// (same guarantee the old `?? loc` fallback gave).
-const locMerged = {
-  en: locationsEn as any,
-  es: localize(locationsEn, locationsEs) as any,
-  vi: localize(locationsEn, locationsVi) as any,
-};
-const locText = (lang: Lang, name: string, fallback: string): string =>
-  (locMerged[lang].locations as Array<{ name: string; text: string }>).find(
-    (r) => r.name === name,
-  )?.text ||
-  fallback ||
-  name;
+// Mass locations: single-file entry collection (Sveltia: Mass locations).
+// Each object holds all locales: {key, en:{name}, es:{name}, vi:{name}}.
+// `key` is the stable Relation value; missing translations fall back to
+// English, then to the key itself.
+type LocEntry = { key?: string; en?: { name?: string }; es?: { name?: string }; vi?: { name?: string }; name?: string };
 const LOCALES: Record<string, Record<Lang, string>> = Object.fromEntries(
-  (locMerged.en.locations as Array<{ name: string; text: string }>).map((l) => [
-    l.name,
-    { en: locText('en', l.name, ''), es: locText('es', l.name, l.text), vi: locText('vi', l.name, l.text) },
-  ]),
+  (locationsData as unknown as LocEntry[]).map((e) => {
+    const key = (e.key || (e as any).name || '') as string;
+    const enName = e.en?.name || (e as any).name || key;
+    const esName = e.es?.name || enName;
+    const viName = e.vi?.name || enName;
+    return [key, { en: enName, es: esName, vi: viName }];
+  }),
 );
 
 export function locName(loc: string, lang: Lang): string {
   return LOCALES[loc]?.[lang] ?? loc;
+}
+
+// Mass languages: single-file entry collection (Sveltia: Mass languages).
+// Codes are Relation values (english|spanish|vietnamese|tagalog); autonyms
+// name each language in itself so chips need no translation.
+type LangEntry = { code: string; autonym: string; chip?: string };
+export const MASS_LANGS: LangEntry[] = massLangsData as unknown as LangEntry[];
+const LANG_BY_CODE: Record<string, LangEntry> = Object.fromEntries(
+  MASS_LANGS.map((l) => [l.code, l]),
+);
+// Back-compat: old display values (English|Español|Vietnamese|Tagalog) map to codes.
+const OLD_LANG_TO_CODE: Record<string, string> = {
+  English: 'english',
+  'Español': 'spanish',
+  Vietnamese: 'vietnamese',
+  Tagalog: 'tagalog',
+};
+
+export function langCode(raw: string): string {
+  return LANG_BY_CODE[raw] ? raw : (OLD_LANG_TO_CODE[raw] || raw);
+}
+
+export function langAutonym(code: string): string {
+  const c = langCode(code);
+  return LANG_BY_CODE[c]?.autonym || code;
+}
+
+export function langChip(code: string): string {
+  const c = langCode(code);
+  const suffix = LANG_BY_CODE[c]?.chip || c;
+  return `chip chip-${suffix}`;
+}
+
+/** Site locale -> default Mass filter code (compact homepage block). */
+export function defaultLangFilter(siteLang: Lang): string {
+  return siteLang === 'es' ? 'spanish' : siteLang === 'vi' ? 'vietnamese' : 'english';
 }
 
 // Day names per language, matching the parish's own Spanish/Vietnamese Mass
@@ -83,7 +111,9 @@ export interface MassRow {
   time: string;
   /** Optional trailing marker, e.g. - Patio. Usually blank. */
   suffix?: string;
-  lang: 'English' | 'Español' | 'Vietnamese' | 'Tagalog';
+  /** Mass language code (Relation -> mass_languages.code, e.g. english). */
+  lang: string;
+  /** Location key (Relation -> locations.key, e.g. church). */
   location: string;
   /** Extra detail from the parish schedule graphic (e.g. Livestream). */
   note?: string;

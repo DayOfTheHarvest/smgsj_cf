@@ -137,7 +137,16 @@ for (const id of DEFAULT_ORDER) {
               <a href={ic.link}><img src={ic.image} alt={ic.alt} width={ic.width || 140} height={ic.height || 140} loading="lazy" class="diocesan-icon" /></a>
             ))}
           </div>
-          <p class="mx-auto mt-4 text-sm text-soft">{catholic.ethics_name}: <a href={`tel:${EXTERNAL.ethicspoint_phone.replace(/[^0-9]/g, '')}`} class="font-bold">{EXTERNAL.ethicspoint_phone}</a> · <a href={EXTERNAL.ethicspoint}>{catholic.ethics_report}</a></p>
+          {((catholic.ethics_note || '').trim() ? (
+            <div class="mx-auto mt-4 text-sm text-soft">
+              <div set:html={renderMd((catholic.ethics_note || '').trim())} />
+              {catholic.show_phone !== false && (
+                <p><a href={`tel:${EXTERNAL.ethicspoint_phone.replace(/[^0-9]/g, '')}`} class="font-bold">{EXTERNAL.ethicspoint_phone}</a> · <a href={EXTERNAL.ethicspoint}>{catholic.ethics_report || 'Report online'}</a></p>
+              )}
+            </div>
+          ) : (
+            <p class="mx-auto mt-4 text-sm text-soft">{catholic.ethics_name}: {catholic.show_phone !== false && (<><a href={`tel:${EXTERNAL.ethicspoint_phone.replace(/[^0-9]/g, '')}`} class="font-bold">{EXTERNAL.ethicspoint_phone}</a> · </>)}<a href={EXTERNAL.ethicspoint}>{catholic.ethics_report}</a></p>
+          ))}
         </section>
       )}
       </>

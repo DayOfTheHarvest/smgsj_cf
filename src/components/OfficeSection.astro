@@ -1,11 +1,11 @@
 ---
 import { OFFICE_HOURS } from '../data/mass';
-import { PHONE, EMAIL, EMERGENCY_EN_ES, EMERGENCY_VI } from '../config';
+import { PHONE, EMAIL, EMERGENCIES, emergencyLabel } from '../config';
 import Icon from './Icon.astro';
 import type { Lang } from '../config';
 interface Props { lang: Lang; ui: any; }
 const { lang, ui } = Astro.props;
-const tel = (n: string) => n.replace(/[^0-9]/g, '');
+const tel = (n: string) => (n || '').replace(/[^0-9]/g, '');
 const hours = (OFFICE_HOURS[lang] || OFFICE_HOURS.en).split('\n').map((line) => {
   const i = line.indexOf(':');
   return i > 0
@@ -30,14 +30,12 @@ const hours = (OFFICE_HOURS[lang] || OFFICE_HOURS.en).split('\n').map((line) => 
     <article class="card">
       <div class="card-head"><Icon name="alert" /><h3>{ui.footer.emergency}</h3></div>
       <dl class="my-2">
-        <div class="border-b border-line py-2">
-          <dt class="font-bold text-navy">English / Español</dt>
-          <dd class="m-0"><a class="font-bold" href={`tel:${tel(EMERGENCY_EN_ES)}`}>{EMERGENCY_EN_ES}</a></dd>
-        </div>
-        <div class="py-2">
-          <dt class="font-bold text-navy">Tiếng Việt</dt>
-          <dd class="m-0"><a class="font-bold" href={`tel:${tel(EMERGENCY_VI)}`}>{EMERGENCY_VI}</a></dd>
-        </div>
+        {EMERGENCIES.map((e, i) => (
+          <div class={i < EMERGENCIES.length - 1 ? 'border-b border-line py-2' : 'py-2'}>
+            <dt class="font-bold text-navy">{emergencyLabel(e, lang)}</dt>
+            <dd class="m-0"><a class="font-bold" href={`tel:${tel(e.number)}`}>{e.number}</a></dd>
+          </div>
+        ))}
       </dl>
     </article>
     <article class="card">

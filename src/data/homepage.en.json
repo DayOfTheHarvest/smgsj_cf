@@ -121,6 +121,8 @@
       }
     ],
     "ethics_name": "EthicsPoint (Children & Vulnerable Adults)",
-    "ethics_report": "Report online"
+    "ethics_report": "Report online",
+    "ethics_note": "",
+    "show_phone": true
   }
 }
