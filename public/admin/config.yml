@@ -188,6 +188,24 @@ collections:
                     label: Card
                     summary: '{{title}}'
                     fields:
+                      - label: 'Card content'
+                        name: kind
+                        widget: select
+                        i18n: duplicate
+                        options:
+                          - { label: 'Generic card', value: generic }
+                          - { label: 'Bulletin list', value: bulletins }
+                          - { label: 'Office hours', value: hours }
+                          - { label: 'Emergency numbers', value: emergency }
+                          - { label: 'Contact card', value: contact }
+                        default: generic
+                        hint: 'Live cards fill themselves from parish data — heading and icon still apply, text and buttons show around the live list.'
+                      - label: 'Bulletin count (bulletin cards only)'
+                        name: limit
+                        widget: number
+                        i18n: duplicate
+                        default: 5
+                        required: false
                       - label: 'Icon (pick from the list, optional)'
                         name: icon
                         widget: select
@@ -351,6 +369,24 @@ collections:
                     label: Card
                     summary: '{{title}}'
                     fields:
+                      - label: 'Card content'
+                        name: kind
+                        widget: select
+                        i18n: duplicate
+                        options:
+                          - { label: 'Generic card', value: generic }
+                          - { label: 'Bulletin list', value: bulletins }
+                          - { label: 'Office hours', value: hours }
+                          - { label: 'Emergency numbers', value: emergency }
+                          - { label: 'Contact card', value: contact }
+                        default: generic
+                        hint: 'Live cards fill themselves from parish data — heading and icon still apply, text and buttons show around the live list.'
+                      - label: 'Bulletin count (bulletin cards only)'
+                        name: limit
+                        widget: number
+                        i18n: duplicate
+                        default: 5
+                        required: false
                       - label: 'Icon (pick from the list, optional)'
                         name: icon
                         widget: select
@@ -642,9 +678,7 @@ collections:
                     i18n: duplicate
                     options:
                       - { label: 'Carousel — rotating banner slides', value: carousel }
-                      - { label: 'Actions — action cards row', value: actions }
                       - { label: 'Body — homepage page text', value: body }
-                      - { label: 'Office — contact + office hours cards', value: office }
                       - { label: 'Flocknote — signup form', value: flocknote }
                   - label: 'Visible'
                     name: visible
@@ -745,6 +779,24 @@ collections:
                         label: Card
                         summary: '{{title}}'
                         fields:
+                          - label: 'Card content'
+                            name: kind
+                            widget: select
+                            i18n: duplicate
+                            options:
+                              - { label: 'Generic card', value: generic }
+                              - { label: 'Bulletin list', value: bulletins }
+                              - { label: 'Office hours', value: hours }
+                              - { label: 'Emergency numbers', value: emergency }
+                              - { label: 'Contact card', value: contact }
+                            default: generic
+                            hint: 'Live cards fill themselves from parish data — heading and icon still apply, text and buttons show around the live list.'
+                          - label: 'Bulletin count (bulletin cards only)'
+                            name: limit
+                            widget: number
+                            i18n: duplicate
+                            default: 5
+                            required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
                             widget: select
@@ -930,6 +982,24 @@ collections:
                         label: Card
                         summary: '{{title}}'
                         fields:
+                          - label: 'Card content'
+                            name: kind
+                            widget: select
+                            i18n: duplicate
+                            options:
+                              - { label: 'Generic card', value: generic }
+                              - { label: 'Bulletin list', value: bulletins }
+                              - { label: 'Office hours', value: hours }
+                              - { label: 'Emergency numbers', value: emergency }
+                              - { label: 'Contact card', value: contact }
+                            default: generic
+                            hint: 'Live cards fill themselves from parish data — heading and icon still apply, text and buttons show around the live list.'
+                          - label: 'Bulletin count (bulletin cards only)'
+                            name: limit
+                            widget: number
+                            i18n: duplicate
+                            default: 5
+                            required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
                             widget: select
@@ -1127,6 +1197,24 @@ collections:
                         label: Card
                         summary: '{{title}}'
                         fields:
+                          - label: 'Card content'
+                            name: kind
+                            widget: select
+                            i18n: duplicate
+                            options:
+                              - { label: 'Generic card', value: generic }
+                              - { label: 'Bulletin list', value: bulletins }
+                              - { label: 'Office hours', value: hours }
+                              - { label: 'Emergency numbers', value: emergency }
+                              - { label: 'Contact card', value: contact }
+                            default: generic
+                            hint: 'Live cards fill themselves from parish data — heading and icon still apply, text and buttons show around the live list.'
+                          - label: 'Bulletin count (bulletin cards only)'
+                            name: limit
+                            widget: number
+                            i18n: duplicate
+                            default: 5
+                            required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
                             widget: select
@@ -1323,6 +1411,24 @@ collections:
                         label: Card
                         summary: '{{title}}'
                         fields:
+                          - label: 'Card content'
+                            name: kind
+                            widget: select
+                            i18n: duplicate
+                            options:
+                              - { label: 'Generic card', value: generic }
+                              - { label: 'Bulletin list', value: bulletins }
+                              - { label: 'Office hours', value: hours }
+                              - { label: 'Emergency numbers', value: emergency }
+                              - { label: 'Contact card', value: contact }
+                            default: generic
+                            hint: 'Live cards fill themselves from parish data — heading and icon still apply, text and buttons show around the live list.'
+                          - label: 'Bulletin count (bulletin cards only)'
+                            name: limit
+                            widget: number
+                            i18n: duplicate
+                            default: 5
+                            required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
                             widget: select
@@ -1530,6 +1636,24 @@ collections:
                         label: Card
                         summary: '{{title}}'
                         fields:
+                          - label: 'Card content'
+                            name: kind
+                            widget: select
+                            i18n: duplicate
+                            options:
+                              - { label: 'Generic card', value: generic }
+                              - { label: 'Bulletin list', value: bulletins }
+                              - { label: 'Office hours', value: hours }
+                              - { label: 'Emergency numbers', value: emergency }
+                              - { label: 'Contact card', value: contact }
+                            default: generic
+                            hint: 'Live cards fill themselves from parish data — heading and icon still apply, text and buttons show around the live list.'
+                          - label: 'Bulletin count (bulletin cards only)'
+                            name: limit
+                            widget: number
+                            i18n: duplicate
+                            default: 5
+                            required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
                             widget: select
@@ -1685,6 +1809,24 @@ collections:
                         label: Card
                         summary: '{{title}}'
                         fields:
+                          - label: 'Card content'
+                            name: kind
+                            widget: select
+                            i18n: duplicate
+                            options:
+                              - { label: 'Generic card', value: generic }
+                              - { label: 'Bulletin list', value: bulletins }
+                              - { label: 'Office hours', value: hours }
+                              - { label: 'Emergency numbers', value: emergency }
+                              - { label: 'Contact card', value: contact }
+                            default: generic
+                            hint: 'Live cards fill themselves from parish data — heading and icon still apply, text and buttons show around the live list.'
+                          - label: 'Bulletin count (bulletin cards only)'
+                            name: limit
+                            widget: number
+                            i18n: duplicate
+                            default: 5
+                            required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
                             widget: select
@@ -1737,93 +1879,6 @@ collections:
                             required: false
                       - name: staff
                         label: Staff Directory
-      - name: action-cards
-        label: Homepage Action Cards
-        icon: dashboard
-        file: src/data/actions.{{locale}}.json
-        i18n: true
-        description: >-
-          The cards below the welcome banner. Add, remove, or reorder cards.
-          Each card has a kind (bulletin list, link button, or text only).
-          Switch languages top-right; add/remove cards in English only.
-        fields:
-          - label: 'Bulletin list length (bulletin cards show this many)'
-            name: bulletins_limit
-            widget: number
-            i18n: duplicate
-            default: 5
-            hint: 'How many bulletins the bulletin card lists. Older bulletins still drop off by date.'
-          - label: 'Cards'
-            name: cards
-            widget: list
-            collapsed: auto
-            label_singular: 'Card'
-            i18n: duplicate
-            summary: '{{title}}'
-            fields:
-              - label: 'Icon (pick from the list — no emoji needed)'
-                name: icon
-                widget: select
-                i18n: duplicate
-                options: ['news', 'heart', 'card', 'form', 'calendar', 'users', 'church', 'phone', 'mail', 'clock', 'star', 'info']
-                required: false
-              - label: 'Title (this language)'
-                name: title
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Text (blank for bulletin-list cards, this language)'
-                name: text
-                widget: text
-                i18n: true
-                required: false
-              - label: 'Button link (blank = text-only card)'
-                name: link
-                widget: string
-                required: false
-                i18n: duplicate
-                hint: 'A parish page (/requests/), a full web address, or a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube). See “Contact Info & External Links” for what each @shortcut opens.'
-              - label: 'Button label (this language)'
-                name: link_label
-                widget: string
-                required: false
-                i18n: true
-              - label: 'Button color'
-                name: style
-                widget: select
-                i18n: duplicate
-                options: ['primary', 'gold', 'outline']
-              - label: 'Second link (optional, e.g. Online Payment)'
-                name: extra_link
-                widget: string
-                required: false
-                i18n: duplicate
-                hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
-              - label: 'Second link label (this language)'
-                name: extra_label
-                widget: string
-                required: false
-                i18n: true
-              - label: 'Second link style'
-                name: extra_style
-                widget: select
-                i18n: duplicate
-                options:
-                  - { label: 'Plain link', value: link }
-                  - { label: 'Primary button', value: primary }
-                  - { label: 'Gold button', value: gold }
-                  - { label: 'Outline button', value: outline }
-                default: link
-                required: false
-              - label: 'Card kind (what this card shows)'
-                name: kind
-                widget: select
-                i18n: duplicate
-                options:
-                  - { label: 'Bulletin list (latest bulletins)', value: bulletins }
-                  - { label: 'Link button', value: link }
-                  - { label: 'Text only', value: text }
-                hint: 'WARNING: only ONE card should be a bulletin list.'
       - name: slides
         label: Homepage Carousel
         icon: campaign

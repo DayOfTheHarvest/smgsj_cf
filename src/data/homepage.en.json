@@ -31,9 +31,60 @@
       "pastor_quote": "I am delighted to welcome you as you visit our parish website. This is a place where we stay connected and support one another in our life of faith. — Pastor Andrew C. Nguyen"
     },
     {
-      "type": "preset",
-      "id": "actions",
-      "visible": true
+      "type": "custom",
+      "title": "",
+      "visible": true,
+      "blocks": [
+        {
+          "type": "card",
+          "icon": "news",
+          "title": "Bulletin",
+          "kind": "bulletins",
+          "limit": 5
+        },
+        {
+          "type": "card",
+          "icon": "heart",
+          "title": "Online Giving",
+          "text": "Support our parish mission online.",
+          "buttons": [
+            {
+              "label": "Online Giving",
+              "link": "@giving",
+              "style": "primary"
+            }
+          ],
+          "buttons_layout": "stacked"
+        },
+        {
+          "type": "card",
+          "icon": "card",
+          "title": "Online Payment",
+          "text": "Make payments to the parish for services rendered.",
+          "buttons": [
+            {
+              "label": "Online Payment",
+              "link": "@payment",
+              "style": "primary"
+            }
+          ],
+          "buttons_layout": "stacked"
+        },
+        {
+          "type": "card",
+          "icon": "form",
+          "title": "Request Forms",
+          "text": "Funeral, hall rental, certificates, baptism and catechetical registration.",
+          "buttons": [
+            {
+              "label": "Request Forms",
+              "link": "/requests/",
+              "style": "primary"
+            }
+          ],
+          "buttons_layout": "stacked"
+        }
+      ]
     },
     {
       "type": "schedule",
@@ -110,9 +161,29 @@
       "visible": true
     },
     {
-      "type": "preset",
-      "id": "office",
-      "visible": true
+      "type": "custom",
+      "title": "Contact & Office Hours",
+      "visible": true,
+      "blocks": [
+        {
+          "type": "card",
+          "icon": "clock",
+          "title": "Office Hours",
+          "kind": "hours"
+        },
+        {
+          "type": "card",
+          "icon": "alert",
+          "title": "Emergency",
+          "kind": "emergency"
+        },
+        {
+          "type": "card",
+          "icon": "phone",
+          "title": "Get in Touch",
+          "kind": "contact"
+        }
+      ]
     },
     {
       "type": "preset",

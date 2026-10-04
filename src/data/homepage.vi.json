@@ -31,9 +31,60 @@
       "pastor_quote": "I am delighted to welcome you as you visit our parish website. This is a place where we stay connected and support one another in our life of faith. — Pastor Andrew C. Nguyen"
     },
     {
-      "type": "preset",
-      "id": "actions",
-      "visible": true
+      "type": "custom",
+      "title": "",
+      "visible": true,
+      "blocks": [
+        {
+          "type": "card",
+          "icon": "news",
+          "title": "Bản Tin",
+          "kind": "bulletins",
+          "limit": 5
+        },
+        {
+          "type": "card",
+          "icon": "heart",
+          "title": "Dâng Hiến Online",
+          "text": "Hỗ trợ sứ mạng của giáo xứ chúng ta trực tuyến.",
+          "buttons": [
+            {
+              "label": "Dâng Hiến Online",
+              "link": "@giving",
+              "style": "primary"
+            }
+          ],
+          "buttons_layout": "stacked"
+        },
+        {
+          "type": "card",
+          "icon": "card",
+          "title": "Thanh Toán Online",
+          "text": "Thanh toán cho giáo xứ cho các dịch vụ đã thực hiện.",
+          "buttons": [
+            {
+              "label": "Thanh Toán Online",
+              "link": "@payment",
+              "style": "primary"
+            }
+          ],
+          "buttons_layout": "stacked"
+        },
+        {
+          "type": "card",
+          "icon": "form",
+          "title": "Đơn Xin",
+          "text": "Tang lễ, thuê hội trường, chứng chỉ, rửa tội và ghi danh giáo lý.",
+          "buttons": [
+            {
+              "label": "Đơn Xin",
+              "link": "/requests/",
+              "style": "primary"
+            }
+          ],
+          "buttons_layout": "stacked"
+        }
+      ]
     },
     {
       "type": "schedule",
@@ -110,9 +161,29 @@
       "visible": true
     },
     {
-      "type": "preset",
-      "id": "office",
-      "visible": true
+      "type": "custom",
+      "title": "Liên Lạc & Giờ Văn Phòng",
+      "visible": true,
+      "blocks": [
+        {
+          "type": "card",
+          "icon": "clock",
+          "title": "Giờ Văn Phòng",
+          "kind": "hours"
+        },
+        {
+          "type": "card",
+          "icon": "alert",
+          "title": "Khẩn cấp",
+          "kind": "emergency"
+        },
+        {
+          "type": "card",
+          "icon": "phone",
+          "title": "Liên Hệ",
+          "kind": "contact"
+        }
+      ]
     },
     {
       "type": "preset",

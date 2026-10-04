@@ -31,9 +31,60 @@
       "pastor_quote": "I am delighted to welcome you as you visit our parish website. This is a place where we stay connected and support one another in our life of faith. — Pastor Andrew C. Nguyen"
     },
     {
-      "type": "preset",
-      "id": "actions",
-      "visible": true
+      "type": "custom",
+      "title": "",
+      "visible": true,
+      "blocks": [
+        {
+          "type": "card",
+          "icon": "news",
+          "title": "Boletín",
+          "kind": "bulletins",
+          "limit": 5
+        },
+        {
+          "type": "card",
+          "icon": "heart",
+          "title": "Donar en línea",
+          "text": "Apoye la misión de nuestra parroquia en línea.",
+          "buttons": [
+            {
+              "label": "Donar en línea",
+              "link": "@giving",
+              "style": "primary"
+            }
+          ],
+          "buttons_layout": "stacked"
+        },
+        {
+          "type": "card",
+          "icon": "card",
+          "title": "Pago en línea",
+          "text": "Realice pagos a la parroquia por servicios prestados.",
+          "buttons": [
+            {
+              "label": "Pago en línea",
+              "link": "@payment",
+              "style": "primary"
+            }
+          ],
+          "buttons_layout": "stacked"
+        },
+        {
+          "type": "card",
+          "icon": "form",
+          "title": "Formularios",
+          "text": "Funeral, alquiler del salón, certificados, bautismo e inscripción catequética.",
+          "buttons": [
+            {
+              "label": "Formularios",
+              "link": "/requests/",
+              "style": "primary"
+            }
+          ],
+          "buttons_layout": "stacked"
+        }
+      ]
     },
     {
       "type": "schedule",
@@ -110,9 +161,29 @@
       "visible": true
     },
     {
-      "type": "preset",
-      "id": "office",
-      "visible": true
+      "type": "custom",
+      "title": "Contacto y Horario de Oficina",
+      "visible": true,
+      "blocks": [
+        {
+          "type": "card",
+          "icon": "clock",
+          "title": "Horario de Oficina",
+          "kind": "hours"
+        },
+        {
+          "type": "card",
+          "icon": "alert",
+          "title": "Emergencia",
+          "kind": "emergency"
+        },
+        {
+          "type": "card",
+          "icon": "phone",
+          "title": "Comuníquese",
+          "kind": "contact"
+        }
+      ]
     },
     {
       "type": "preset",

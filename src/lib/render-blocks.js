@@ -103,7 +103,21 @@ export function renderStaffCards(members, o) {
   );
 }
 
-// Bulletin list (mirrors BulletinList.astro). Display label comes from the
+// Office hours text is one "Days: time" line per row in every language.
+// Shared so the site, the footer, and the CMS preview parse it identically.
+export function parseOfficeHours(text) {
+  return String(text || '')
+    .split('\n')
+    .map((line) => {
+      const i = line.indexOf(':');
+      return i > 0
+        ? { days: line.slice(0, i).trim(), time: line.slice(i + 1).trim() }
+        : { days: line.trim(), time: '' };
+    })
+    .filter((r) => r.days);
+}
+
+// Bulletin list. Display label comes from the
 // shared date, auto-translated per locale; a hand-typed label wins.
 export function bulletinLabel(b, lang) {
   const manual = (b.label || '').trim();
@@ -278,11 +292,83 @@ export function renderBlock(b, o, kp) {
     return renderStaffCards(o.staff.members, o.staff);
   }
   if (b.type === 'card') {
+    // Live cards fill their body from parish data (bulletins, office hours,
+    // emergency numbers, contact info) so those sections are generic card
+    // rows staff can reorder, rename, or remove. o carries the data:
+    // lang, bulletins {items, weeks}, office (hours text), emergencies
+    // [{label, number}] (pre-labeled by the caller), contact {phone, email}.
+    // Heading, icon, text, image, and buttons still apply around live bodies.
+    const kind = b.kind || 'generic';
     const html = b.text && String(b.text).trim() ? o.md(b.text) : '';
     const buttons = (Array.isArray(b.buttons) ? b.buttons : [])
       .map((btn) => buttonAnchor(btn, o))
       .filter(Boolean);
-    if (!(b.title && String(b.title).trim()) && !html && !buttons.length && !b.image) return '';
+    let live = '';
+    if (kind === 'bulletins') {
+      const src = o.bulletins;
+      const items = src
+        ? filterBulletins(src.items || [], Number(src.weeks ?? 3), Date.now()).slice(
+            0,
+            Number(b.limit ?? 5) || 5,
+          )
+        : [];
+      live = renderBulletinList(items, o.lang || 'en');
+    } else if (kind === 'hours' && o.office != null) {
+      const rows = parseOfficeHours(o.office);
+      live =
+        '<dl class="my-2">' +
+        rows
+          .map(
+            (r, i) =>
+              '<div class="' +
+              (i < rows.length - 1 ? 'border-b border-line py-2' : 'py-2') +
+              '">' +
+              '<dt class="font-bold text-navy">' +
+              esc(r.days) +
+              '</dt>' +
+              (r.time ? '<dd class="m-0">' + esc(r.time) + '</dd>' : '') +
+              '</div>',
+          )
+          .join('') +
+        '</dl>';
+    } else if (kind === 'emergency' && o.emergencies) {
+      const list = o.emergencies;
+      live =
+        '<dl class="my-2">' +
+        list
+          .map(
+            (e, i) =>
+              '<div class="' +
+              (i < list.length - 1 ? 'border-b border-line py-2' : 'py-2') +
+              '">' +
+              '<dt class="font-bold text-navy">' +
+              esc(e.label) +
+              '</dt>' +
+              '<dd class="m-0"><a class="font-bold" href="tel:' +
+              escAttr(String(e.number || '').replace(/[^0-9]/g, '')) +
+              '">' +
+              esc(e.number) +
+              '</a></dd></div>',
+          )
+          .join('') +
+        '</dl>';
+    } else if (kind === 'contact' && o.contact) {
+      const tel = String(o.contact.phone || '').replace(/[^0-9]/g, '');
+      live =
+        '<p class="font-serif text-2xl font-bold"><a class="text-navy no-underline" href="tel:' +
+        escAttr(tel) +
+        '">' +
+        esc(o.contact.phone) +
+        '</a></p>' +
+        '<p class="text-lg font-bold"><a class="text-navy" href="mailto:' +
+        escAttr(o.contact.email || '') +
+        '">' +
+        esc(o.contact.email) +
+        '</a></p>';
+    } else if (kind !== 'generic') {
+      return ''; // live data unavailable (e.g. still loading in preview)
+    }
+    if (!(b.title && String(b.title).trim()) && !html && !buttons.length && !live && !b.image) return '';
     return (
       '<article class="card"' +
       (kp ? ' data-key-path="' + kp + '" tabindex="0"' : '') +
@@ -304,6 +390,7 @@ export function renderBlock(b, o, kp) {
           '" loading="lazy" style="border-radius:.5rem"></p>'
         : '') +
       (html ? '<div>' + html + '</div>' : '') +
+      (live ? '<div>' + live + '</div>' : '') +
       (buttons.length
         ? b.buttons_layout === 'inline'
           ? '<p class="btn-row">' + buttons.join('') + '</p>'

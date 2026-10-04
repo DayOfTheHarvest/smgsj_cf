@@ -1,15 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
 import Carousel from './Carousel.astro';
-import ActionCards from './ActionCards.astro';
 import Icon from './Icon.astro';
-import OfficeSection from './OfficeSection.astro';
 import FlocknoteSignup from './FlocknoteSignup.astro';
 import MassCards from './MassCards.astro';
-import { EXTERNAL, resolveLink, type Lang } from '../config';
+import { EXTERNAL, resolveLink, type Lang, PHONE, EMAIL, EMERGENCIES, emergencyLabel } from '../config';
 import homepageEn from '../data/homepage.en.json';
 import homepageEs from '../data/homepage.es.json';
 import homepageVi from '../data/homepage.vi.json';
+import bulletinEn from '../data/bulletins.en.json';
+import bulletinEs from '../data/bulletins.es.json';
+import bulletinVi from '../data/bulletins.vi.json';
+import { OFFICE_HOURS } from '../data/mass';
 import { pickLocale } from '../lib/i18n';
 import { renderMd } from '../lib/md';
 import { renderSections } from '../lib/render-blocks.js';
@@ -51,6 +53,7 @@ const hrefFor = (link: string) => resolveLink(link, lang);
 const staffMembers = ((pickLocale({ en: staffEn, es: staffEs, vi: staffVi }, lang) as any).members as Array<any>) ?? [];
 const blockOpts = (title: string) => ({
   title,
+  lang,
   md: (src: string) => renderMd(src || ''),
   href: (link: string) => resolveLink(link || '', lang),
   assetUrl: (p: string) => p,
@@ -60,6 +63,13 @@ const blockOpts = (title: string) => ({
     goal: ui.goalWord,
     donate: ui.nav.giving,
   },
+  bulletins: {
+    items: (((pickLocale({ en: bulletinEn, es: bulletinEs, vi: bulletinVi }, lang) as any).bulletins) as Array<any>) ?? [],
+    weeks: Number((pickLocale({ en: bulletinEn, es: bulletinEs, vi: bulletinVi }, lang) as any).weeks ?? 3),
+  },
+  office: OFFICE_HOURS[lang] ?? OFFICE_HOURS.en,
+  emergencies: EMERGENCIES.map((e) => ({ label: emergencyLabel(e, lang), number: e.number })),
+  contact: { phone: PHONE, email: EMAIL },
   staff: {
     members: staffMembers,
     assetUrl: (p: string) => p,
@@ -99,7 +109,7 @@ const blocksHtml = (title: string, blocks: Array<any>) => {
 // Staff-composed sections (Sveltia: Homepage welcome → Sections): rows in
 // display order with visibility toggles, plus custom blocks anywhere. Unknown
 // ids ignored; missing sections appended visible in default position.
-const DEFAULT_ORDER = ['carousel', 'hero', 'actions', 'schedule', 'events', 'body', 'office', 'flocknote', 'catholic'];
+const DEFAULT_ORDER = ['carousel', 'hero', 'schedule', 'events', 'body', 'flocknote', 'catholic'];
 const present = new Set(
   sections.flatMap((s) => {
     if (s?.type === 'preset' && typeof s.id === 'string') return [s.id];
@@ -169,10 +179,6 @@ const scheduleBtnClass = (b: any) =>
           {blocksHtml(s.title || ui.hero.welcome, s.blocks) && <div set:html={blocksHtml(s.title || ui.hero.welcome, s.blocks)} />}
         </section>
       )}
-      {s.id === 'actions' && (<>
-        <ActionCards lang={lang} ui={ui} />
-        {blocksHtml('Actions', s.blocks) && <div set:html={blocksHtml('Actions', s.blocks)} />}
-      </>)}
       {s.type === 'schedule' && (
         <>
           <MassCards lang={lang} ui={ui} compact />
@@ -208,10 +214,6 @@ const scheduleBtnClass = (b: any) =>
           <div set:html={body} />
         </section>
         {blocksHtml(typeof titleVal === 'string' ? titleVal : ui.hero.welcome, s.blocks) && <div set:html={blocksHtml(typeof titleVal === 'string' ? titleVal : ui.hero.welcome, s.blocks)} />}
-      </>)}
-      {s.id === 'office' && (<>
-        <OfficeSection lang={lang} ui={ui} />
-        {blocksHtml(ui.contactSection, s.blocks) && <div set:html={blocksHtml(ui.contactSection, s.blocks)} />}
       </>)}
       {s.id === 'flocknote' && (<>
         <FlocknoteSignup ui={ui} lang={lang} />

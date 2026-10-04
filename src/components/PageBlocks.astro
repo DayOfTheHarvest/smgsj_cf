@@ -1,10 +1,14 @@
 ---
 import { renderSections } from '../lib/render-blocks.js';
 import { renderMd } from '../lib/md';
-import { resolveLink, type Lang } from '../config';
+import { resolveLink, type Lang, PHONE, EMAIL, EMERGENCIES, emergencyLabel } from '../config';
 import staffEn from '../data/staff.en.json';
 import staffEs from '../data/staff.es.json';
 import staffVi from '../data/staff.vi.json';
+import bulletinsEn from '../data/bulletins.en.json';
+import bulletinsEs from '../data/bulletins.es.json';
+import bulletinsVi from '../data/bulletins.vi.json';
+import { OFFICE_HOURS } from '../data/mass';
 import { pickLocale } from '../lib/i18n';
 
 interface Props {
@@ -19,8 +23,12 @@ const { lang, ui, title, sections = [] } = Astro.props;
 // (src/lib/render-blocks.js): same classes, same output. Only the data
 // sources differ (translated ui strings + resolveLink here).
 const members = ((pickLocale({ en: staffEn, es: staffEs, vi: staffVi }, lang) as any).members as Array<any>) ?? [];
+// Live card data (bulletins, office hours, emergency numbers, contact info)
+// so generic card rows can carry parish sections anywhere on the site.
+const bulletinData = pickLocale({ en: bulletinsEn, es: bulletinsEs, vi: bulletinsVi }, lang) as any;
 const html = renderSections(Array.isArray(sections) ? sections : [], {
   title,
+  lang,
   md: (src: string) => renderMd(src || ''),
   href: (link: string) => resolveLink(link || '', lang),
   assetUrl: (p: string) => p,
@@ -30,6 +38,13 @@ const html = renderSections(Array.isArray(sections) ? sections : [], {
     goal: ui.goalWord,
     donate: ui.nav.giving,
   },
+  bulletins: {
+    items: (bulletinData.bulletins as Array<any>) ?? [],
+    weeks: Number(bulletinData.weeks ?? 3),
+  },
+  office: OFFICE_HOURS[lang] ?? OFFICE_HOURS.en,
+  emergencies: EMERGENCIES.map((e) => ({ label: emergencyLabel(e, lang), number: e.number })),
+  contact: { phone: PHONE, email: EMAIL },
   staff: {
     members,
     assetUrl: (p: string) => p,

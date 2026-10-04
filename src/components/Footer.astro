@@ -1,6 +1,7 @@
 ---
 import { ADDRESS, PHONE, EMAIL, EMERGENCIES, emergencyLabel, EXTERNAL, resolveLink } from '../config';
 import { OFFICE_HOURS } from '../data/mass';
+import { parseOfficeHours } from '../lib/render-blocks.js';
 import footerEn from '../data/footer.en.json';
 import footerEs from '../data/footer.es.json';
 import footerVi from '../data/footer.vi.json';
@@ -20,12 +21,7 @@ const foot = pickLocale({ en: footerEn, es: footerEs, vi: footerVi }, lang as an
 const aboutLinks = (foot.about_links as Array<any>) ?? [];
 const contactLinks = (foot.contact_links as Array<any>) ?? [];
 const footHref = (link: string) => resolveLink(link || '', lang as any);
-const hours = (OFFICE_HOURS[lang] || OFFICE_HOURS.en).split('\n').map((line: string) => {
-  const i = line.indexOf(':');
-  return i > 0
-    ? { days: line.slice(0, i).trim(), time: line.slice(i + 1).trim() }
-    : { days: line.trim(), time: '' };
-});
+const hours = parseOfficeHours(OFFICE_HOURS[lang] || OFFICE_HOURS.en);
 ---
 <footer class="footer">
   <div class="wrap footer-grid">

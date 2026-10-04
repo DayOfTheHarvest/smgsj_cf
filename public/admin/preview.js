@@ -118,9 +118,21 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
     return found;
   }
 
+  /* True when any card in the sections is a live card (bulletins, hours,
+     emergency, contact) rather than a generic card. */
+  function hasLiveCards(sections) {
+    var found = false;
+    (sections || []).forEach(function (s) {
+      ((s && s.blocks) || []).forEach(function (b) {
+        if (b && b.type === 'card' && b.kind && b.kind !== 'generic') found = true;
+      });
+    });
+    return found;
+  }
+
   var PagesPreview = createClass({
     getInitialState: function () {
-      return { staff: null, aliases: null };
+      return { staff: null, aliases: null, bulletins: null, office: null, settings: null };
     },
     componentDidMount: function () {
       var self = this;
@@ -138,6 +150,17 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
           self.setState({ aliases: aliasesFrom(s) });
         });
       }
+      if (hasLiveCards(data.sections)) {
+        safeGet(this.props, 'bulletins', 'bulletin-list').then(function (entry) {
+          self.setState({ bulletins: firstEntry(entry) });
+        }, function () {});
+        safeGet(this.props, 'site', 'office-hours').then(function (entry) {
+          self.setState({ office: firstEntry(entry) });
+        }, function () {});
+        fetchSettings(this.props, function (s) {
+          self.setState({ settings: s });
+        });
+      }
     },
     render: function () {
       var props = this.props;
@@ -147,10 +170,14 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       var self = this;
       var loc = previewLocale(entry.get('path'));
       var staff = this.state.staff;
+      var liveSettings = this.state.settings || {};
+      var liveBulletins = this.state.bulletins;
+      var liveOffice = this.state.office;
       var html =
         '<h1 data-key-path="title" tabindex="0">' + esc(data.title || '') + '</h1>' +
         renderSections(data.sections || [], {
           title: data.title || '',
+          lang: loc,
           md: md,
           href: function (link) { return previewHref(link, loc, self.state.aliases); },
           assetUrl: function (p) {
@@ -159,6 +186,20 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
           },
           t: { asof: 'Pledged as of', of: 'of', goal: 'goal', donate: 'Donate' },
           kp: true,
+          bulletins: liveBulletins ? {
+            items: liveBulletins.bulletins || [],
+            weeks: Number(liveBulletins.weeks == null ? 3 : liveBulletins.weeks)
+          } : null,
+          office: liveOffice ? liveOffice.text : null,
+          emergencies: (liveSettings.emergencies || []).map(function (e) {
+            return {
+              label: e['label_' + loc] || e.label_en || '',
+              number: e.number || ''
+            };
+          }),
+          contact: (liveSettings.phone || liveSettings.email)
+            ? { phone: liveSettings.phone || '', email: liveSettings.email || '' }
+            : null,
           staff: staff && staff.members ? {
             members: staff.members,
             assetUrl: function (p) {
@@ -180,18 +221,12 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
   var PRESET_INFO = {
     carousel: 'Carousel — rotating banner slides',
     hero: 'Hero — welcome title, subtitle + buttons',
-    actions: 'Actions — action cards row',
     schedule: 'Schedule — Mass times + schedule buttons',
     events: 'Events — event cards + calendar buttons',
     body: 'Body — homepage page text',
-    office: 'Office — contact + office hours cards',
     flocknote: 'Flocknote — signup form',
     catholic: 'Catholic — diocesan icons + EthicsPoint line'
   };
-
-  function actionBtnExtraClass(s) {
-    return s === 'primary' || s === 'gold' || s === 'outline' ? btnClassFor(s) : '';
-  }
 
   /* Shared composed-section renderers: the standalone file previews and the
      full homepage preview render the same elements (no `this` inside the
@@ -210,44 +245,6 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
     });
   }
 
-  function actionCards(cards, live, aliases, loc, kpBase) {
-    var kp = kpBase || 'cards';
-    return h('div', { className: 'cards' },
-      (cards || []).map(function (c, i) {
-        var head = c.icon
-          ? h('div', { className: 'card-head' },
-            h('span', { dangerouslySetInnerHTML: { __html: iconBadge(c.icon) } }),
-            h('h3', {}, c.title || ''))
-          : (c.title ? h('h3', {}, c.title) : null);
-        var body = null;
-        if (c.kind === 'bulletins') {
-          body = live ? h('div', {
-            dangerouslySetInnerHTML: {
-              __html: renderBulletinList(live, loc, true)
-            }
-          }) : h('p', { className: 'text-soft' }, 'Bulletin list (loading…)');
-        } else {
-          body = h('div', {},
-            c.text ? h('p', {}, c.text) : null,
-            c.kind === 'link' && c.link ? h('p', {},
-              h('a', {
-                className: btnClassFor(c.style),
-                href: previewHref(c.link, loc, aliases)
-              }, c.link_label || c.title)) : null,
-            c.extra_link ? h('p', {},
-              h('a', actionBtnExtraClass(c.extra_style)
-                ? {
-                    className: actionBtnExtraClass(c.extra_style),
-                    href: previewHref(c.extra_link, loc, aliases)
-                  }
-                : { href: previewHref(c.extra_link, loc, aliases) },
-                c.extra_label)) : null);
-        }
-        return h('article', {
-          key: i, className: 'card', 'data-key-path': kp + '.' + i, tabIndex: 0
-        }, head, body);
-      }));
-  }
 
   function langOf(langs, code) {
     for (var i = 0; i < (langs || []).length; i++) {
@@ -304,37 +301,6 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
     }
   });
 
-  /* ---- Homepage action cards file: the cards as visitors see them ----
-     The bulletin card embeds the live filtered list, like ActionCards. */
-  var ActionsPreview = createClass({
-    getInitialState: function () {
-      return { bulletins: null, aliases: null };
-    },
-    componentDidMount: function () {
-      var self = this;
-      safeGet(this.props, 'bulletins', 'bulletin-list').then(function (entry) {
-        if (Array.isArray(entry)) entry = entry[0];
-        var data = entry && (entry.get ? entry.get('data') : entry.data);
-        self.setState({ bulletins: plain(data) });
-      }, function () {});
-      fetchSettings(this.props, function (s) {
-        self.setState({ aliases: aliasesFrom(s) });
-      });
-    },
-    render: function () {
-      var data = plain(this.props.entry.get('data')) || {};
-      var cards = data.cards || [];
-      var bd = this.state.bulletins;
-      var aliases = this.state.aliases;
-      var loc = previewLocale(this.props.entry.get('path'));
-      var limit = Number(data.bulletins_limit == null ? 5 : data.bulletins_limit) || 5;
-      var live = bd ? filterBulletins(bd.bulletins || [],
-        Number(bd.weeks == null ? 3 : bd.weeks), Date.now()).slice(0, limit) : null;
-      return h('div', { className: 'wrap' },
-        h('h1', { 'data-key-path': 'cards', tabIndex: 0 }, 'Action cards preview'),
-        actionCards(cards, live, aliases, loc, 'cards'));
-    }
-  });
   var HeaderPreview = createClass({
     getInitialState: function () {
       return { aliases: null };
@@ -445,8 +411,8 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
      theme rows compose live regions from other collections, fetched here.
      Anything still loading (or failing to load) renders as a labeled
      placeholder, so a bad lookup can never blank the preview. */
-  var HOMEPAGE_ORDER = ['carousel', 'hero', 'actions', 'schedule', 'events',
-    'body', 'office', 'flocknote', 'catholic'];
+  var HOMEPAGE_ORDER = ['carousel', 'hero', 'schedule', 'events',
+    'body', 'flocknote', 'catholic'];
 
   /* First entry wins: each getCollection call below resolves one entry. */
   function firstEntry(entry) {
@@ -457,7 +423,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
 
   var HomepagePreview = createClass({
     getInitialState: function () {
-      return { settings: null, ui: null, actions: null, slides: null,
+      return { settings: null, ui: null, slides: null,
         bulletins: null, masses: null, langs: [], locs: [],
         confession: null, office: null, signup: null, homeBody: null,
         staff: null };
@@ -474,7 +440,6 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       }
       pull(safeGet(this.props, 'site', 'settings'), 'settings');
       pull(safeGet(this.props, 'interface', 'ui'), 'ui');
-      pull(safeGet(this.props, 'homepage', 'action-cards'), 'actions');
       pull(safeGet(this.props, 'homepage', 'slides'), 'slides');
       pull(safeGet(this.props, 'bulletins', 'bulletin-list'), 'bulletins');
       pull(safeGet(this.props, 'schedule', 'masses'), 'masses');
@@ -513,10 +478,6 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
           return { type: 'preset', id: id, visible: true };
         });
       var bd = st.bulletins;
-      var actionLimit = Number(st.actions && st.actions.bulletins_limit == null
-        ? 5 : st.actions && st.actions.bulletins_limit) || 5;
-      var live = bd ? filterBulletins(bd.bulletins || [],
-        Number(bd.weeks == null ? 3 : bd.weeks), Date.now()).slice(0, actionLimit) : null;
       var staffMembers = st.staff && st.staff.members ? st.staff.members : null;
       var staffOpt = staffMembers ? {
         members: staffMembers,
@@ -524,6 +485,25 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
         profileHref: function (slug) { return '/' + loc + '/staff/' + slug + '/'; },
         profileLabel: PROFILE_LABELS[loc] || PROFILE_LABELS.en
       } : null;
+      // Live card data, like the site's PageBlocks: generic card rows can
+      // carry bulletins, hours, numbers, and contact info anywhere.
+      var liveCardOpts = {
+        lang: loc,
+        bulletins: st.bulletins ? {
+          items: st.bulletins.bulletins || [],
+          weeks: Number(st.bulletins.weeks == null ? 3 : st.bulletins.weeks)
+        } : null,
+        office: st.office ? st.office.text : null,
+        emergencies: (settings.emergencies || []).map(function (e) {
+          return {
+            label: e['label_' + loc] || e.label_en || '',
+            number: e.number || ''
+          };
+        }),
+        contact: (settings.phone || settings.email)
+          ? { phone: settings.phone || '', email: settings.email || '' }
+          : null
+      };
       function blocksHtml(title, blocks) {
         if (!blocks || !blocks.length) return '';
         // Consecutive buttons share one row, like the site; other widgets
@@ -552,7 +532,12 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
                 href: function (link) { return previewHref(link, loc, aliases); },
                 assetUrl: function (p) { var a = getAsset(p); return (a && a.url) || p; },
                 t: { asof: 'Pledged as of', of: 'of', goal: 'goal', donate: 'Donate' },
-                staff: staffOpt
+                staff: staffOpt,
+                lang: liveCardOpts.lang,
+                bulletins: liveCardOpts.bulletins,
+                office: liveCardOpts.office,
+                emergencies: liveCardOpts.emergencies,
+                contact: liveCardOpts.contact
               });
           }
         }
@@ -654,7 +639,12 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
                 title: s.title || '', md: md,
                 href: function (link) { return previewHref(link, loc, aliases); },
                 assetUrl: function (p) { var a = getAsset(p); return (a && a.url) || p; },
-                t: {}, kp: false
+                t: {}, kp: false,
+                lang: liveCardOpts.lang,
+                bulletins: liveCardOpts.bulletins,
+                office: liveCardOpts.office,
+                emergencies: liveCardOpts.emergencies,
+                contact: liveCardOpts.contact
               });
               return h('div', {
                 key: ci,
@@ -692,52 +682,6 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
           buttons.length ? h('p', { className: 'btn-row' }, buttons) : null,
           extra ? h('div', {
             dangerouslySetInnerHTML: { __html: extra }
-          }) : null);
-      }
-      function officeNode(s, si) {
-        if (!st.office) return placeholder(si, PRESET_INFO.office, '(loading…)');
-        var lines = String(st.office.text || '').split('\n').map(function (line) {
-          var i = line.indexOf(':');
-          return i > 0
-            ? { days: line.slice(0, i).trim(), time: line.slice(i + 1).trim() }
-            : { days: line.trim(), time: '' };
-        }).filter(function (r) { return r.days; });
-        var emergencies = settings.emergencies || [];
-        return h('div', { key: 's' + si, 'data-key-path': 'sections.' + si, tabIndex: 0 },
-          h('h2', {}, ui.contactSection || 'Contact & Office Hours'),
-          h('div', { className: 'cards' },
-            h('article', { className: 'card' },
-              h('div', { className: 'card-head' },
-                h('span', { dangerouslySetInnerHTML: { __html: iconBadge('clock') } }),
-                h('h3', {}, (ui.schedule && ui.schedule.office) || 'Office Hours')),
-              lines.map(function (r, i) {
-                return h('p', { key: i, className: 'my-1' },
-                  h('strong', { className: 'text-navy' }, r.days),
-                  r.time ? h('span', {}, ' ' + r.time) : null);
-              })),
-            emergencies.length ? h('article', { className: 'card' },
-              h('div', { className: 'card-head' },
-                h('span', { dangerouslySetInnerHTML: { __html: iconBadge('alert') } }),
-                h('h3', {}, (ui.footer && ui.footer.emergency) || 'Emergency')),
-              emergencies.map(function (e, i) {
-                var label = e['label_' + loc] || e.label_en || '';
-                return h('p', { key: i, className: 'my-1' },
-                  h('strong', { className: 'text-navy' }, label),
-                  h('br', {}),
-                  h('a', { href: 'tel:' + String(e.number || '').replace(/[^0-9]/g, '') }, e.number || ''));
-              })) : null,
-            h('article', { className: 'card' },
-              h('div', { className: 'card-head' },
-                h('span', { dangerouslySetInnerHTML: { __html: iconBadge('phone') } }),
-                h('h3', {}, ui.contactCard || 'Get in Touch')),
-              settings.phone ? h('p', { className: 'my-1' },
-                h('a', { href: 'tel:' + String(settings.phone).replace(/[^0-9]/g, '') }, settings.phone)) : null,
-              settings.email ? h('p', { className: 'my-1' },
-                h('a', { href: 'mailto:' + settings.email }, settings.email)) : null)),
-          blocksHtml(ui.contactSection || 'Contact & Office Hours', s.blocks) ? h('div', {
-            dangerouslySetInnerHTML: {
-              __html: blocksHtml(ui.contactSection || 'Contact & Office Hours', s.blocks)
-            }
           }) : null);
       }
       function flocknoteNode(s, si) {
@@ -798,15 +742,6 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
                 }) : null)
               : placeholder(si, PRESET_INFO.carousel, '(loading…)');
           }
-          if (s.id === 'actions') {
-            return st.actions
-              ? h('div', { key: 's' + si, 'data-key-path': 'sections.' + si, tabIndex: 0 },
-                actionCards(st.actions.cards || [], live, aliases, loc, 'sections.' + si + '.cards'),
-                blocksHtml('Actions', s.blocks) ? h('div', {
-                  dangerouslySetInnerHTML: { __html: blocksHtml('Actions', s.blocks) }
-                }) : null)
-              : placeholder(si, PRESET_INFO.actions, '(loading…)');
-          }
           if (s.id === 'body') {
             return st.homeBody
               ? h('div', { key: 's' + si },
@@ -820,7 +755,6 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
                 }) : null)
               : placeholder(si, PRESET_INFO.body, '(page text lives on the Home topic page)');
           }
-          if (s.id === 'office') return officeNode(s, si);
           if (s.id === 'flocknote') return flocknoteNode(s, si);
           return placeholder(si, PRESET_INFO[s.id] || s.id);
         }
@@ -833,7 +767,6 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
 
   CMS.registerPreviewTemplate('pages', PagesPreview);
   CMS.registerPreviewTemplate('homepage-text', HomepagePreview);
-  CMS.registerPreviewTemplate('action-cards', ActionsPreview);
   CMS.registerPreviewTemplate('slides', SlidesPreview);
   CMS.registerPreviewTemplate('masses', MassPreview);
   CMS.registerPreviewTemplate('header-menu', HeaderPreview);
