@@ -57,11 +57,21 @@ const sectionsR = (Array.isArray(sections) ? sections : []).map((s) => ({
                 <h3>{b.title}</h3>
               ) : null}
               {b.__html && <div set:html={b.__html} />}
-              {(b.buttons || []).map((btn) => (
-                btn?.label?.trim() && btn?.link?.trim() ? (
-                  <p><a class={btnClassFor(btn.style || 'light')} href={hrefFor(btn.link.trim())}>{btn.label}</a></p>
-                ) : null
-              ))}
+              {b.buttons_layout === 'inline' && (b.buttons || []).length ? (
+                <p class="flex flex-wrap gap-2">
+                  {(b.buttons || []).map((btn) => (
+                    btn?.label?.trim() && btn?.link?.trim() ? (
+                      <a class={btnClassFor(btn.style || 'light')} href={hrefFor(btn.link.trim())}>{btn.label}</a>
+                    ) : null
+                  ))}
+                </p>
+              ) : (
+                (b.buttons || []).map((btn) => (
+                  btn?.label?.trim() && btn?.link?.trim() ? (
+                    <p><a class={btnClassFor(btn.style || 'light')} href={hrefFor(btn.link.trim())}>{btn.label}</a></p>
+                  ) : null
+                ))
+              )}
             </article>
           ))}
         </div>

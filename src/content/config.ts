@@ -54,6 +54,7 @@ const cardBlock = z.object({
   title: z.string().nullish(),
   text: z.string().nullish(),
   buttons: z.array(cardButton).optional().default([]),
+  buttons_layout: z.string().nullish(),
 });
 
 const pageBlock = z.discriminatedUnion('type', [

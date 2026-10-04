@@ -227,6 +227,15 @@ collections:
                             widget: select
                             i18n: duplicate
                             options: ['gold', 'light', 'primary', 'outline']
+                      - label: 'Buttons layout'
+                        name: buttons_layout
+                        widget: select
+                        i18n: duplicate
+                        options:
+                          - { label: 'Stacked (one per line)', value: stacked }
+                          - { label: 'Inline (side by side)', value: inline }
+                        default: stacked
+                        required: false
           - name: fullwidth_section
             label: Full-width section
             summary: '{{title}}'
@@ -377,6 +386,15 @@ collections:
                             widget: select
                             i18n: duplicate
                             options: ['gold', 'light', 'primary', 'outline']
+                      - label: 'Buttons layout'
+                        name: buttons_layout
+                        widget: select
+                        i18n: duplicate
+                        options:
+                          - { label: 'Stacked (one per line)', value: stacked }
+                          - { label: 'Inline (side by side)', value: inline }
+                        default: stacked
+                        required: false
       - name: updated
         widget: hidden
         i18n: duplicate
