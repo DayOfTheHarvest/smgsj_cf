@@ -62,6 +62,22 @@ for m in re.findall(r"options: \[([^\]]*'users'[^\]]*)\]", open(f"{ADMIN}/config
 for icon in sorted(offered):
     check(icon in known, f"CMS icon {icon!r} missing in icons.js")
 
+# 4. preview registrations --------------------------------------------------
+# Every custom preview template must point at a real collection, file, or
+# singleton, so renames can't silently orphan a preview.
+registered = set(re.findall(r"registerPreviewTemplate\('([^']+)'", open(f"{ADMIN}/preview.js").read()))
+known_targets = set()
+for c in cfg["collections"]:
+    if c.get("name"):
+        known_targets.add(c["name"])
+    for f in c.get("files", []):
+        known_targets.add(f["name"])
+for s in cfg.get("singletons", []):
+    if "name" in s:
+        known_targets.add(s["name"])
+for name in sorted(registered):
+    check(name in known_targets, f"preview template {name!r} has no collection/file/singleton")
+
 if errors:
     print("PREVIEW DRIFT:")
     for e in errors:

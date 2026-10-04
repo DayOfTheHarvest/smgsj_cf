@@ -45,6 +45,110 @@ export function fmtUSD(n) {
   });
 }
 
+// Staff directory cards (mirrors StaffCards.astro exactly, including its
+// template whitespace). o: { assetUrl(path)->url, profileHref(slug)->url,
+// profileLabel }. Members without a bio get no button, phone link only.
+export function staffInitials(name) {
+  return String(name || '')
+    .replace(/^(Rev\.|Mrs?\.|Ms\.|Sr\.|Deacon)\s+/i, '')
+    .split(/\s+/)
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
+export function renderStaffCards(members, o) {
+  return (
+    '<div class="cards staff-grid"> ' +
+    (Array.isArray(members) ? members : [])
+      .map((s, i) => {
+        const profile = s.bio
+          ? '<p class="my-1"> <a class="btn btn-outline" href="' +
+            escAttr(o.profileHref(s.slug)) +
+            '">' +
+            esc(o.profileLabel) +
+            '</a> </p>'
+          : '';
+        return (
+          '<article class="card staff-card"' +
+          (o.kp ? ' data-key-path="members.' + i + '" tabindex="0"' : '') +
+          '> ' +
+          (s.photo
+            ? '<img class="staff-photo" src="' +
+              escAttr(o.assetUrl(s.photo)) +
+              '" alt="' +
+              escAttr(s.name) +
+              '" width="160" height="160" loading="lazy">'
+            : '<span class="staff-initials" aria-hidden="true">' +
+              esc(staffInitials(s.name)) +
+              '</span>') +
+          ' <h3>' +
+          esc(s.name) +
+          '</h3>' +
+          ' <p class="staff-role">' +
+          esc(s.role) +
+          '</p>' +
+          ' <p class="my-1"><a href="tel:' +
+          escAttr(String(s.phone || '').replace(/[^0-9]/g, '')) +
+          '">' +
+          esc(s.phone) +
+          '</a></p> ' +
+          profile +
+          ' </article>'
+        );
+      })
+      .join('') +
+    ' </div>'
+  );
+}
+
+// Bulletin list (mirrors BulletinList.astro). Display label comes from the
+// shared date, auto-translated per locale; a hand-typed label wins.
+export function bulletinLabel(b, lang) {
+  const manual = (b.label || '').trim();
+  if (manual) return manual;
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(b.date || '');
+  if (!m) return b.date || '';
+  try {
+    return new Intl.DateTimeFormat(lang, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }).format(new Date(m[1] + '-' + m[2] + '-' + m[3] + 'T12:00:00Z'));
+  } catch (e) {
+    return b.date || '';
+  }
+}
+
+export function filterBulletins(items, weeks, now) {
+  const cutoff = weeks > 0 ? now - weeks * 7 * 864e5 : 0;
+  return (Array.isArray(items) ? items : []).filter((b) => {
+    const t = Date.parse(b.date);
+    return Number.isNaN(t) || t >= cutoff;
+  });
+}
+
+export function renderBulletinList(items, lang, kp) {
+  return (
+    '<ul class="bulletin-list"> ' +
+    items
+      .map(
+        (b, i) =>
+          '<li' +
+          (kp ? ' data-key-path="bulletins.' + i + '" tabindex="0"' : '') +
+          '><a href="' +
+          escAttr(b.url) +
+          '">' +
+          esc(bulletinLabel(b, lang)) +
+          '</a></li>',
+      )
+      .join('') +
+    ' </ul>'
+  );
+}
+
 function iconBadge(name) {
   const paths = ICON_PATHS[name] || ICON_PATHS.info;
   return (

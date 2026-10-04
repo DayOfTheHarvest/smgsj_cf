@@ -9,7 +9,7 @@
    English (the stored values); fundraiser microcopy is English; map/calendar
    iframes may refuse framing and show blank until deployed; the previewed
    locale is read off the entry file path (falls back to English). */
-import { renderSections, esc } from './render-blocks.js';
+import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, esc } from './render-blocks.js';
 
 (function () {
   if (!window.CMS) return;
@@ -39,25 +39,6 @@ import { renderSections, esc } from './render-blocks.js';
   }
 
   var PROFILE_LABELS = { en: 'View Profile', es: 'Ver Perfil', vi: 'Xem Hồ Sơ' };
-
-  function staffInitials(name) {
-    return String(name || '').replace(/^(Rev\.|Mrs?\.|Ms\.|Sr\.|Deacon)\s+/i, '').split(/\s+/)
-      .map(function (w) { return w[0]; }).slice(0, 2).join('').toUpperCase();
-  }
-
-  function bulletinLabel(b, lang) {
-    var manual = (b.label || '').trim();
-    if (manual) return manual;
-    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(b.date || '');
-    if (!m) return b.date || '';
-    try {
-      return new Intl.DateTimeFormat(lang, {
-        day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC'
-      }).format(new Date(m[1] + '-' + m[2] + '-' + m[3] + 'T12:00:00Z'));
-    } catch (e) {
-      return b.date || '';
-    }
-  }
 
   /* ---- Pages: title + sections via the shared site renderer ----
      Staff pages additionally show the member directory below. */
@@ -100,34 +81,19 @@ import { renderSections, esc } from './render-blocks.js';
       if (entry.get('slug') === 'staff' && staff && staff.members) {
         var loc = previewLocale(entry.get('path'));
         kids.push(h('section', { key: 'dir', 'aria-label': 'Staff directory' },
-          h('div', { className: 'staff-grid' },
-            staff.members.map(function (m, i) {
-              var photo = m.photo && props.getAsset ? props.getAsset(m.photo) : null;
-              var tel = String(m.phone || '').replace(/[^0-9]/g, '');
-              var bio = m.bio && String(m.bio).trim();
-              return h('article', {
-                key: i, className: 'card staff-card',
-                'data-key-path': 'members.' + i, tabIndex: 0
-              },
-                photo && photo.url
-                  ? h('img', {
-                    className: 'staff-photo', src: photo.url, alt: m.name,
-                    width: 160, height: 160, loading: 'lazy'
-                  })
-                  : h('span', { className: 'staff-initials', 'aria-hidden': 'true' },
-                    staffInitials(m.name)),
-                h('h3', {}, m.name),
-                h('p', { className: 'staff-role' }, m.role),
-                h('p', { className: 'my-1' },
-                  h('a', { href: 'tel:' + tel }, m.phone)),
-                bio
-                  ? h('p', { className: 'my-1' },
-                    h('a', {
-                      className: 'btn btn-outline',
-                      href: '/' + loc + '/staff/' + m.slug + '/'
-                    }, PROFILE_LABELS[loc] || PROFILE_LABELS.en))
-                  : null);
-            }))));
+          h('div', {
+            dangerouslySetInnerHTML: {
+              __html: renderStaffCards(staff.members, {
+                assetUrl: function (p) {
+                  var a = props.getAsset ? props.getAsset(p) : null;
+                  return (a && a.url) || p;
+                },
+                profileHref: function (slug) { return '/' + loc + '/staff/' + slug + '/'; },
+                profileLabel: PROFILE_LABELS[loc] || PROFILE_LABELS.en,
+                kp: true
+              })
+            }
+          })));
       }
       return h('div', { className: 'wrap' }, kids);
     }
@@ -161,25 +127,46 @@ import { renderSections, esc } from './render-blocks.js';
       var raw = entry.get('data');
       var data = (raw && raw.toJS) ? raw.toJS() : (raw || {});
       var loc = previewLocale(entry.get('path'));
-      var weeks = Number(data.weeks == null ? 3 : data.weeks);
-      var cutoff = weeks > 0 ? Date.now() - weeks * 7 * 864e5 : 0;
-      var items = (data.bulletins || []).filter(function (b) {
-        var t = Date.parse(b.date);
-        return Number.isNaN(t) || t >= cutoff;
-      }).slice(0, 5);
+      var items = filterBulletins(
+        data.bulletins || [],
+        Number(data.weeks == null ? 3 : data.weeks),
+        Date.now()
+      ).slice(0, 5);
       return h('div', { className: 'wrap' },
-        h('h1', { 'data-key-path': 'bulletins', tabIndex: 0 }, 'Bulletin preview'),
-        h('ul', { className: 'bulletin-list' },
-          items.map(function (b, i) {
-            return h('li', { key: i, 'data-key-path': 'bulletins.' + i, tabIndex: 0 },
-              h('a', { href: b.url }, bulletinLabel(b, loc)));
-          })));
+        h('h1', {}, 'Bulletin preview'),
+        h('div', {
+          'data-key-path': 'bulletins',
+          dangerouslySetInnerHTML: { __html: renderBulletinList(items, loc, true) }
+        }));
     }
   });
 
   /* ---- Mass schedule: full table with chips, like /mass-times/ ----
      (Bespoke: the site's MassCards carries homepage variants + JS filtering
      that don't belong in a shared renderer.) */
+  /* getCollection shapes vary (single entry vs entry-per-item, Immutable vs
+     plain), so normalize to a flat item array; unknown shapes resolve to the
+     stored codes/keys rather than blank labels. */
+  function collectItems(entries) {
+    var list = (entries && entries.toJS) ? entries.toJS() : entries;
+    if (!list) return [];
+    var arr = Array.isArray(list) ? list : [list];
+    var out = [];
+    arr.forEach(function (e) {
+      var d = e;
+      if (d && typeof d === 'object') {
+        if (typeof d.get === 'function') {
+          try { d = d.get('data'); } catch (err) { d = null; }
+        } else if (d.data !== undefined) {
+          d = d.data;
+        }
+      }
+      if (Array.isArray(d)) out = out.concat(d);
+      else if (d && typeof d === 'object') out.push(d);
+    });
+    return out;
+  }
+
   var MassPreview = createClass({
     getInitialState: function () {
       return { langs: [], locs: [] };
@@ -187,18 +174,10 @@ import { renderSections, esc } from './render-blocks.js';
     componentDidMount: function () {
       var self = this;
       this.props.getCollection('mass_languages').then(function (entries) {
-        self.setState({
-          langs: plain(entries).map(function (e) {
-            return plain(e.data !== undefined ? e.data : e);
-          })
-        });
+        self.setState({ langs: collectItems(entries) });
       }, function () {});
       this.props.getCollection('locations').then(function (entries) {
-        self.setState({
-          locs: plain(entries).map(function (e) {
-            return plain(e.data !== undefined ? e.data : e);
-          })
-        });
+        self.setState({ locs: collectItems(entries) });
       }, function () {});
     },
     render: function () {

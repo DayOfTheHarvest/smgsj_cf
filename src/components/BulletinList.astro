@@ -3,41 +3,17 @@ import bulletinsEn from '../data/bulletins.en.json';
 import bulletinsEs from '../data/bulletins.es.json';
 import bulletinsVi from '../data/bulletins.vi.json';
 import { pickLocale } from '../lib/i18n';
+import { filterBulletins, renderBulletinList } from '../lib/render-blocks.js';
 import type { Lang } from '../config';
 interface Props { limit?: number; lang?: Lang; }
 const { limit = 5, lang = 'en' } = Astro.props;
 const data = pickLocale({ en: bulletinsEn, es: bulletinsEs, vi: bulletinsVi }, lang) as any;
 // Show bulletins from the past N weeks (staff-set window; 0 = show all).
-const weeks = Number(data.weeks ?? 3);
-const cutoff = weeks > 0 ? Date.now() - weeks * 7 * 864e5 : 0;
-// Display label comes from the shared date, auto-translated per site locale
-// (Intl); a hand-typed Custom label wins when staff sets one.
-const formatDate = (iso: string): string => {
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
-  if (!m) return '';
-  const atNoonUTC = new Date(`${m[1]}-${m[2]}-${m[3]}T12:00:00Z`);
-  try {
-    return new Intl.DateTimeFormat(lang, {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      timeZone: 'UTC',
-    }).format(atNoonUTC);
-  } catch {
-    return '';
-  }
-};
-const labelOf = (b: any): string =>
-  (b.label || '').trim() || formatDate(b.date) || b.date;
-const items = ((data.bulletins ?? []) as Array<any>)
-  .filter((b) => {
-    const t = Date.parse(b.date);
-    return Number.isNaN(t) || t >= cutoff;
-  })
-  .slice(0, limit);
+// Markup is shared with the CMS preview (src/lib/render-blocks.js).
+const items = filterBulletins(
+  (data.bulletins ?? []) as Array<any>,
+  Number(data.weeks ?? 3),
+  Date.now(),
+).slice(0, limit);
 ---
-<ul class="bulletin-list">
-  {items.map((b) => (
-    <li><a href={b.url}>{labelOf(b)}</a></li>
-  ))}
-</ul>
+<Fragment set:html={renderBulletinList(items, lang)} />

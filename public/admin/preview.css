@@ -104,6 +104,11 @@ iframe.preview-embed { width: 100%; border: 0; }
 .text-soft { color: #5b6270; font-size: 0.875rem; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
+/* Bulletin rows. */
+.bulletin-list { margin: 0; list-style: none; padding: 0; }
+.bulletin-list li { border-bottom: 1px solid #e3e6ec; }
+.bulletin-list a { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; font-weight: 600; text-decoration: none; min-height: 44px; }
+
 /* Staff directory cards (mirrors .card parts above). */
 .staff-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 1rem 0; }
 @media (min-width: 768px) { .staff-grid { grid-template-columns: repeat(3, 1fr); } }
