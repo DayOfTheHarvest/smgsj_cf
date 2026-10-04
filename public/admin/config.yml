@@ -208,9 +208,9 @@ collections:
                         required: false
                       - label: 'Icon (pick from the list, optional)'
                         name: icon
-                        widget: select
+                        widget: icon
                         i18n: duplicate
-                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
+                        options: ['news', 'heart', 'form', 'clock', 'alert', 'phone', 'mail', 'calendar', 'users', 'church', 'youtube', 'facebook', 'card', 'star', 'info']
                         required: false
                       - label: 'Heading (this language)'
                         name: title
@@ -389,9 +389,9 @@ collections:
                         required: false
                       - label: 'Icon (pick from the list, optional)'
                         name: icon
-                        widget: select
+                        widget: icon
                         i18n: duplicate
-                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
+                        options: ['news', 'heart', 'form', 'clock', 'alert', 'phone', 'mail', 'calendar', 'users', 'church', 'youtube', 'facebook', 'card', 'star', 'info']
                         required: false
                       - label: 'Heading (this language)'
                         name: title
@@ -799,9 +799,9 @@ collections:
                             required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
-                            widget: select
+                            widget: icon
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
+                            options: ['news', 'heart', 'form', 'clock', 'alert', 'phone', 'mail', 'calendar', 'users', 'church', 'youtube', 'facebook', 'card', 'star', 'info']
                             required: false
                           - label: 'Heading (this language)'
                             name: title
@@ -1002,9 +1002,9 @@ collections:
                             required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
-                            widget: select
+                            widget: icon
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
+                            options: ['news', 'heart', 'form', 'clock', 'alert', 'phone', 'mail', 'calendar', 'users', 'church', 'youtube', 'facebook', 'card', 'star', 'info']
                             required: false
                           - label: 'Heading (this language)'
                             name: title
@@ -1217,9 +1217,9 @@ collections:
                             required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
-                            widget: select
+                            widget: icon
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
+                            options: ['news', 'heart', 'form', 'clock', 'alert', 'phone', 'mail', 'calendar', 'users', 'church', 'youtube', 'facebook', 'card', 'star', 'info']
                             required: false
                           - label: 'Heading (this language)'
                             name: title
@@ -1292,9 +1292,9 @@ collections:
                     fields:
                       - label: 'Icon (pick from the list)'
                         name: icon
-                        widget: select
+                        widget: icon
                         i18n: duplicate
-                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
+                        options: ['news', 'heart', 'form', 'clock', 'alert', 'phone', 'mail', 'calendar', 'users', 'church', 'youtube', 'facebook', 'card', 'star', 'info']
                         required: false
                       - label: 'Title (this language)'
                         name: title
@@ -1431,9 +1431,9 @@ collections:
                             required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
-                            widget: select
+                            widget: icon
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
+                            options: ['news', 'heart', 'form', 'clock', 'alert', 'phone', 'mail', 'calendar', 'users', 'church', 'youtube', 'facebook', 'card', 'star', 'info']
                             required: false
                           - label: 'Heading (this language)'
                             name: title
@@ -1656,9 +1656,9 @@ collections:
                             required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
-                            widget: select
+                            widget: icon
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
+                            options: ['news', 'heart', 'form', 'clock', 'alert', 'phone', 'mail', 'calendar', 'users', 'church', 'youtube', 'facebook', 'card', 'star', 'info']
                             required: false
                           - label: 'Heading (this language)'
                             name: title
@@ -1839,9 +1839,9 @@ collections:
                             required: false
                           - label: 'Icon (pick from the list, optional)'
                             name: icon
-                            widget: select
+                            widget: icon
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
+                            options: ['news', 'heart', 'form', 'clock', 'alert', 'phone', 'mail', 'calendar', 'users', 'church', 'youtube', 'facebook', 'card', 'star', 'info']
                             required: false
                           - label: 'Heading (this language)'
                             name: title

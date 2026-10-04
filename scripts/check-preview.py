@@ -105,6 +105,11 @@ for m in re.findall(r"options: \[([^\]]*'users'[^\]]*)\]", open(f"{ADMIN}/config
     offered.update(re.findall(r"'([\w-]+)'", m))
 for icon in sorted(offered):
     check(icon in known, f"CMS icon {icon!r} missing in icons.js")
+# Completeness: every artwork icon must be offered somewhere, otherwise a
+# stored value shows a blank picker (the lists are generated from icons.js
+# by scripts/sync-icons.py, so this only fails on manual edits).
+for icon in sorted(known):
+    check(icon in offered, f"icon {icon!r} in icons.js is not offered by any CMS select")
 
 # 5. brand tokens ------------------------------------------------------------
 # preview.css hand-mirrors the Tailwind theme (the preview iframe has no
