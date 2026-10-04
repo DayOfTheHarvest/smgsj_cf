@@ -43,8 +43,8 @@ const showNotice = Boolean(notice.enabled) && noticeText.length > 0;
   <link rel="alternate" hreflang="vi" href={`${base}/vi${slug && slug !== 'home' ? '/' + slug : ''}`} />
   <link rel="alternate" hreflang="x-default" href={`${base}/`} />
   <link rel="icon" href="/favicon.ico" />
-  <!-- Visitor stats: undecided (old GA UA-135786317-1 is dead). Either register for Cloudflare Web Analytics and replace SMGSJ_REPLACE_ME, or swap in a DNS-independent counter. See DEPLOY.md. -->
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "SMGSJ_REPLACE_ME"}'></script>
+  <!-- No visitor stats yet (old GA UA-135786317-1 is dead): when analytics is
+       decided, paste the real snippet here. See DEPLOY.md. Nothing loads until then. -->
 </head>
 <body>
   <a class="skip" href="#main">{ui.skipLink}</a>

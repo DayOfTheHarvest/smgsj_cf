@@ -7,7 +7,10 @@
   <title>Content Manager — SMG Parish</title>
 </head>
 <body>
-  <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+  <!-- Pinned for longevity: unpinned CMS bundles float into breaking releases
+       (v1.0 GA is scheduled). Upgrade only as a conscious step, then smoke-test
+       /admin end to end (login, edit + save in every collection, previews). -->
+  <script src="https://unpkg.com/@sveltia/cms@0.227.4/dist/sveltia-cms.js"></script>
   <!-- Bump ?v= whenever preview assets change (staff browsers cache /admin aggressively). -->
   <script type="module" src="/admin/preview.js?v=11"></script>
   <script type="module" src="/admin/field-icon.js?v=1"></script>

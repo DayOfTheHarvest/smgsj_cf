@@ -110,7 +110,16 @@ npm run auth:check  # gate: provider/backend/widget agree
 - [ ] Pastor demo sign-off (sacramental ES/VI accuracy, presider names).
 - [ ] Switch DNS per §4 during a quiet window; confirm `https://www.smgsj.org/`
       loads with a valid cert and `/admin` still logs in.
-- [ ] Decide visitor stats (the old Google Analytics ID is dead): either register the domain for Cloudflare Web Analytics (works without moving nameservers) and replace `SMGSJ_REPLACE_ME` in `src/layouts/Base.astro`, or drop in a DNS-independent counter. Rebuild + redeploy after.
+- [ ] Decide visitor stats (the old Google Analytics ID is dead): either register the domain for Cloudflare Web Analytics (works without moving nameservers) and paste the snippet where `src/layouts/Base.astro` says so (the dead placeholder loads nothing until then), or drop in a DNS-independent counter. Rebuild + redeploy after.
+
+> Longevity pins (do not loosen without a smoke test): Sveltia CMS is
+> exact-pinned in `public/admin/index.html`, `wrangler`/`pagefind` are exact
+> in `package.json` with `package-lock.json` committed, and
+> `scripts/check-pins.py` (first step of `npm run build`) fails the deploy
+> on unpinned CDN URLs, floating tooling, non-stdlib build scripts, remote
+> pulls in code, or a non-static Worker config. Upgrading Sveltia means
+> bumping the pin, then in `/admin`: log in, edit + save in every
+> collection, and check the previews.
 
 ## 6. Rollback
 
