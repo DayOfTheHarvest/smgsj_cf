@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "python3 scripts/sync-preview.py && astro build && python3 scripts/sitemap.py && npm run pagefind",
+    "build": "python3 scripts/sync-shortcuts.py && python3 scripts/sync-preview.py && astro build && python3 scripts/sitemap.py && npm run pagefind",
     "build:astro": "astro build",
     "pagefind": "npx --yes pagefind --site dist 2>&1 | tail -n 5 || echo 'pagefind skipped (offline?)'",
     "preview": "astro preview --host",

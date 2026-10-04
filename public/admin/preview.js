@@ -258,7 +258,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
             if (c.kind === 'bulletins') {
               body = live ? h('div', {
                 dangerouslySetInnerHTML: {
-                  __html: renderBulletinList(live, previewLocale(this.props.entry.get('path')))
+                  __html: renderBulletinList(live, loc, true)
                 }
               }) : h('p', { className: 'text-soft' }, 'Bulletin list (loading…)');
             } else {
