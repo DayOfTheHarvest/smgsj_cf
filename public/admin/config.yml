@@ -1273,12 +1273,19 @@ collections:
           Link shortcuts staff can type in any link field: @giving (Online
           Giving), @payment (Online Payment), @calendar-suggest (Calendar
           request), @calendar-view (Calendar view), @flocknote (Flocknote
-          signup), @youtube (YouTube channel) — each follows its URL on this
-          screen automatically. A scannable copy lives on the
+          signup), @facebook (Facebook page), @youtube (YouTube channel) —
+          each follows its URL on this screen automatically. A scannable copy lives on the
           Link Shortcuts page in this section.
         fields:
           - { label: 'Phone (e.g. 408-363-2300)', name: phone, widget: string }
           - { label: 'Header logo (pick from uploads)', name: logo, widget: image }
+          - { label: 'Brand name (header, e.g. St. Maria Goretti)', name: brand_name, widget: string }
+          - { label: 'Brand tagline (header, e.g. Catholic Parish · San Jose)', name: brand_tagline, widget: string }
+          - label: 'Giving button color'
+            name: giving_style
+            widget: select
+            options: ['gold', 'primary', 'outline', 'light']
+            default: gold
           - { label: 'Parish name (browser tabs, headers)', name: site_name, widget: string }
           - { label: 'Shrine address', name: shrine_address, widget: string }
           - { label: 'Email', name: email, widget: string }
@@ -1353,6 +1360,7 @@ collections:
               @calendar-suggest — Calendar request. Uses the Calendar request URL.
               @calendar-view — Calendar view. Uses the Calendar view URL.
               @flocknote — Flocknote signup. Uses the Flocknote signup URL.
+              @facebook — Facebook page. Uses the Facebook page URL.
               @youtube — YouTube channel. Uses the YouTube channel URL.
       - name: office-hours
         label: Office Hours
@@ -1446,6 +1454,49 @@ collections:
             widget: string
             i18n: true
             required: false
+      - name: footer-links
+        label: Footer Links
+        icon: link
+        file: src/data/footer.{{locale}}.json
+        i18n: true
+        description: 'The two link columns in the footer on every page. Add, remove, or reorder links. Write the name in this language — switch top-right.'
+        fields:
+          - label: 'About column links'
+            name: about_links
+            widget: list
+            i18n: duplicate
+            collapsed: auto
+            label_singular: 'Link'
+            summary: '{{label}}'
+            fields:
+              - label: 'Name (this language)'
+                name: label
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Link'
+                name: link
+                widget: string
+                i18n: duplicate
+                hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
+          - label: 'Contact column links'
+            name: contact_links
+            widget: list
+            i18n: duplicate
+            collapsed: auto
+            label_singular: 'Link'
+            summary: '{{label}}'
+            fields:
+              - label: 'Name (this language)'
+                name: label
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Link'
+                name: link
+                widget: string
+                i18n: duplicate
+                hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
 
   - name: updates
     label: Notices, Forms & Galleries
@@ -1544,6 +1595,7 @@ collections:
         - { label: 'Saturday (day group)', name: daySaturday, widget: string, i18n: true, required: false }
         - { label: 'Sunday (day group)', name: daySunday, widget: string, i18n: true, required: false }
         - { label: 'Weekdays (day group)', name: dayWeekday, widget: string, i18n: true, required: false }
+        - { label: 'Slide dots label (blind visitors)', name: dotsLabel, widget: string, i18n: true, required: false }
         - { label: 'Email address field', name: emailAddress, widget: string, i18n: true, required: false }
         - { label: 'Events heading', name: eventsTitle, widget: string, i18n: true, required: false }
         - { label: 'Facility request link text', name: facilityRequest, widget: string, i18n: true, required: false }
@@ -1585,6 +1637,7 @@ collections:
             - { label: 'Menu: Call button', name: call, widget: string, i18n: true, required: false }
             - { label: 'Menu: Contact', name: contact, widget: string, i18n: true, required: false }
             - { label: 'Menu: Giving button', name: giving, widget: string, i18n: true, required: false }
+            - { label: 'Menu: Menu button', name: menu, widget: string, i18n: true, required: false }
             - { label: 'Menu: Request Forms', name: requests, widget: string, i18n: true, required: false }
         - { label: '“Next” arrow label', name: nextSlide, widget: string, i18n: true, required: false }
         - { label: 'English-home link (404 page)', name: notFoundEn, widget: string, i18n: true, required: false }
@@ -1592,8 +1645,10 @@ collections:
         - { label: '“Page not found” heading', name: notFoundTitle, widget: string, i18n: true, required: false }
         - { label: 'Vietnamese-home link (404 page)', name: notFoundVi, widget: string, i18n: true, required: false }
         - { label: 'Word for “of” (in 41% of goal)', name: ofWord, widget: string, i18n: true, required: false }
+        - { label: 'Overview link word (mobile menu)', name: overviewWord, widget: string, i18n: true, required: false }
         - { label: '“Phone” label', name: phoneLabel, widget: string, i18n: true, required: false }
         - { label: 'Footer Photos link', name: photosLink, widget: string, i18n: true, required: false }
+        - { label: 'Photos count word (e.g. photos, fotos)', name: photosWord, widget: string, i18n: true, required: false }
         - { label: '“Raised as of” label', name: pledgedAsOf, widget: string, i18n: true, required: false }
         - { label: '“Previous” arrow label', name: prevSlide, widget: string, i18n: true, required: false }
         - label: 'Schedule'

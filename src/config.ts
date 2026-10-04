@@ -68,6 +68,9 @@ export const FORM_NOTIFICATION_EMAIL = EMAIL;
 export const MEDIA_BASE = '/uploads';
 export const LEGACY_UPLOADS = 'https://uploads.weconnect.com/mce/fbbf192d8343f1afa97f7a91d44cac3057f6a46f';
 export const LOGO: string = (settings as any).logo || '/uploads/logo.png';
+export const BRAND_NAME: string = (settings as any).brand_name || 'St. Maria Goretti';
+export const BRAND_TAGLINE: string = (settings as any).brand_tagline || '';
+export const GIVING_STYLE: string = (settings as any).giving_style || 'gold';
 
 export const LANGUAGES = ['en', 'es', 'vi'] as const;
 export type Lang = (typeof LANGUAGES)[number];
@@ -99,6 +102,7 @@ export function resolveLink(link: string, lang: Lang): string {
     '@calendar-suggest': EXTERNAL.calendarSuggest,
     '@calendar-view': EXTERNAL.calendarView,
     '@flocknote': EXTERNAL.flocknote,
+    '@facebook': EXTERNAL.facebook,
     '@youtube': EXTERNAL.youtube,
   };
   if (aliases[l]) return aliases[l];

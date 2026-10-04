@@ -1,0 +1,26 @@
+{
+  "about_links": [
+    {
+      "label": "History",
+      "link": "/about-us/"
+    },
+    {
+      "label": "Photos",
+      "link": "/photos/"
+    },
+    {
+      "label": "Staff",
+      "link": "/staff/"
+    }
+  ],
+  "contact_links": [
+    {
+      "label": "Contact",
+      "link": "/contact/"
+    },
+    {
+      "label": "Request Forms",
+      "link": "/requests/"
+    }
+  ]
+}

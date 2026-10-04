@@ -18,6 +18,9 @@
   "calendar_embed": "https://www.calendarwiz.com/calendars/calendar.php?crd=smgsj&cid[]=all",
   "today_embed": "https://www.calendarwiz.com/calendars/day.php?crd=smgsj&cid[]=all",
   "logo": "/uploads/logo.png",
+  "brand_name": "St. Maria Goretti",
+  "brand_tagline": "Catholic Parish · San Jose",
+  "giving_style": "gold",
   "site_name": "St. Maria Goretti Parish",
   "shrine_address": "685 Singleton Road, San Jose, CA 95111",
   "emergencies": [

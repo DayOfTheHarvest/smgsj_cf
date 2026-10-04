@@ -1,10 +1,25 @@
 ---
-import { ADDRESS, PHONE, EMAIL, EMERGENCIES, emergencyLabel, EXTERNAL } from '../config';
+import { ADDRESS, PHONE, EMAIL, EMERGENCIES, emergencyLabel, EXTERNAL, resolveLink } from '../config';
 import { OFFICE_HOURS } from '../data/mass';
+import footerEn from '../data/footer.en.json';
+import footerEs from '../data/footer.es.json';
+import footerVi from '../data/footer.vi.json';
+import { pickLocale } from '../lib/i18n';
 import Icon from './Icon.astro';
 interface Props { lang: string; ui: any; }
 const { lang, ui } = Astro.props;
 const tel = (n: string) => (n || '').replace(/[^0-9]/g, '');
+// Street address comes from Site Settings (single source); split the street
+// line from the rest for the two-line display.
+const addrParts = ADDRESS.split(',');
+const street = (addrParts[0] || '').trim();
+const locality = addrParts.slice(1).join(',').trim();
+// Footer link columns live in Footer Links (per language) so staff can add,
+// remove, or reorder them without code changes.
+const foot = pickLocale({ en: footerEn, es: footerEs, vi: footerVi }, lang as any) as any;
+const aboutLinks = (foot.about_links as Array<any>) ?? [];
+const contactLinks = (foot.contact_links as Array<any>) ?? [];
+const footHref = (link: string) => resolveLink(link || '', lang as any);
 const hours = (OFFICE_HOURS[lang] || OFFICE_HOURS.en).split('\n').map((line: string) => {
   const i = line.indexOf(':');
   return i > 0
@@ -16,8 +31,10 @@ const hours = (OFFICE_HOURS[lang] || OFFICE_HOURS.en).split('\n').map((line: str
   <div class="wrap footer-grid">
     <div>
       <h2>{ui.footer.parish}</h2>
-      <p class="my-2 text-[0.95rem]">2980 Senter Road<br />San Jose, CA 95111</p>
-      <p class="my-2 text-[0.95rem]"><a href={`/${lang}/about-us/`}>{ui.historyLink}</a> · <a href={`/${lang}/photos/`}>{ui.photosLink}</a> · <a href={`/${lang}/staff/`}>{ui.staffLink}</a></p>
+      <p class="my-2 text-[0.95rem]">{street}<br />{locality}</p>
+      <p class="my-2 text-[0.95rem]">{aboutLinks.map((l: any, i: number) => (
+        <span>{i > 0 ? ' · ' : null}<a href={footHref(l.link)}>{l.label}</a></span>
+      ))}</p>
     </div>
     <div>
       <h2>{ui.footer.phone}</h2>
@@ -29,7 +46,9 @@ const hours = (OFFICE_HOURS[lang] || OFFICE_HOURS.en).split('\n').map((line: str
     <div>
       <h2>{ui.footer.email}</h2>
       <p class="my-2 text-[0.95rem]"><a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
-      <p class="my-2 text-[0.95rem]"><a href={`/${lang}/contact/`}>{ui.nav.contact}</a><br /><a href={`/${lang}/requests/`}>{ui.nav.requests}</a></p>
+      <p class="my-2 text-[0.95rem]">{contactLinks.map((l: any, i: number) => (
+        <span>{i > 0 ? <br /> : null}<a href={footHref(l.link)}>{l.label}</a></span>
+      ))}</p>
     </div>
     <div>
       <h2>{ui.footer.office}</h2>
@@ -40,7 +59,7 @@ const hours = (OFFICE_HOURS[lang] || OFFICE_HOURS.en).split('\n').map((line: str
   </div>
   <div class="wrap footer-base">© {new Date().getFullYear()} {ui.footer.parish} · {ADDRESS}</div>
   <div class="wrap flex items-center gap-3 px-4 pb-5">
-    <span class="text-sm text-slate-400">Follow us:</span>
+    <span class="text-sm text-slate-400">{ui.followUs}:</span>
     <a href={EXTERNAL.facebook} aria-label="Facebook" class="text-slate-300 no-underline hover:text-white"><Icon name="facebook" size={22} /></a>
     <a href={EXTERNAL.youtube} aria-label="YouTube" class="text-slate-300 no-underline hover:text-white"><Icon name="youtube" size={22} /></a>
   </div>

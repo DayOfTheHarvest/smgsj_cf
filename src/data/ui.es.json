@@ -1,4 +1,6 @@
 {
+  "dotsLabel": "Elegir diapositiva",
+  "menu": "Menú",
   "nav": {
     "contact": "Contacto",
     "requests": "Formularios",
@@ -9,6 +11,8 @@
     "welcome": "¡Bienvenidos a la Parroquia Santa María Goretti!",
     "subtitle": "Una vibrante comunidad católica en Senter Road — todos son bienvenidos."
   },
+  "overviewWord": "vista general",
+  "photosWord": "fotos",
   "schedule": {
     "massTimes": "Horario de Misas",
     "confession": "Horario de Confesiones",

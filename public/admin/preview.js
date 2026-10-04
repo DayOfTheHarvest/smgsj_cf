@@ -52,7 +52,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
   }
 
   /* Site settings, fetched once and shared: resolves @giving/@payment/
-     @calendar-suggest/@calendar-view/@flocknote/@youtube preview links. */
+     @calendar-suggest/@calendar-view/@flocknote/@facebook/@youtube preview links. */
   var SETTINGS_CACHE = null;
   function fetchSettings(props, done) {
     if (SETTINGS_CACHE) { done(SETTINGS_CACHE); return; }
@@ -72,6 +72,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       '@calendar-suggest': settings.calendar_suggest,
       '@calendar-view': settings.calendar_view,
       '@flocknote': settings.flocknote,
+      '@facebook': settings.facebook,
       '@youtube': settings.youtube
     };
   }

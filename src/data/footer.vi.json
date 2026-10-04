@@ -1,0 +1,26 @@
+{
+  "about_links": [
+    {
+      "label": "Lịch Sử",
+      "link": "/about-us/"
+    },
+    {
+      "label": "Hình Ảnh",
+      "link": "/photos/"
+    },
+    {
+      "label": "Nhân Sự",
+      "link": "/staff/"
+    }
+  ],
+  "contact_links": [
+    {
+      "label": "Liên Lạc",
+      "link": "/contact/"
+    },
+    {
+      "label": "Đơn Xin",
+      "link": "/requests/"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 ---
-import { EXTERNAL, PHONE, ADDRESS, LOGO, resolveLink, type Lang } from '../config';
+import { EXTERNAL, PHONE, ADDRESS, LOGO, BRAND_NAME, BRAND_TAGLINE, GIVING_STYLE, resolveLink, type Lang } from '../config';
+import { btnClassFor } from '../lib/render-blocks.js';
 import navEn from '../data/navigation.en.json';
 import navEs from '../data/navigation.es.json';
 import navVi from '../data/navigation.vi.json';
@@ -32,10 +33,9 @@ const groups = ((nav.groups as Array<any>) ?? []).map((g) => ({
 <header class="sitebar">
   <div class="wrap flex min-h-[72px] flex-wrap items-center gap-3 py-2">
     <a class="mr-auto flex items-center gap-2 text-white no-underline hover:text-white" href={`/${lang}/`}>
-      <img class="brand-logo" src={LOGO} alt="St. Maria Goretti Parish logo" width="56" height="56" />
+      <img class="brand-logo" src={LOGO} alt={`${BRAND_NAME} logo`} width="56" height="56" />
       <span>
-        <span class="brand-name">St. Maria Goretti</span><br />
-        <span class="brand-sub">Catholic Parish · San Jose</span>
+        <span class="brand-name">{BRAND_NAME}</span>{BRAND_TAGLINE ? <><br /><span class="brand-sub">{BRAND_TAGLINE}</span></> : null}
       </span>
     </a>
     <div class="flex flex-wrap items-center gap-2">
@@ -46,8 +46,8 @@ const groups = ((nav.groups as Array<any>) ?? []).map((g) => ({
           </a>
         ))}
       </span>
-      <a class="btn btn-gold" href={EXTERNAL.giving}>♥ {ui.nav.giving}</a>
-      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobileNav">☰ Menu</button>
+      <a class={btnClassFor(GIVING_STYLE)} href={EXTERNAL.giving}>♥ {ui.nav.giving}</a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobileNav">☰ {ui.menu}</button>
     </div>
   </div>
   <nav class="navbar" aria-label="Primary">
@@ -72,7 +72,7 @@ const groups = ((nav.groups as Array<any>) ?? []).map((g) => ({
         <details class="border-b border-line">
           <summary class="flex min-h-[44px] cursor-pointer items-center font-bold text-navy">{g.label}</summary>
           <div class="grid gap-1 pb-3 pl-2">
-            <a href={g.href}>{g.label} — overview</a>
+            <a href={g.href}>{g.label} — {ui.overviewWord}</a>
             {g.children.map((c) => <a href={c.href} class="py-2">{c.label}</a>)}
           </div>
         </details>

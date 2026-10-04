@@ -1,4 +1,6 @@
 {
+  "dotsLabel": "Chọn slide",
+  "menu": "Menu",
   "nav": {
     "contact": "Liên Lạc",
     "requests": "Đơn Xin",
@@ -9,6 +11,8 @@
     "welcome": "Chào mừng đến Giáo xứ Thánh Maria Goretti!",
     "subtitle": "Một cộng đoàn Công giáo đầy sức sống trên đường Senter — tất cả đều được chào đón."
   },
+  "overviewWord": "tổng quan",
+  "photosWord": "ảnh",
   "schedule": {
     "massTimes": "Giờ Lễ",
     "confession": "Giờ Giải Tội",

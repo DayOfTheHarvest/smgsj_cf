@@ -1,0 +1,26 @@
+{
+  "about_links": [
+    {
+      "label": "Historia",
+      "link": "/about-us/"
+    },
+    {
+      "label": "Fotos",
+      "link": "/photos/"
+    },
+    {
+      "label": "Personal",
+      "link": "/staff/"
+    }
+  ],
+  "contact_links": [
+    {
+      "label": "Contacto",
+      "link": "/contact/"
+    },
+    {
+      "label": "Formularios",
+      "link": "/requests/"
+    }
+  ]
+}
