@@ -84,7 +84,8 @@
           ],
           "buttons_layout": "stacked"
         }
-      ]
+      ],
+      "layout": "four"
     },
     {
       "type": "schedule",

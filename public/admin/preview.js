@@ -524,6 +524,29 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
               }
             }
             if (anchors) out += '<p class="btn-row">' + anchors + '</p>';
+          } else if (b && b.type === 'card') {
+            // Consecutive cards share one grid, like the site and the page
+            // sections — one card per grid would stack them vertically.
+            var run = [];
+            while (i < blocks.length && blocks[i] && blocks[i].type === 'card') {
+              run.push(blocks[i++]);
+            }
+            if (run.length) {
+              out += renderSections(
+                [{ type: 'content_section', title: '', body: '', blocks: run }],
+                {
+                  title: title, md: md,
+                  href: function (link) { return previewHref(link, loc, aliases); },
+                  assetUrl: function (p) { var a = getAsset(p); return (a && a.url) || p; },
+                  t: { asof: 'Pledged as of', of: 'of', goal: 'goal', donate: 'Donate' },
+                  staff: staffOpt,
+                  lang: liveCardOpts.lang,
+                  bulletins: liveCardOpts.bulletins,
+                  office: liveCardOpts.office,
+                  emergencies: liveCardOpts.emergencies,
+                  contact: liveCardOpts.contact
+                });
+            }
           } else {
             out += renderSections(
               [{ type: 'content_section', title: '', body: '', blocks: [blocks[i++]] }],
@@ -623,37 +646,13 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       }
       function customNode(s, si) {
         var extra = blocksHtml(s.title || 'Custom block', s.blocks);
+        var grid = s.layout === 'four'
+          ? extra.split('class="cards"').join('class="cards four"')
+          : extra;
         return h('section', { key: 's' + si, 'aria-label': s.title || 'Custom block' },
           s.title ? h('h2', { 'data-key-path': 'sections.' + si + '.title', tabIndex: 0 }, s.title) : null,
-          h('div', { className: 'cards' },
-            ((s.cards || [])).map(function (c, ci) {
-              var adapted = {
-                type: 'card', icon: c.icon, title: c.title, text: c.text,
-                image: c.image,
-                buttons: c.buttons || (c.link ? [{
-                  label: c.link_label || c.title, link: c.link, style: 'outline'
-                }] : []),
-                buttons_layout: c.buttons_layout
-              };
-              var inner = renderBlock(adapted, {
-                title: s.title || '', md: md,
-                href: function (link) { return previewHref(link, loc, aliases); },
-                assetUrl: function (p) { var a = getAsset(p); return (a && a.url) || p; },
-                t: {}, kp: false,
-                lang: liveCardOpts.lang,
-                bulletins: liveCardOpts.bulletins,
-                office: liveCardOpts.office,
-                emergencies: liveCardOpts.emergencies,
-                contact: liveCardOpts.contact
-              });
-              return h('div', {
-                key: ci,
-                'data-key-path': 'sections.' + si + '.cards.' + ci,
-                dangerouslySetInnerHTML: { __html: inner }
-              });
-            })),
-          extra ? h('div', {
-            dangerouslySetInnerHTML: { __html: extra }
+          grid ? h('div', {
+            dangerouslySetInnerHTML: { __html: grid }
           }) : null);
       }
       function scheduleNode(s, si) {

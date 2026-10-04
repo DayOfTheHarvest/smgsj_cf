@@ -412,7 +412,10 @@ function groupBlocks(blocks) {
     if (b && b.type === 'card') {
       const text = b.text && String(b.text).trim() ? 'x' : '';
       const title = b.title && String(b.title).trim() ? 'x' : '';
-      if (!(title || text || (b.buttons || []).length)) return;
+      // Live cards (bulletins, hours, numbers, contact) render their body
+      // from parish data, so they join the grid even with no text of their own.
+      const liveKind = b.kind && b.kind !== 'generic';
+      if (!(title || text || (b.buttons || []).length || liveKind)) return;
       const last = runs[runs.length - 1];
       if (last && last.kind === 'cards') last.items.push({ b, bi });
       else runs.push({ kind: 'cards', items: [{ b, bi }] });

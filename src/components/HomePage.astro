@@ -15,7 +15,7 @@ import { OFFICE_HOURS } from '../data/mass';
 import { pickLocale } from '../lib/i18n';
 import { renderMd } from '../lib/md';
 import { renderSections } from '../lib/render-blocks.js';
-import { renderBlock, btnClassFor, esc } from '../lib/render-blocks.js';
+import { btnClassFor, esc } from '../lib/render-blocks.js';
 import staffEn from '../data/staff.en.json';
 import staffEs from '../data/staff.es.json';
 import staffVi from '../data/staff.vi.json';
@@ -99,12 +99,28 @@ const blocksHtml = (title: string, blocks: Array<any>) => {
           esc(resolveLink(link, lang)) + '">' + esc(label) + '</a>';
       }).filter(Boolean).join('');
       if (anchors) out += '<p class="flex flex-wrap gap-2">' + anchors + '</p>';
+    } else if (b?.type === 'card') {
+      // Consecutive cards share one grid, exactly like page sections do —
+      // one card per grid would stack them instead of sitting side by side.
+      const run: Array<any> = [];
+      while (i < list.length && list[i]?.type === 'card') run.push(list[i++]);
+      if (run.length) {
+        out += renderSections(
+          [{ type: 'content_section', title: '', body: '', blocks: run }], o);
+      }
     } else {
       out += renderSections(
         [{ type: 'content_section', title: '', body: '', blocks: [list[i++]] }], o);
     }
   }
   return out;
+};
+// Custom rows are fully generic sections: every card lives in blocks, so the
+// row only picks how many columns the grids use (four restores the old
+// four-across action-cards look).
+const customBlocksHtml = (title: string, blocks: Array<any>, layout: string) => {
+  const html = blocksHtml(title, blocks);
+  return layout === 'four' ? html.replaceAll('class="cards"', 'class="cards four"') : html;
 };
 // Staff-composed sections (Sveltia: Homepage welcome → Sections): rows in
 // display order with visibility toggles, plus custom blocks anywhere. Unknown
@@ -138,26 +154,7 @@ const scheduleBtnClass = (b: any) =>
       {s.type === 'custom' ? (
         <section aria-label={s.title || `Section ${si + 1}`}>
           {(s.title) && <h2>{s.title}</h2>}
-          <div class="cards">
-            {((Array.isArray(s.cards) ? s.cards : []) as any[]).map((c: any) => {
-              // Same card shape as page sections: multiple buttons with a
-              // layout choice (the old single link still maps to one button).
-              const adapted = {
-                type: 'card',
-                icon: c.icon,
-                title: c.title,
-                text: c.text,
-                image: c.image,
-                buttons: (Array.isArray(c.buttons) ? c.buttons : (c.link ? [{
-                  label: c.link_label || c.title, link: c.link, style: 'outline'
-                }] : [])),
-                buttons_layout: c.buttons_layout,
-              };
-              const cardHtml = renderBlock(adapted as any, blockOpts(s.title || `Section ${si + 1}`));
-              return cardHtml ? <div set:html={cardHtml} /> : null;
-            })}
-          </div>
-          {blocksHtml(s.title || `Section ${si + 1}`, s.blocks) && <div set:html={blocksHtml(s.title || `Section ${si + 1}`, s.blocks)} />}
+          {customBlocksHtml(s.title || `Section ${si + 1}`, s.blocks, s.layout) && <div set:html={customBlocksHtml(s.title || `Section ${si + 1}`, s.blocks, s.layout)} />}
         </section>
       ) : s.visible === false ? null : (
       <>

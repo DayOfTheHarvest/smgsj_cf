@@ -39,6 +39,9 @@ img { max-width: 100%; height: auto; }
 
 .cards { display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 1rem 0; }
 @media (min-width: 768px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+/* Four-across grids mirror the site (custom rows set to Four across). */
+@media (min-width: 768px) { .cards.four { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1280px) { .cards.four { grid-template-columns: repeat(4, 1fr); } }
 .card { border: 1px solid #e3e6ec; border-radius: 0.75rem; background: #fff; padding: 1.25rem; }
 .card-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
 .card-head h2, .card-head h3 { margin: 0; border: 0; padding: 0; }

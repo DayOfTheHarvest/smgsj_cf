@@ -210,7 +210,7 @@ collections:
                         name: icon
                         widget: select
                         i18n: duplicate
-                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
                         required: false
                       - label: 'Heading (this language)'
                         name: title
@@ -391,7 +391,7 @@ collections:
                         name: icon
                         widget: select
                         i18n: duplicate
-                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
                         required: false
                       - label: 'Heading (this language)'
                         name: title
@@ -801,7 +801,7 @@ collections:
                             name: icon
                             widget: select
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
                             required: false
                           - label: 'Heading (this language)'
                             name: title
@@ -1004,7 +1004,7 @@ collections:
                             name: icon
                             widget: select
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
                             required: false
                           - label: 'Heading (this language)'
                             name: title
@@ -1219,7 +1219,7 @@ collections:
                             name: icon
                             widget: select
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
                             required: false
                           - label: 'Heading (this language)'
                             name: title
@@ -1294,7 +1294,7 @@ collections:
                         name: icon
                         widget: select
                         i18n: duplicate
-                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
                         required: false
                       - label: 'Title (this language)'
                         name: title
@@ -1433,7 +1433,7 @@ collections:
                             name: icon
                             widget: select
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
                             required: false
                           - label: 'Heading (this language)'
                             name: title
@@ -1658,7 +1658,7 @@ collections:
                             name: icon
                             widget: select
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
                             required: false
                           - label: 'Heading (this language)'
                             name: title
@@ -1715,12 +1715,22 @@ collections:
                     widget: string
                     required: false
                     i18n: true
-                  - label: 'Extra widgets (below the cards)'
+                  - label: 'Card grid layout'
+                    name: layout
+                    widget: select
+                    i18n: duplicate
+                    options:
+                      - { label: 'Three across', value: three }
+                      - { label: 'Four across', value: four }
+                    default: three
+                    required: false
+                    hint: 'Four across restores the old four-box row (e.g. Bulletin, Giving, Payment, Requests).'
+                  - label: 'Content (cards and widgets)'
                     name: blocks
                     widget: list
                     i18n: duplicate
                     required: false
-                    hint: 'Text, buttons, thermometers, images, or embeds — anything a page section can hold. Drag to reorder. Consecutive buttons show side by side. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
+                    hint: 'Cards, text, buttons, thermometers, images, or embeds — anything a page section can hold. Consecutive cards share one row; consecutive buttons show side by side. Drag to reorder. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
                     types:
                       - name: fundraiser
                         label: Fundraiser thermometer
@@ -1831,7 +1841,7 @@ collections:
                             name: icon
                             widget: select
                             i18n: duplicate
-                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info', 'alert', 'card']
                             required: false
                           - label: 'Heading (this language)'
                             name: title
