@@ -10,6 +10,25 @@ const data = pickLocale({ en: bulletinsEn, es: bulletinsEs, vi: bulletinsVi }, l
 // Show bulletins from the past N weeks (staff-set window; 0 = show all).
 const weeks = Number(data.weeks ?? 3);
 const cutoff = weeks > 0 ? Date.now() - weeks * 7 * 864e5 : 0;
+// Display label comes from the shared date, auto-translated per site locale
+// (Intl); a hand-typed Custom label wins when staff sets one.
+const formatDate = (iso: string): string => {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+  if (!m) return '';
+  const atNoonUTC = new Date(`${m[1]}-${m[2]}-${m[3]}T12:00:00Z`);
+  try {
+    return new Intl.DateTimeFormat(lang, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }).format(atNoonUTC);
+  } catch {
+    return '';
+  }
+};
+const labelOf = (b: any): string =>
+  (b.label || '').trim() || formatDate(b.date) || b.date;
 const items = ((data.bulletins ?? []) as Array<any>)
   .filter((b) => {
     const t = Date.parse(b.date);
@@ -19,6 +38,6 @@ const items = ((data.bulletins ?? []) as Array<any>)
 ---
 <ul class="bulletin-list">
   {items.map((b) => (
-    <li><a href={b.url}>{b.label}</a></li>
+    <li><a href={b.url}>{labelOf(b)}</a></li>
   ))}
 </ul>

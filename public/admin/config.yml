@@ -551,7 +551,7 @@ collections:
         label: Bulletin Links
         file: src/data/bulletins.{{locale}}.json
         i18n: true
-        description: Newest first. Upload the PDF via Media first, then paste its /uploads/ link here. Write the label in this language — switch top-right.
+        description: Newest first. Upload the PDF via Media first, then paste its /uploads/ link here. Pick the Sunday date — the display label translates automatically.
         fields:
           - label: 'Show bulletins from the past N weeks (0 = show all)'
             name: weeks
@@ -565,13 +565,14 @@ collections:
             label_singular: 'Bulletin'
             add_to_top: true
             i18n: true
-            summary: '{{label}}'
+            summary: '{{date}}'
             fields:
-              - label: 'Date'
+              - label: 'Date (sets the auto-translated label below)'
                 name: date
-                widget: string
+                widget: datetime
                 i18n: duplicate
-              - label: 'Label (e.g. October 11, 2026 — this language)'
+                hint: 'Pick the Sunday from the calendar. One shared date — display translates per language.'
+              - label: 'Custom label (optional — blank = automatic translated date)'
                 name: label
                 widget: string
                 i18n: true
