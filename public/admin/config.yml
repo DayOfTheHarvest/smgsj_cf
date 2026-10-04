@@ -1582,9 +1582,9 @@ collections:
                 hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
 
   - name: updates
-    label: Notices, Forms & Galleries
+    label: Notices
     icon: notifications
-    description: 'Urgent site-wide banner, request-form links and photo galleries.'
+    description: 'Urgent site-wide banner.'
     i18n: true
     files:
       - name: notice
@@ -1613,50 +1613,6 @@ collections:
             widget: string
             required: false
             i18n: true
-      - name: forms
-        label: Request Form Links
-        icon: assignment
-        file: src/data/forms.json
-        description: The request-forms page list. Update URLs when yearly registrations roll over (e.g. 2026-2027 → 2027-2028). Parish-page links must start AND end with / .
-        fields:
-          - label: 'Forms'
-            name: forms
-            widget: list
-            collapsed: auto
-            label_singular: 'Form'
-            summary: '{{label}}'
-            fields:
-              - { label: 'Label (keep all 3 languages in one line)', name: label, widget: string }
-              - { label: 'Link', name: url, widget: string, hint: 'A parish page, a full web address, or a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube). See “Contact Info & External Links” for what each @shortcut opens.' }
-      - name: galleries
-        label: Photo Galleries
-        icon: photo_library
-        file: src/data/galleries.{{locale}}.json
-        i18n: true
-        description: Gallery titles with photo counts. Paste the Google Photos album link when an album moves over; blank link shows the title without a link. Write the title in this language — switch top-right.
-        fields:
-          - label: 'Galleries'
-            name: galleries
-            widget: list
-            collapsed: auto
-            label_singular: 'Gallery'
-            i18n: duplicate
-            summary: '{{title}}'
-            fields:
-              - label: 'Title (this language)'
-                name: title
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Photo count'
-                name: photos
-                widget: number
-                i18n: duplicate
-              - label: 'Album link (blank = no link yet)'
-                name: url
-                widget: string
-                required: false
-                i18n: duplicate
 
   # ——— Translators (button & heading words, all languages) ———
   - divider: true
@@ -1730,7 +1686,6 @@ collections:
         - { label: 'Overview link word (mobile menu)', name: overviewWord, widget: string, i18n: true, required: false }
         - { label: '“Phone” label', name: phoneLabel, widget: string, i18n: true, required: false }
         - { label: 'Footer Photos link', name: photosLink, widget: string, i18n: true, required: false }
-        - { label: 'Photos count word (e.g. photos, fotos)', name: photosWord, widget: string, i18n: true, required: false }
         - { label: '“Raised as of” label', name: pledgedAsOf, widget: string, i18n: true, required: false }
         - { label: '“Previous” arrow label', name: prevSlide, widget: string, i18n: true, required: false }
         - label: 'Schedule'

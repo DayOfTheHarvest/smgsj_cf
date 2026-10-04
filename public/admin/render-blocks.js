@@ -282,7 +282,7 @@ export function renderBlock(b, o, kp) {
     const buttons = (Array.isArray(b.buttons) ? b.buttons : [])
       .map((btn) => buttonAnchor(btn, o))
       .filter(Boolean);
-    if (!(b.title && String(b.title).trim()) && !html && !buttons.length) return '';
+    if (!(b.title && String(b.title).trim()) && !html && !buttons.length && !b.image) return '';
     return (
       '<article class="card"' +
       (kp ? ' data-key-path="' + kp + '" tabindex="0"' : '') +
@@ -296,6 +296,13 @@ export function renderBlock(b, o, kp) {
         : b.title && String(b.title).trim()
           ? '<h3>' + esc(b.title) + '</h3>'
           : '') +
+      (b.image
+        ? '<p><img src="' +
+          escAttr(o.assetUrl(b.image)) +
+          '" alt="' +
+          escAttr(b.title || '') +
+          '" loading="lazy" style="border-radius:.5rem"></p>'
+        : '') +
       (html ? '<div>' + html + '</div>' : '') +
       (buttons.length
         ? b.buttons_layout === 'inline'

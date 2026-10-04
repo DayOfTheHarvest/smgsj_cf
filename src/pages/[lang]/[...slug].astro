@@ -7,12 +7,6 @@ import en from '../../data/ui.en.json';
 import es from '../../data/ui.es.json';
 import vi from '../../data/ui.vi.json';
 import PageBlocks from '../../components/PageBlocks.astro';
-import { resolveLink } from '../../config';
-import formsData from '../../data/forms.json';
-import galleriesEn from '../../data/galleries.en.json';
-import galleriesEs from '../../data/galleries.es.json';
-import galleriesVi from '../../data/galleries.vi.json';
-import { pickLocale } from '../../lib/i18n';
 import { bundlePages, localizeSections } from '../../lib/i18n';
 
 export async function getStaticPaths() {
@@ -42,8 +36,6 @@ const enSections = ((enEntry.data as any).sections as Array<any>) ?? [];
 const locSections = ((locEntry.data as any).sections as Array<any>) ?? [];
 const sections = localizeSections(enSections, locSections);
 const fallback = lang !== 'en' && locSections.length === 0;
-const formList = ((formsData as any).forms as Array<any>) ?? [];
-const galleryList = ((pickLocale({ en: galleriesEn, es: galleriesEs, vi: galleriesVi }, lang) as any).galleries as Array<any>) ?? [];
 ---
 <Base lang={lang} slug={slug} title={titleLoc} fallback={fallback}>
   <h1>{titleLoc}</h1>
@@ -51,25 +43,4 @@ const galleryList = ((pickLocale({ en: galleriesEn, es: galleriesEs, vi: galleri
     {slug === 'mass-times' && <MassCards lang={lang} ui={ui} />}
     <PageBlocks lang={lang} ui={ui} title={titleLoc} sections={sections} />
   </div>
-  {slug === 'requests' && (
-    <section aria-label="External forms">
-      <ul>
-        {formList.map((f) => (
-          <li><a href={resolveLink(f.url, lang)}>{f.label}</a></li>
-        ))}
-      </ul>
-    </section>
-  )}
-  {slug === 'photos' && (
-    <section aria-label="Photo galleries">
-      <ul>
-        {galleryList.map((g) => (
-          <li>
-            {g.url?.trim() ? <a href={g.url.trim()}>{g.title}</a> : <strong>{g.title}</strong>}
-            {typeof g.photos === 'number' ? ` — ${g.photos} photos` : ''}
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
 </Base>

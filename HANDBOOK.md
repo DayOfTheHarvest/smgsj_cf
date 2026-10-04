@@ -43,7 +43,7 @@ names appear on the homepage schedule and the Mass times table. Adding a new
 place? Type its exact name, then add its translations under Location names.
 
 ### Urgent message for everyone (closures, emergencies, holy-day changes)
-Open **Notices, forms & galleries** → Urgent notice. Write the message in all
+Open **Notices** → Urgent notice. Write the message in all
 3 languages, add a link if there is one, and switch it **ON**. Switch it
 **OFF** when it no longer applies — while on, the gold message bar shows on
 every page of the site.
@@ -58,12 +58,12 @@ every page of the site.
 | Office hours wording | Parish info → Office hours. Hours update everywhere at once (homepage Contact section, bottom of every page, contact page). |
 | Staff names, job titles, phone numbers, biographies | Staff directory. Job titles and biographies in each language — switch top-right; empty shows English. Photos: press Choose image, never type an address. Empty biography = no personal page. |
 | Homepage moving pictures | Homepage carousel. The first picture shows on load; each picture has its own seconds and size (leave sizes at 1920×480 unless the web developer volunteer says otherwise). Upload wide pictures (about 1920 wide) under Media first. Captions and alt text in each language — switch top-right; empty shows English. |
-| Homepage boxes (Bulletin, Giving, Payment, Requests) | Site settings → Homepage action cards. Kinds: bulletin list (only ONE box), link button, text only. Web addresses for parish pages must start AND end with `/`. You can also type a @shortcut word (@giving, @payment, @calendar-suggest, @calendar-view, @flocknote, @youtube) instead of an address — those follow Site settings automatically. |
+| Homepage boxes (Bulletin, Giving, Payment, Requests) | Site settings → Homepage action cards. Kinds: bulletin list (only ONE box), link button, text only. The bulletin card shows the newest entries first — set how many under Bulletin list length. Web addresses for parish pages must start AND end with `/`. You can also type a @shortcut word (@giving, @payment, @calendar-suggest, @calendar-view, @flocknote, @facebook, @youtube) instead of an address — those follow Site settings automatically. |
 | Homepage order | Site settings → Homepage welcome → Sections. Drag rows to reorder; uncheck Visible to hide a section (it keeps its place, re-check to show it again). Never change a Theme section's name — only its visibility. |
-| Welcome text, buttons, events, facility line, church icons | Site settings → Homepage welcome (welcome / events / facility / church blocks). The pastor's words should stay as he wrote them. |
+| Welcome text, buttons, Mass schedule links, events, church icons | Site settings → Homepage welcome (hero banner, schedule block, event cards, Catholic block, custom blocks). Each row carries its own buttons and headings — relabel or reorder them inside the row. The pastor's words should stay as he wrote them. |
 | Top menu | Site settings → Header menu structure. Links must start AND end with `/`. Add a temporary entry (for example a fundraiser) and remove it when done. |
 | Phone, email, address, Giving/Payment, Calendar, YouTube, social media | Site settings → Contact info & external links. A wrong address here shows on every page — double-check. |
-| Request forms, photo albums | Notices, forms & galleries. Update form addresses when yearly sign-ups roll over; paste Google Photos album addresses as albums move over. |
+| Request forms, photo albums | On the Request Forms / Photo Galleries page itself → Page sections. Update form addresses when yearly sign-ups roll over; paste Google Photos album addresses as albums move over. |
 | Fundraisers (capital campaign and future ones) | On the fundraiser page itself → Page widgets → Add “Fundraiser thermometer” and fill goal, raised, date, donate link (and the title + button label in each language via the top-right switcher). New fundraiser: create its page under Pages first, then add its thermometer widget, feature it with a carousel slide. Finished fundraiser: delete the thermometer row, remove its carousel slide, then rewrite the page as a thank-you note — no volunteer needed. |
 | Button and heading wording (all 3 languages) | Interface words — one screen for all languages; switch language with the button in the top-right corner. **Wording only — never rename, remove, or add rows**, or text across the site goes blank. |
 
