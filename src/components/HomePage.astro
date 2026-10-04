@@ -13,6 +13,7 @@ import homepageVi from '../data/homepage.vi.json';
 import { pickLocale } from '../lib/i18n';
 import { renderMd } from '../lib/md';
 import { renderSections } from '../lib/render-blocks.js';
+import { btnClassFor, esc } from '../lib/render-blocks.js';
 import staffEn from '../data/staff.en.json';
 import staffEs from '../data/staff.es.json';
 import staffVi from '../data/staff.vi.json';
@@ -66,12 +67,35 @@ const blockOpts = (title: string) => ({
     profileLabel: ui.viewProfile,
   },
 });
-const blocksHtml = (title: string, blocks: Array<any>) =>
-  ((blocks ?? []).length
-    ? renderSections(
-      [{ type: 'content_section', title: '', body: '', blocks: blocks ?? [] }],
-      blockOpts(title))
-    : '');
+const blocksHtml = (title: string, blocks: Array<any>) => {
+  const list = blocks ?? [];
+  if (!list.length) return '';
+  const o = blockOpts(title);
+  // Consecutive buttons share one row (side by side), exactly like the old
+  // calendar buttons did; every other widget renders on its own via the
+  // shared renderer. Buttons stay standard button blocks either way.
+  let out = '';
+  let i = 0;
+  while (i < list.length) {
+    const b = list[i];
+    if (b?.type === 'button') {
+      const run: Array<any> = [];
+      while (i < list.length && list[i]?.type === 'button') run.push(list[i++]);
+      const anchors = run.map((x) => {
+        const label = (x.label || '').trim();
+        const link = (x.link || '').trim();
+        if (!label || !link) return '';
+        return '<a class="' + btnClassFor(x.style) + '" href="' +
+          esc(resolveLink(link, lang)) + '">' + esc(label) + '</a>';
+      }).filter(Boolean).join('');
+      if (anchors) out += '<p class="flex flex-wrap gap-2">' + anchors + '</p>';
+    } else {
+      out += renderSections(
+        [{ type: 'content_section', title: '', body: '', blocks: [list[i++]] }], o);
+    }
+  }
+  return out;
+};
 // Staff-composed sections (Sveltia: Homepage welcome → Sections): rows in
 // display order with visibility toggles, plus custom blocks anywhere. Unknown
 // ids ignored; missing sections appended visible in default position.
@@ -151,10 +175,6 @@ for (const id of DEFAULT_ORDER) {
               </article>
             ))}
           </div>
-          <p class="flex flex-wrap gap-2">
-            <a class="btn btn-primary" href={`/${lang}/calendar/#today`}>{ui.todayEvents}</a>
-            <a class="btn btn-outline" href={`/${lang}/calendar/`}>{ui.fullCalendar}</a>
-          </p>
           {blocksHtml(ui.eventsTitle, s.blocks) && <div set:html={blocksHtml(ui.eventsTitle, s.blocks)} />}
         </section>
       )}

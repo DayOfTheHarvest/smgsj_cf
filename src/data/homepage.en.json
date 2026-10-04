@@ -68,6 +68,18 @@
       ],
       "blocks": [
         {
+          "type": "button",
+          "label": "Today's Events",
+          "link": "/calendar/#today",
+          "style": "primary"
+        },
+        {
+          "type": "button",
+          "label": "Full Calendar",
+          "link": "/calendar/",
+          "style": "outline"
+        },
+        {
           "type": "richtext",
           "body": "For individual events, please call the parish office."
         },

@@ -68,6 +68,18 @@
       ],
       "blocks": [
         {
+          "type": "button",
+          "label": "Sự Kiện Hôm Nay",
+          "link": "/calendar/#today",
+          "style": "primary"
+        },
+        {
+          "type": "button",
+          "label": "Lịch Đầy Đủ",
+          "link": "/calendar/",
+          "style": "outline"
+        },
+        {
           "type": "richtext",
           "body": "Đối với các sự kiện cá nhân, vui lòng gọi văn phòng giáo xứ."
         },

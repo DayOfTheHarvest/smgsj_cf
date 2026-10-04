@@ -9,7 +9,7 @@
    English (the stored values); fundraiser microcopy is English; map/calendar
    iframes may refuse framing and show blank until deployed; the previewed
    locale is read off the entry file path (falls back to English). */
-import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, renderBlock, iconBadge, esc } from './render-blocks.js?v=2';
+import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, renderBlock, btnClassFor, iconBadge, esc } from './render-blocks.js?v=2';
 
 (function () {
   if (!window.CMS) return;
@@ -188,11 +188,9 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
     catholic: 'Catholic — diocesan icons + EthicsPoint line'
   };
 
-  /* Action-card button colors, mirroring ActionCards.astro. */
+  /* Action-card button colors, mirroring btnClassFor on the site. */
   function actionBtnClass(s) {
-    return s === 'gold' ? 'btn btn-gold'
-      : s === 'outline' ? 'btn btn-outline'
-      : 'btn btn-primary';
+    return btnClassFor(s);
   }
 
   /* Shared composed-section renderers: the standalone file previews and the
@@ -518,15 +516,37 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       } : null;
       function blocksHtml(title, blocks) {
         if (!blocks || !blocks.length) return '';
-        return renderSections(
-          [{ type: 'content_section', title: '', body: '', blocks: blocks }],
-          {
-            title: title, md: md,
-            href: function (link) { return previewHref(link, loc, aliases); },
-            assetUrl: function (p) { var a = getAsset(p); return (a && a.url) || p; },
-            t: { asof: 'Pledged as of', of: 'of', goal: 'goal', donate: 'Donate' },
-            staff: staffOpt
-          });
+        // Consecutive buttons share one row, like the site; other widgets
+        // render on their own via the shared renderer.
+        var out = '';
+        var i = 0;
+        while (i < blocks.length) {
+          var b = blocks[i];
+          if (b && b.type === 'button') {
+            var anchors = '';
+            while (i < blocks.length && blocks[i] && blocks[i].type === 'button') {
+              var x = blocks[i++];
+              var label = (x.label || '').trim();
+              var link = (x.link || '').trim();
+              if (label && link) {
+                anchors += '<a class="' + btnClassFor(x.style) + '" href="' +
+                  esc(previewHref(link, loc, aliases)) + '">' + esc(label) + '</a>';
+              }
+            }
+            if (anchors) out += '<p class="btn-row">' + anchors + '</p>';
+          } else {
+            out += renderSections(
+              [{ type: 'content_section', title: '', body: '', blocks: [blocks[i++]] }],
+              {
+                title: title, md: md,
+                href: function (link) { return previewHref(link, loc, aliases); },
+                assetUrl: function (p) { var a = getAsset(p); return (a && a.url) || p; },
+                t: { asof: 'Pledged as of', of: 'of', goal: 'goal', donate: 'Donate' },
+                staff: staffOpt
+              });
+          }
+        }
+        return out;
       }
       function placeholder(si, label, extra) {
         return h('div', {

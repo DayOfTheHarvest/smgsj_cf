@@ -753,7 +753,7 @@ collections:
                     widget: list
                     i18n: duplicate
                     required: false
-                    hint: 'Text, buttons, thermometers, images, or embeds — anything a page section can hold. Drag to reorder. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
+                    hint: 'Text, buttons, thermometers, images, or embeds — anything a page section can hold. Drag to reorder. Consecutive buttons show side by side. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
                     types:
                       - name: fundraiser
                         label: Fundraiser thermometer
@@ -1005,7 +1005,7 @@ collections:
                     widget: list
                     i18n: duplicate
                     required: false
-                    hint: 'Text, buttons, thermometers, images, or embeds — anything a page section can hold. Drag to reorder. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
+                    hint: 'Text, buttons, thermometers, images, or embeds — anything a page section can hold. Drag to reorder. Consecutive buttons show side by side. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
                     types:
                       - name: fundraiser
                         label: Fundraiser thermometer
