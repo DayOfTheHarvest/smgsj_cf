@@ -6,7 +6,6 @@ import type { Lang } from '../../config';
 import en from '../../data/ui.en.json';
 import es from '../../data/ui.es.json';
 import vi from '../../data/ui.vi.json';
-import StaffCards from '../../components/StaffCards.astro';
 import PageBlocks from '../../components/PageBlocks.astro';
 import { resolveLink } from '../../config';
 import formsData from '../../data/forms.json';
@@ -52,11 +51,6 @@ const galleryList = ((pickLocale({ en: galleriesEn, es: galleriesEs, vi: galleri
     {slug === 'mass-times' && <MassCards lang={lang} ui={ui} />}
     <PageBlocks lang={lang} ui={ui} title={titleLoc} sections={sections} />
   </div>
-  {slug === 'staff' && (
-    <section aria-label="Staff directory">
-      <StaffCards lang={lang} ui={ui} />
-    </section>
-  )}
   {slug === 'requests' && (
     <section aria-label="External forms">
       <ul>

@@ -118,6 +118,13 @@ iframe.preview-embed { width: 100%; border: 0; }
 .staff-photo { width: 160px; height: 160px; border-radius: 999px; object-fit: cover; margin: 0 auto; }
 .staff-initials { display: inline-flex; align-items: center; justify-content: center; width: 160px; height: 160px; border-radius: 999px; background: #1e2e4f; color: #c9a227; font-family: Georgia, 'Palatino Linotype', serif; font-size: 1.875rem; font-weight: 700; }
 
+/* Homepage preview: simplified hero + theme-section placeholders. */
+.preview-hero { background: linear-gradient(135deg, #141f36 0%, #1e2e4f 60%, #2c4470 100%); color: #fff; border-radius: 0.75rem; padding: 1.5rem; margin: 1rem 0; }
+.preview-hero h1 { color: #fff; border: 0; margin-top: 0; }
+.preview-hero p { color: #e2e8f0; }
+.preview-hero .hero-eyebrow { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: #c9a227; }
+.preset-row { border: 1px dashed #5b6270; border-radius: 0.5rem; padding: 0.5rem 0.75rem; margin: 0.5rem 0; }
+
 /* Header menu preview (simplified site navbar). */
 .preview-nav { background: #141f36; border-radius: 0.5rem; padding: 0.5rem 1rem; }
 .preview-nav a { color: #e2e8f0; text-decoration: none; font-weight: 600; display: inline-block; padding: 0.5rem 0.75rem; font-size: 0.95rem; }

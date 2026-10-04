@@ -236,6 +236,8 @@ collections:
                           - { label: 'Inline (side by side)', value: inline }
                         default: stacked
                         required: false
+                  - name: staff
+                    label: Staff Directory
           - name: fullwidth_section
             label: Full-width section
             summary: '{{title}}'
@@ -395,6 +397,8 @@ collections:
                           - { label: 'Inline (side by side)', value: inline }
                         default: stacked
                         required: false
+                  - name: staff
+                    label: Staff Directory
       - name: updated
         widget: hidden
         i18n: duplicate

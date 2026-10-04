@@ -57,6 +57,12 @@ const cardBlock = z.object({
   buttons_layout: z.string().nullish(),
 });
 
+// Staff directory grid (data comes from the staff files per viewing locale,
+// so one widget works on any page in every language).
+const staffBlock = z.object({
+  type: z.literal('staff'),
+});
+
 const pageBlock = z.discriminatedUnion('type', [
   fundraiserBlock,
   embedBlock,
@@ -64,6 +70,7 @@ const pageBlock = z.discriminatedUnion('type', [
   richtextBlock,
   imageBlock,
   cardBlock,
+  staffBlock,
 ]);
 
 const contentSection = z.object({

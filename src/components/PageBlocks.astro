@@ -2,6 +2,10 @@
 import { renderSections } from '../lib/render-blocks.js';
 import { renderMd } from '../lib/md';
 import { resolveLink, type Lang } from '../config';
+import staffEn from '../data/staff.en.json';
+import staffEs from '../data/staff.es.json';
+import staffVi from '../data/staff.vi.json';
+import { pickLocale } from '../lib/i18n';
 
 interface Props {
   lang: Lang;
@@ -14,6 +18,7 @@ const { lang, ui, title, sections = [] } = Astro.props;
 // Page sections share one markup implementation with the CMS live preview
 // (src/lib/render-blocks.js): same classes, same output. Only the data
 // sources differ (translated ui strings + resolveLink here).
+const members = ((pickLocale({ en: staffEn, es: staffEs, vi: staffVi }, lang) as any).members as Array<any>) ?? [];
 const html = renderSections(Array.isArray(sections) ? sections : [], {
   title,
   md: (src: string) => renderMd(src || ''),
@@ -24,6 +29,12 @@ const html = renderSections(Array.isArray(sections) ? sections : [], {
     of: ui.ofWord,
     goal: ui.goalWord,
     donate: ui.nav.giving,
+  },
+  staff: {
+    members,
+    assetUrl: (p: string) => p,
+    profileHref: (slug: string) => `/${lang}/staff/${slug}/`,
+    profileLabel: ui.viewProfile,
   },
 });
 ---

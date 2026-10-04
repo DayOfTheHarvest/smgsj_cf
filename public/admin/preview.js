@@ -9,7 +9,7 @@
    English (the stored values); fundraiser microcopy is English; map/calendar
    iframes may refuse framing and show blank until deployed; the previewed
    locale is read off the entry file path (falls back to English). */
-import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, esc } from './render-blocks.js';
+import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, renderBlock, iconBadge, esc } from './render-blocks.js';
 
 (function () {
   if (!window.CMS) return;
@@ -41,18 +41,30 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
   var PROFILE_LABELS = { en: 'View Profile', es: 'Ver Perfil', vi: 'Xem Hồ Sơ' };
 
   /* ---- Pages: title + sections via the shared site renderer ----
-     Staff pages additionally show the member directory below. */
+     Pages containing a staff widget also show the member directory. */
+  function hasStaffWidget(sections) {
+    var found = false;
+    (sections || []).forEach(function (s) {
+      ((s && s.blocks) || []).forEach(function (b) {
+        if (b && b.type === 'staff') found = true;
+      });
+    });
+    return found;
+  }
+
   var PagesPreview = createClass({
     getInitialState: function () {
       return { staff: null };
     },
     componentDidMount: function () {
       var self = this;
-      if (this.props.entry.get('slug') !== 'staff') return;
+      var raw = this.props.entry.get('data');
+      var data = (raw && raw.toJS) ? raw.toJS() : (raw || {});
+      if (!hasStaffWidget(data.sections)) return;
       this.props.getCollection('_singletons', 'staff').then(function (entry) {
         if (Array.isArray(entry)) entry = entry[0];
-        var data = entry && (entry.get ? entry.get('data') : entry.data);
-        self.setState({ staff: plain(data) });
+        var sdata = entry && (entry.get ? entry.get('data') : entry.data);
+        self.setState({ staff: plain(sdata) });
       }, function () {});
     },
     render: function () {
@@ -61,6 +73,8 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       var raw = entry.get('data');
       var data = (raw && raw.toJS) ? raw.toJS() : (raw || {});
       var self = this;
+      var loc = previewLocale(entry.get('path'));
+      var staff = this.state.staff;
       var html =
         '<h1 data-key-path="title" tabindex="0">' + esc(data.title || '') + '</h1>' +
         renderSections(data.sections || [], {
@@ -72,34 +86,119 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
             return (a && a.url) || p;
           },
           t: { asof: 'Pledged as of', of: 'of', goal: 'goal', donate: 'Donate' },
-          kp: true
+          kp: true,
+          staff: staff && staff.members ? {
+            members: staff.members,
+            assetUrl: function (p) {
+              var a = self.props.getAsset ? self.props.getAsset(p) : null;
+              return (a && a.url) || p;
+            },
+            profileHref: function (slug) { return '/' + loc + '/staff/' + slug + '/'; },
+            profileLabel: PROFILE_LABELS[loc] || PROFILE_LABELS.en,
+            kp: true
+          } : null
         });
-      var kids = [h('div', {
-        key: 'page', dangerouslySetInnerHTML: { __html: html }
-      })];
-      var staff = this.state.staff;
-      if (entry.get('slug') === 'staff' && staff && staff.members) {
-        var loc = previewLocale(entry.get('path'));
-        kids.push(h('section', { key: 'dir', 'aria-label': 'Staff directory' },
-          h('div', {
-            dangerouslySetInnerHTML: {
-              __html: renderStaffCards(staff.members, {
-                assetUrl: function (p) {
-                  var a = props.getAsset ? props.getAsset(p) : null;
-                  return (a && a.url) || p;
-                },
-                profileHref: function (slug) { return '/' + loc + '/staff/' + slug + '/'; },
-                profileLabel: PROFILE_LABELS[loc] || PROFILE_LABELS.en,
-                kp: true
-              })
-            }
-          })));
-      }
-      return h('div', { className: 'wrap' }, kids);
+      return h('div', { className: 'wrap', dangerouslySetInnerHTML: { __html: html } });
     }
   });
 
-  /* ---- Header menu singleton: the nav as visitors see it ---- */
+  /* Theme-section meanings, mirroring the Homepage Welcome labels in
+     public/admin/config.yml. Shown for preset rows (live regions compose
+     other collections, so only their place + visibility preview here). */
+  var PRESET_INFO = {
+    carousel: 'Carousel — rotating banner slides',
+    hero: 'Hero — welcome title, subtitle + buttons',
+    actions: 'Actions — action cards row',
+    schedule: 'Schedule — Mass times + schedule buttons',
+    events: 'Events — event cards + calendar buttons',
+    body: 'Body — homepage page text',
+    office: 'Office — contact + office hours cards',
+    flocknote: 'Flocknote — signup form',
+    catholic: 'Catholic — diocesan icons + EthicsPoint line'
+  };
+
+  /* Action-card button colors, mirroring ActionCards.astro. */
+  function actionBtnClass(s) {
+    return s === 'gold' ? 'btn btn-gold'
+      : s === 'outline' ? 'btn btn-outline'
+      : 'btn btn-primary';
+  }
+
+  /* ---- Homepage carousel file: the slides as visitors see them ---- */
+  var SlidesPreview = createClass({
+    render: function () {
+      var props = this.props;
+      var raw = props.entry.get('data');
+      var data = (raw && raw.toJS) ? raw.toJS() : (raw || {});
+      var slides = data.slides || [];
+      return h('div', { className: 'wrap' },
+        h('h1', { 'data-key-path': 'slides', tabIndex: 0 }, 'Carousel preview'),
+        h('p', { className: 'text-soft' }, 'First slide shows on load; slides rotate on the site.'),
+        slides.map(function (s, i) {
+          var asset = s.image && props.getAsset ? props.getAsset(s.image) : null;
+          var img = h('img', {
+            src: (asset && asset.url) || s.image, alt: s.alt || '',
+            loading: 'lazy', style: { borderRadius: '.5rem' }
+          });
+          return h('figure', { key: i, 'data-key-path': 'slides.' + i, tabIndex: 0 },
+            s.link ? h('a', { href: s.link }, img) : img,
+            h('figcaption', { className: 'text-soft' },
+              s.caption || '', s.seconds ? ' (' + s.seconds + 's)' : ''));
+        }));
+    }
+  });
+
+  /* ---- Homepage action cards file: the cards as visitors see them ----
+     The bulletin card embeds the live filtered list, like ActionCards. */
+  var ActionsPreview = createClass({
+    getInitialState: function () {
+      return { bulletins: null };
+    },
+    componentDidMount: function () {
+      var self = this;
+      this.props.getCollection('bulletins', 'bulletin-list').then(function (entry) {
+        if (Array.isArray(entry)) entry = entry[0];
+        var data = entry && (entry.get ? entry.get('data') : entry.data);
+        self.setState({ bulletins: plain(data) });
+      }, function () {});
+    },
+    render: function () {
+      var data = plain(this.props.entry.get('data')) || {};
+      var cards = data.cards || [];
+      var bd = this.state.bulletins;
+      var live = bd ? filterBulletins(bd.bulletins || [],
+        Number(bd.weeks == null ? 3 : bd.weeks), Date.now()).slice(0, 5) : null;
+      return h('div', { className: 'wrap' },
+        h('h1', { 'data-key-path': 'cards', tabIndex: 0 }, 'Action cards preview'),
+        h('div', { className: 'cards' },
+          cards.map(function (c, i) {
+            var head = c.icon
+              ? h('div', { className: 'card-head' },
+                h('span', { dangerouslySetInnerHTML: { __html: iconBadge(c.icon) } }),
+                h('h3', {}, c.title || ''))
+              : (c.title ? h('h3', {}, c.title) : null);
+            var body = null;
+            if (c.kind === 'bulletins') {
+              body = live ? h('div', {
+                dangerouslySetInnerHTML: {
+                  __html: renderBulletinList(live, previewLocale(this.props.entry.get('path')))
+                }
+              }) : h('p', { className: 'text-soft' }, 'Bulletin list (loading…)');
+            } else {
+              body = h('div', {},
+                c.text ? h('p', {}, c.text) : null,
+                c.kind === 'link' && c.link ? h('p', {},
+                  h('a', { className: actionBtnClass(c.style), href: c.link },
+                    c.link_label || c.title)) : null,
+                c.extra_link ? h('p', {},
+                  h('a', { href: c.extra_link }, c.extra_label)) : null);
+            }
+            return h('article', {
+              key: i, className: 'card', 'data-key-path': 'cards.' + i, tabIndex: 0
+            }, head, body);
+          })));
+    }
+  });
   var HeaderPreview = createClass({
     render: function () {
       var raw = this.props.entry.get('data');
@@ -225,7 +324,126 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
     }
   });
 
+  /* ---- Homepage welcome file: hero, events, facility, diocesan block ----
+     Theme (preset) sections compose live regions from other collections, so
+     they preview as labeled placeholders; custom blocks render for real. */
+  var HomepagePreview = createClass({
+    getInitialState: function () {
+      return { settings: null };
+    },
+    componentDidMount: function () {
+      var self = this;
+      this.props.getCollection('site', 'settings').then(function (entry) {
+        if (Array.isArray(entry)) entry = entry[0];
+        var data = entry && (entry.get ? entry.get('data') : entry.data);
+        self.setState({ settings: plain(data) });
+      }, function () {});
+    },
+    render: function () {
+      var props = this.props;
+      var raw = props.entry.get('data');
+      var data = (raw && raw.toJS) ? raw.toJS() : (raw || {});
+      var settings = this.state.settings || {};
+      var hero = data.hero || {};
+      var kids = [
+        h('div', { key: 'hero', className: 'preview-hero', 'data-key-path': 'hero', tabIndex: 0 },
+          hero.eyebrow ? h('p', { className: 'hero-eyebrow' }, hero.eyebrow) : null,
+          h('h1', {}, hero.title || ''),
+          hero.subtitle ? h('p', {}, hero.subtitle) : null,
+          h('p', { className: 'btn-row' },
+            (hero.buttons || []).map(function (b, i) {
+              if (!b.label || !b.link) return null;
+              return h('a', {
+                key: i, className: 'btn btn-' + (b.style || 'light'), href: b.link
+              }, b.label);
+            })))
+      ];
+      kids.push(h('h2', { key: 'evh' }, 'Event cards'));
+      kids.push(h('div', { key: 'ev', className: 'cards', 'data-key-path': 'events', tabIndex: 0 },
+        (data.events || []).map(function (e, i) {
+          return h('article', { key: i, className: 'card', 'data-key-path': 'events.' + i, tabIndex: 0 },
+            e.icon ? h('div', { className: 'card-head' },
+              h('span', { dangerouslySetInnerHTML: { __html: iconBadge(e.icon) } }),
+              h('h3', {}, e.title || '')) : (e.title ? h('h3', {}, e.title) : null),
+            e.text ? h('p', {}, e.text) : null,
+            e.link ? h('p', {},
+              h('a', { className: 'btn btn-outline', href: e.link }, e.link_label || e.title)) : null);
+        })));
+      var facility = data.facility || {};
+      kids.push(h('div', { key: 'fac', 'data-key-path': 'facility', tabIndex: 0 },
+        facility.tail ? h('p', {}, facility.tail) : null,
+        facility.link_label ? h('p', {},
+          h('a', { className: 'btn btn-outline', href: settings.calendar_suggest || '#' },
+            facility.link_label)) : null));
+      var catholic = data.catholic || {};
+      kids.push(h('div', { key: 'cath', 'data-key-path': 'catholic', tabIndex: 0 },
+        h('div', {},
+          (catholic.icons || []).map(function (ic, i) {
+            var asset = ic.image && props.getAsset ? props.getAsset(ic.image) : null;
+            var img = h('img', {
+              className: 'diocesan-icon', src: (asset && asset.url) || ic.image,
+              alt: ic.alt || '', loading: 'lazy'
+            });
+            return ic.link
+              ? h('a', { key: i, href: ic.link }, img)
+              : h('span', { key: i }, img);
+          })),
+        h('p', { className: 'text-soft' },
+          (catholic.ethics_name || 'EthicsPoint') + ': ',
+          h('a', {
+            href: 'tel:' + String(settings.ethicspoint_phone || '').replace(/[^0-9]/g, '')
+          }, settings.ethicspoint_phone || ''),
+          ' · ',
+          h('a', { href: settings.ethicspoint || '#' }, catholic.ethics_report || ''))));
+      kids.push(h('h2', { key: 'sech' }, 'Page sections'));
+      (data.sections || []).forEach(function (s, si) {
+        if (s.type === 'custom') {
+          kids.push(h('section', { key: 's' + si, 'aria-label': s.title || 'Custom block' },
+            s.title ? h('h2', { 'data-key-path': 'sections.' + si + '.title', tabIndex: 0 }, s.title) : null,
+            h('div', { className: 'cards' },
+              (s.cards || []).map(function (c, ci) {
+                var adapted = {
+                  type: 'card', icon: c.icon, title: c.title, text: c.text,
+                  buttons: c.link ? [{
+                    label: c.link_label || c.title, link: c.link, style: 'outline'
+                  }] : []
+                };
+                var inner = renderBlock(adapted, {
+                  title: s.title || '', md: md,
+                  href: function (link) { return link; },
+                  assetUrl: function (p) {
+                    var a = props.getAsset ? props.getAsset(p) : null;
+                    return (a && a.url) || p;
+                  },
+                  t: {}, kp: false
+                });
+                return h('div', {
+                  key: ci,
+                  'data-key-path': 'sections.' + si + '.cards.' + ci,
+                  dangerouslySetInnerHTML: {
+                    __html: (c.image ? '<p><img src="' + (
+                      (props.getAsset && props.getAsset(c.image) || {}).url || c.image
+                    ) + '" alt="" loading="lazy" style="border-radius:.5rem"></p>' : '') + inner
+                  }
+                });
+              }))));
+        } else {
+          kids.push(h('div', {
+            key: 's' + si, className: 'preset-row',
+            'data-key-path': 'sections.' + si, tabIndex: 0
+          },
+            h('strong', {}, PRESET_INFO[s.id] || s.id),
+            s.visible === false ? h('span', { className: 'text-soft' }, ' (hidden)') : null));
+        }
+      });
+      return h('div', { className: 'wrap' }, kids);
+    }
+  });
+
   CMS.registerPreviewTemplate('pages', PagesPreview);
+  CMS.registerPreviewTemplate('homepage-text', HomepagePreview);
+  CMS.registerPreviewTemplate('action-cards', ActionsPreview);
+  CMS.registerPreviewTemplate('slides', SlidesPreview);
   CMS.registerPreviewTemplate('masses', MassPreview);
   CMS.registerPreviewTemplate('header-menu', HeaderPreview);
   CMS.registerPreviewTemplate('bulletin-list', BulletinPreview);

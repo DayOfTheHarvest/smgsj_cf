@@ -45,9 +45,9 @@ export function fmtUSD(n) {
   });
 }
 
-// Staff directory cards (mirrors StaffCards.astro exactly, including its
-// template whitespace). o: { assetUrl(path)->url, profileHref(slug)->url,
-// profileLabel }. Members without a bio get no button, phone link only.
+// Staff directory cards: the canonical implementation used by the site
+// (via PageBlocks) and the CMS preview. o: { assetUrl(path)->url,
+// profileHref(slug)->url, profileLabel, kp? }. Members without a bio get no button, phone link only.
 export function staffInitials(name) {
   return String(name || '')
     .replace(/^(Rev\.|Mrs?\.|Ms\.|Sr\.|Deacon)\s+/i, '')
@@ -149,7 +149,7 @@ export function renderBulletinList(items, lang, kp) {
   );
 }
 
-function iconBadge(name) {
+export function iconBadge(name) {
   const paths = ICON_PATHS[name] || ICON_PATHS.info;
   return (
     '<span class="icon-badge" aria-hidden="true"><svg width="26" height="26" ' +
@@ -230,7 +230,7 @@ function renderFundraiser(b, o, kp) {
   );
 }
 
-function renderBlock(b, o, kp) {
+export function renderBlock(b, o, kp) {
   if (!b) return '';
   if (b.type === 'fundraiser') return renderFundraiser(b, o, kp);
   if (b.type === 'embed') {
@@ -272,6 +272,10 @@ function renderBlock(b, o, kp) {
       escAttr(b.alt || '') +
       '" loading="lazy" style="border-radius:.75rem"></p>'
     );
+  }
+  if (b.type === 'staff') {
+    if (!o.staff || !o.staff.members) return '';
+    return renderStaffCards(o.staff.members, o.staff);
   }
   if (b.type === 'card') {
     const html = b.text && String(b.text).trim() ? o.md(b.text) : '';
