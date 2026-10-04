@@ -23,7 +23,8 @@ for src_rel, dst_rel in PAIRS:
     dst = os.path.join(ROOT, dst_rel)
     text = open(src, encoding="utf-8").read()
     for imp in re.findall(r"^\s*import\s.*?from\s*['\"]([^'\"]+)['\"]", text, re.M):
-        assert imp in ("./icons.js", "./render-blocks.js"), f"{src_rel}: forbidden import {imp}"
+        base = imp.split("?")[0]
+        assert base in ("./icons.js", "./render-blocks.js"), f"{src_rel}: forbidden import {imp}"
     shutil.copyfile(src, dst)
     digest = hashlib.sha256(open(dst, "rb").read()).hexdigest()[:12]
     print(f"synced {dst_rel} ({digest})")

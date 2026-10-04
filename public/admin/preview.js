@@ -9,12 +9,12 @@
    English (the stored values); fundraiser microcopy is English; map/calendar
    iframes may refuse framing and show blank until deployed; the previewed
    locale is read off the entry file path (falls back to English). */
-import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, renderBlock, iconBadge, esc } from './render-blocks.js';
+import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, renderBlock, iconBadge, esc } from './render-blocks.js?v=2';
 
 (function () {
   if (!window.CMS) return;
 
-  CMS.registerPreviewStyle('/admin/preview.css');
+  CMS.registerPreviewStyle('/admin/preview.css?v=2');
 
   function md(src) {
     try {
@@ -56,7 +56,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
   var SETTINGS_CACHE = null;
   function fetchSettings(props, done) {
     if (SETTINGS_CACHE) { done(SETTINGS_CACHE); return; }
-    props.getCollection('site', 'settings').then(function (entry) {
+    safeGet(props, 'site', 'settings').then(function (entry) {
       if (Array.isArray(entry)) entry = entry[0];
       var data = entry && (entry.get ? entry.get('data') : entry.data);
       SETTINGS_CACHE = plain(data) || {};
@@ -96,6 +96,15 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
     return found;
   }
 
+  /* getCollection wrapper: a bad name must never blank a preview. */
+  function safeGet(props, a, b) {
+    try {
+      return props.getCollection(a, b);
+    } catch (e) {
+      return { then: function (_, eb) { if (eb) eb(e); } };
+    }
+  }
+
   /* ---- Pages: title + sections via the shared site renderer ----
      Pages containing a staff widget also show the member directory. */
   function hasStaffWidget(sections) {
@@ -117,7 +126,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       var raw = this.props.entry.get('data');
       var data = (raw && raw.toJS) ? raw.toJS() : (raw || {});
       if (hasStaffWidget(data.sections)) {
-        this.props.getCollection('_singletons', 'staff').then(function (entry) {
+        safeGet(this.props, '_singletons', 'staff').then(function (entry) {
           if (Array.isArray(entry)) entry = entry[0];
           var sdata = entry && (entry.get ? entry.get('data') : entry.data);
           self.setState({ staff: plain(sdata) });
@@ -219,7 +228,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
     },
     componentDidMount: function () {
       var self = this;
-      this.props.getCollection('bulletins', 'bulletin-list').then(function (entry) {
+      safeGet(this.props, 'bulletins', 'bulletin-list').then(function (entry) {
         if (Array.isArray(entry)) entry = entry[0];
         var data = entry && (entry.get ? entry.get('data') : entry.data);
         self.setState({ bulletins: plain(data) });
@@ -337,12 +346,13 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
     var out = [];
     arr.forEach(function (e) {
       var d = e;
-      if (d && typeof d === 'object') {
-        if (typeof d.get === 'function') {
-          try { d = d.get('data'); } catch (err) { d = null; }
-        } else if (d.data !== undefined) {
-          d = d.data;
-        }
+      if (d && typeof d.get === 'function') {
+        try { d = d.get('data'); } catch (err) { d = null; }
+      } else if (d && typeof d === 'object' && d.data !== undefined) {
+        d = d.data;
+      }
+      if (d && typeof d.toJS === 'function') {
+        try { d = d.toJS(); } catch (err) {}
       }
       if (Array.isArray(d)) out = out.concat(d);
       else if (d && typeof d === 'object') out.push(d);
@@ -356,10 +366,10 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
     },
     componentDidMount: function () {
       var self = this;
-      this.props.getCollection('mass_languages').then(function (entries) {
+      safeGet(this.props, 'mass_languages').then(function (entries) {
         self.setState({ langs: collectItems(entries) });
       }, function () {});
-      this.props.getCollection('locations').then(function (entries) {
+      safeGet(this.props, 'locations').then(function (entries) {
         self.setState({ locs: collectItems(entries) });
       }, function () {});
     },
@@ -413,14 +423,19 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
      they preview as labeled placeholders; custom blocks render for real. */
   var HomepagePreview = createClass({
     getInitialState: function () {
-      return { settings: null };
+      return { settings: null, ui: null };
     },
     componentDidMount: function () {
       var self = this;
-      this.props.getCollection('site', 'settings').then(function (entry) {
+      safeGet(this.props, 'site', 'settings').then(function (entry) {
         if (Array.isArray(entry)) entry = entry[0];
         var data = entry && (entry.get ? entry.get('data') : entry.data);
         self.setState({ settings: plain(data) });
+      }, function () {});
+      safeGet(this.props, 'interface', 'ui').then(function (entry) {
+        if (Array.isArray(entry)) entry = entry[0];
+        var data = entry && (entry.get ? entry.get('data') : entry.data);
+        self.setState({ ui: plain(data) });
       }, function () {});
     },
     render: function () {
@@ -428,6 +443,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       var raw = props.entry.get('data');
       var data = (raw && raw.toJS) ? raw.toJS() : (raw || {});
       var settings = this.state.settings || {};
+      var ui = this.state.ui || {};
       var loc = previewLocale(props.entry.get('path'));
       var aliases = aliasesFrom(settings);
       var hero = data.hero || {};
@@ -436,6 +452,9 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
           hero.eyebrow ? h('p', { className: 'hero-eyebrow' }, hero.eyebrow) : null,
           h('h1', {}, hero.title || ''),
           hero.subtitle ? h('p', {}, hero.subtitle) : null,
+          data.pastor_quote ? h('p', {
+            className: 'preview-quote', 'data-key-path': 'pastor_quote', tabIndex: 0
+          }, data.pastor_quote) : null,
           h('p', { className: 'btn-row' },
             (hero.buttons || []).map(function (b, i) {
               if (!b.label || !b.link) return null;
@@ -462,9 +481,17 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       var facility = data.facility || {};
       kids.push(h('div', { key: 'fac', 'data-key-path': 'facility', tabIndex: 0 },
         facility.tail ? h('p', {}, facility.tail) : null,
-        facility.link_label ? h('p', {},
-          h('a', { className: 'btn btn-outline', href: settings.calendar_suggest || '#' },
-            facility.link_label)) : null));
+        h('p', { className: 'btn-row' },
+          h('a', {
+            className: 'btn btn-primary',
+            href: previewHref('/calendar/#today', loc, aliases)
+          }, ui.todayEvents || "Today's Events"),
+          h('a', {
+            className: 'btn btn-outline', href: previewHref('/calendar/', loc, aliases)
+          }, ui.fullCalendar || 'Full Calendar'),
+          facility.link_label ? h('a', {
+            className: 'btn btn-outline', href: settings.calendar_suggest || '#'
+          }, facility.link_label) : null)));
       var catholic = data.catholic || {};
       kids.push(h('div', { key: 'cath', 'data-key-path': 'catholic', tabIndex: 0 },
         h('div', {},

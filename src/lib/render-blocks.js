@@ -8,7 +8,7 @@
 //   t       microcopy { asof, of, goal, donate } (translated ui on the site)
 //   kp      emit data-key-path markers for CMS click-to-highlight (preview)
 // public/admin/render-blocks.js is a build-synced copy (scripts/sync-preview.py).
-import { ICON_PATHS } from './icons.js';
+import { ICON_PATHS } from './icons.js?v=2';
 
 // Text nodes: Astro renders ' as &#39;. Attribute values keep ' raw.
 const esc = (v) =>

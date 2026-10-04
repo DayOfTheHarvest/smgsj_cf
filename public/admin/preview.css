@@ -123,7 +123,11 @@ iframe.preview-embed { width: 100%; border: 0; }
 .preview-hero h1 { color: #fff; border: 0; margin-top: 0; }
 .preview-hero p { color: #e2e8f0; }
 .preview-hero .hero-eyebrow { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: #c9a227; }
+.preview-quote { border-left: 4px solid #c9a227; padding-left: 1rem; font-style: italic; }
 .preset-row { border: 1px dashed #5b6270; border-radius: 0.5rem; padding: 0.5rem 0.75rem; margin: 0.5rem 0; }
+
+/* Diocesan icons: fixed display height, like the live site. */
+.diocesan-icon { height: 140px; width: auto; }
 
 /* Header menu preview (simplified site navbar). */
 .preview-nav { background: #141f36; border-radius: 0.5rem; padding: 0.5rem 1rem; }

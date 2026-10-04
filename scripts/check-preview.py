@@ -48,9 +48,13 @@ emitted = set()
 for src in (render_src, open(f"{ADMIN}/preview.js", encoding="utf-8").read()):
     for m in re.findall(r"""class(?:Name)?=["']([^"']+)["']""", src):
         emitted.update(m.split())
+    for m in re.findall(r"""class(?:Name)?\s*:\s*["']([^"']+)["']""", src):
+        emitted.update(m.split())
     emitted.update(re.findall(r"""'(btn(?:-[a-z]+)?)'""", src))
 allowed = {"fullwidth"}  # unstyled on the site itself, by design
 for cls in sorted(emitted):
+    if cls.endswith('-'):
+        continue  # partial class under string concatenation (e.g. 'btn btn-' + style)
     check(cls in selectors or cls in allowed, f"class {cls!r} missing in preview.css")
 
 # 3. icons ------------------------------------------------------------------
@@ -61,6 +65,16 @@ for m in re.findall(r"options: \[([^\]]*'users'[^\]]*)\]", open(f"{ADMIN}/config
     offered.update(re.findall(r"'([\w-]+)'", m))
 for icon in sorted(offered):
     check(icon in known, f"CMS icon {icon!r} missing in icons.js")
+
+# 5. brand tokens ------------------------------------------------------------
+# preview.css hand-mirrors the Tailwind theme (the preview iframe has no
+# Tailwind runtime), so a token change must land in both files. Values that
+# only exist as gradients/shadows are exempt below.
+tw = open(f"{ROOT}/tailwind.config.mjs", encoding="utf-8").read()
+for token in sorted(set(re.findall(r"#[0-9a-fA-F]{6}", tw))):
+    check(token.lower() in css.lower(), f"token {token} missing in preview.css")
+for family in ("Georgia", "system-ui"):
+    check(family in css, f"font {family!r} missing in preview.css")
 
 # 4. preview registrations --------------------------------------------------
 # Every custom preview template must point at a real collection, file, or
