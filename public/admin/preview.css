@@ -103,3 +103,18 @@ table.mass tbody tr:nth-child(even) { background: #f5f6f8; }
 iframe.preview-embed { width: 100%; border: 0; }
 .text-soft { color: #5b6270; font-size: 0.875rem; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+/* Staff directory cards (mirrors .card parts above). */
+.staff-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 1rem 0; }
+@media (min-width: 768px) { .staff-grid { grid-template-columns: repeat(3, 1fr); } }
+.staff-card { border: 1px solid #e3e6ec; border-radius: 0.75rem; background: #fff; padding: 1.25rem; text-align: center; }
+.staff-card h3 { margin: 0.9rem 0 0.2rem; border: 0; padding: 0; }
+.staff-role { margin: 0.25rem 0; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: #a8861c; }
+.staff-photo { width: 160px; height: 160px; border-radius: 999px; object-fit: cover; margin: 0 auto; }
+.staff-initials { display: inline-flex; align-items: center; justify-content: center; width: 160px; height: 160px; border-radius: 999px; background: #1e2e4f; color: #c9a227; font-family: Georgia, 'Palatino Linotype', serif; font-size: 1.875rem; font-weight: 700; }
+
+/* Header menu preview (simplified site navbar). */
+.preview-nav { background: #141f36; border-radius: 0.5rem; padding: 0.5rem 1rem; }
+.preview-nav a { color: #e2e8f0; text-decoration: none; font-weight: 600; display: inline-block; padding: 0.5rem 0.75rem; font-size: 0.95rem; }
+.preview-nav ul { list-style: none; margin: 0.25rem 0 0.5rem 1rem; padding: 0; }
+.preview-nav ul a { color: #ffd970; font-size: 0.9rem; }
