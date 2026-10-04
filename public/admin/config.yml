@@ -73,9 +73,9 @@ collections:
       - label: 'Page sections (the whole page, top to bottom)'
         name: sections
         widget: list
-        i18n: true
+        i18n: duplicate
         required: false
-        hint: 'Build the page from sections in any order. A section can have a heading, some text, and its own widgets below. Drag rows to reorder the page; delete a row to remove that part. Add, remove, or reorder rows in English only — other languages follow the English layout.'
+        hint: 'Build the page from sections in any order. A section can have a heading, some text, and its own widgets below. Drag rows to reorder the page; delete a row to remove that part. Add, remove, or reorder rows in English only — other languages mirror the English layout (rows are read-only there).'
         types:
           - name: content_section
             label: Content section
@@ -97,9 +97,9 @@ collections:
               - label: 'Widgets in this section'
                 name: blocks
                 widget: list
-                i18n: true
+                i18n: duplicate
                 required: false
-                hint: 'Widgets add special pieces to a section: thermometer, embed, button, text, image, or card. Drag to reorder. Add, remove, or reorder rows in English only.'
+                hint: 'Widgets add special pieces to a section: thermometer, embed, button, text, image, or card. Drag to reorder. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
                 types:
                   - name: fundraiser
                     label: Fundraiser thermometer
@@ -209,7 +209,7 @@ collections:
                       - label: 'Buttons (optional)'
                         name: buttons
                         widget: list
-                        i18n: true
+                        i18n: duplicate
                         required: false
                         summary: '{{label}}'
                         fields:
@@ -256,9 +256,9 @@ collections:
               - label: 'Widgets in this section'
                 name: blocks
                 widget: list
-                i18n: true
+                i18n: duplicate
                 required: false
-                hint: 'Widgets add special pieces to a section: thermometer, embed, button, text, image, or card. Drag to reorder. Add, remove, or reorder rows in English only.'
+                hint: 'Widgets add special pieces to a section: thermometer, embed, button, text, image, or card. Drag to reorder. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
                 types:
                   - name: fundraiser
                     label: Fundraiser thermometer
@@ -368,7 +368,7 @@ collections:
                       - label: 'Buttons (optional)'
                         name: buttons
                         widget: list
-                        i18n: true
+                        i18n: duplicate
                         required: false
                         summary: '{{label}}'
                         fields:
@@ -582,7 +582,7 @@ collections:
             collapsed: auto
             label_singular: 'Bulletin'
             add_to_top: true
-            i18n: true
+            i18n: duplicate
             summary: '{{date}}'
             fields:
               - label: 'Date (sets the auto-translated label below)'
@@ -619,7 +619,7 @@ collections:
           - label: 'Homepage sections (order, visibility + custom blocks)'
             name: sections
             widget: list
-            i18n: true
+            i18n: duplicate
             hint: 'Drag rows to reorder the homepage. Uncheck Visible to hide a section without deleting it (it keeps its place). Add a Custom block row anywhere for new titled card blocks. Never change a Theme section name — only its visibility. Add/remove rows in English only.'
             types:
               - name: preset
@@ -658,7 +658,7 @@ collections:
                     name: cards
                     widget: list
                     collapsed: auto
-                    i18n: true
+                    i18n: duplicate
                     summary: '{{title}}'
                     thumbnail: image
                     fields:
@@ -713,7 +713,7 @@ collections:
               - label: 'Hero buttons'
                 name: buttons
                 widget: list
-                i18n: true
+                i18n: duplicate
                 summary: '{{label}}'
                 hint: 'WARNING: parish links must start AND end with / . A wrong link makes a dead button. Add/remove buttons in English only.'
                 fields:
@@ -741,7 +741,7 @@ collections:
             widget: list
             collapsed: auto
             label_singular: 'Event'
-            i18n: true
+            i18n: duplicate
             summary: '{{title}}'
             hint: 'Add, remove or reorder cards in English only — other languages follow the same cards.'
             fields:
@@ -798,7 +798,7 @@ collections:
                 name: icons
                 widget: list
                 label_singular: 'Icon'
-                i18n: true
+                i18n: duplicate
                 summary: '{{alt}}'
                 hint: 'WARNING: use the Media library images already uploaded. Deleting all rows removes the icon row. All icons show at the same height. Add/remove rows in English only.'
                 fields:
@@ -861,7 +861,7 @@ collections:
             widget: list
             collapsed: auto
             label_singular: 'Card'
-            i18n: true
+            i18n: duplicate
             summary: '{{title}}'
             fields:
               - label: 'Icon (pick from the list — no emoji needed)'
@@ -927,7 +927,7 @@ collections:
             widget: list
             collapsed: auto
             label_singular: 'Slide'
-            i18n: true
+            i18n: duplicate
             summary: '{{caption}}'
             thumbnail: image
             fields:
@@ -1076,7 +1076,7 @@ collections:
           - label: 'Fields (add, remove, or reorder — no code change needed)'
             name: fields
             widget: list
-            i18n: true
+            i18n: duplicate
             collapsed: auto
             label_singular: 'Field'
             summary: '{{label}}'
@@ -1178,7 +1178,7 @@ collections:
             widget: list
             collapsed: auto
             label_singular: 'Gallery'
-            i18n: true
+            i18n: duplicate
             summary: '{{title}}'
             fields:
               - label: 'Title (this language)'
@@ -1328,7 +1328,7 @@ singletons:
         widget: list
         collapsed: auto
         label_singular: 'Menu Group'
-        i18n: true
+        i18n: duplicate
         summary: '{{label}}'
         fields:
           - label: 'Group code (leave alone — used behind the scenes)'
@@ -1348,7 +1348,7 @@ singletons:
             name: children
             widget: list
             label_singular: 'Link'
-            i18n: true
+            i18n: duplicate
             summary: '{{label}}'
             fields:
               - label: 'Link name (this language)'
@@ -1372,7 +1372,7 @@ singletons:
         widget: list
         collapsed: auto
         label_singular: 'Member'
-        i18n: true
+        i18n: duplicate
         summary: '{{name}}'
         thumbnail: photo
         fields:
