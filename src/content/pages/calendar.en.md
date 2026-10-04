@@ -4,6 +4,9 @@ title: Calendar
 updated: 2026-10-02
 sections:
 - type: content_section
+  title: ''
+  body: The parish calendar is hosted on CalendarWiz. For individual events, please call the parish office at [408-363-2300](tel:4083632300) or email FacilityReservation@smgsj.org.
+- type: content_section
   blocks:
   - type: button
     label: Facility Reservation Request (parish groups only)
@@ -24,4 +27,3 @@ sections:
   - type: richtext
     body: '[View the facilities calendar](https://www.calendarwiz.com/smgsj)'
 ---
-The parish calendar is hosted on CalendarWiz. For individual events, please call the parish office at [408-363-2300](tel:4083632300) or email FacilityReservation@smgsj.org.

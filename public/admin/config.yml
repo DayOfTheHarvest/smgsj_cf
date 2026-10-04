@@ -70,124 +70,12 @@ collections:
         i18n: true
         required: [en]
         hint: 'Shown in the header and Google results. Keep short. Empty translations show English.'
-      - label: 'Body'
-        name: body
-        widget: markdown
-        i18n: true
-        required: false
-        hint: 'Main content. Headings, bold, italic, lists, quotes, links, and pictures. For every picture, fill in its description box so blind visitors hear what it shows. Empty translations show English + banner.'
-        buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
-        editor_components: [image, code-block]
-        modes: [rich_text, raw]
-      - label: 'Page widgets (optional — add rows for embeds, buttons, or extra blocks)'
-        name: blocks
-        widget: list
-        i18n: true
-        required: false
-        hint: 'Add widget rows in any order — fundraiser, embed, button, text, or image. To remove one, delete its row. For grouped layouts, use Sections below instead.'
-        types:
-          - name: fundraiser
-            label: Fundraiser thermometer
-            summary: '{{title}}'
-            fields:
-              - label: 'Title (this language, read aloud for screen readers)'
-                name: title
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Goal (dollars, numbers only)'
-                name: goal
-                widget: number
-                i18n: duplicate
-              - label: 'Raised so far (dollars, numbers only)'
-                name: pledged
-                widget: number
-                i18n: duplicate
-              - label: 'As of (date)'
-                name: updated
-                widget: string
-                i18n: duplicate
-              - label: 'Donate link'
-                name: donate_link
-                widget: string
-                i18n: duplicate
-              - label: 'Donate button label (this language)'
-                name: donate_label
-                widget: string
-                i18n: true
-                required: false
-          - name: embed
-            label: Embed (calendar, video, map)
-            summary: '{{title}}'
-            fields:
-              - label: 'Title (this language, read aloud for screen readers)'
-                name: title
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Embed URL (CalendarWiz, YouTube, or Maps link)'
-                name: url
-                widget: string
-                i18n: duplicate
-                hint: 'Paste the full embed link. CalendarWiz, YouTube, and Maps allowed — no strict format.'
-              - label: 'Height in pixels'
-                name: height
-                widget: number
-                i18n: duplicate
-                default: 1000
-                required: false
-              - label: 'Caption (optional, this language)'
-                name: caption
-                widget: string
-                i18n: true
-                required: false
-          - name: button
-            label: Button
-            summary: '{{label}}'
-            fields:
-              - label: 'Label (this language)'
-                name: label
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Link (parish page like /volunteer/, full URL, or @shortcut)'
-                name: link
-                widget: string
-                i18n: duplicate
-                hint: 'Parish pages must start AND end with / . @shortcuts (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube) follow Site settings.'
-              - label: 'Color'
-                name: style
-                widget: select
-                i18n: duplicate
-                options: ['gold', 'light', 'primary', 'outline']
-          - name: richtext
-            label: Text block
-            summary: '{{body}}'
-            fields:
-              - label: 'Text (this language)'
-                name: body
-                widget: markdown
-                i18n: true
-                required: false
-                buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
-                editor_components: [image, code-block]
-                modes: [rich_text, raw]
-          - name: image
-            label: Image
-            summary: '{{alt}}'
-            fields:
-              - { label: 'Picture (Media library)', name: image, widget: image, i18n: duplicate, required: false }
-              - label: 'Alt text (describe the picture, this language)'
-                name: alt
-                widget: string
-                i18n: true
-                required: false
-      - label: 'Page sections (optional — group content + widgets into flexible layouts)'
+      - label: 'Page sections (the whole page, top to bottom)'
         name: sections
         widget: list
         i18n: true
         required: false
-        hint: 'Add sections in any order to recreate calendar-style layouts on any page. Each section holds its own widgets below.'
+        hint: 'Build the page from sections in any order. A section can have a heading, some text, and its own widgets below. Drag rows to reorder the page; delete a row to remove that part.'
         types:
           - name: content_section
             label: Content section
@@ -211,7 +99,7 @@ collections:
                 widget: list
                 i18n: true
                 required: false
-                hint: 'Embeds, buttons, and other widgets for this section only. Drag to reorder.'
+                hint: 'Widgets add special pieces to a section: thermometer, embed, button, text, image, or card. Drag to reorder.'
                 types:
                   - name: fundraiser
                     label: Fundraiser thermometer
@@ -295,6 +183,50 @@ collections:
                         widget: string
                         i18n: true
                         required: false
+                  - name: card
+                    label: Card
+                    summary: '{{title}}'
+                    fields:
+                      - label: 'Icon (pick from the list, optional)'
+                        name: icon
+                        widget: select
+                        i18n: duplicate
+                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                        required: false
+                      - label: 'Heading (this language)'
+                        name: title
+                        widget: string
+                        i18n: true
+                        required: false
+                      - label: 'Text (this language)'
+                        name: text
+                        widget: markdown
+                        i18n: true
+                        required: false
+                        buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                        editor_components: [image, code-block]
+                        modes: [rich_text, raw]
+                      - label: 'Buttons (optional)'
+                        name: buttons
+                        widget: list
+                        i18n: true
+                        required: false
+                        summary: '{{label}}'
+                        fields:
+                          - label: 'Label (this language)'
+                            name: label
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Link'
+                            name: link
+                            widget: string
+                            i18n: duplicate
+                          - label: 'Color'
+                            name: style
+                            widget: select
+                            i18n: duplicate
+                            options: ['gold', 'light', 'primary', 'outline']
           - name: fullwidth_section
             label: Full-width section
             summary: '{{title}}'
@@ -317,6 +249,7 @@ collections:
                 widget: list
                 i18n: true
                 required: false
+                hint: 'Widgets add special pieces to a section: thermometer, embed, button, text, image, or card. Drag to reorder.'
                 types:
                   - name: fundraiser
                     label: Fundraiser thermometer
@@ -400,6 +333,50 @@ collections:
                         widget: string
                         i18n: true
                         required: false
+                  - name: card
+                    label: Card
+                    summary: '{{title}}'
+                    fields:
+                      - label: 'Icon (pick from the list, optional)'
+                        name: icon
+                        widget: select
+                        i18n: duplicate
+                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                        required: false
+                      - label: 'Heading (this language)'
+                        name: title
+                        widget: string
+                        i18n: true
+                        required: false
+                      - label: 'Text (this language)'
+                        name: text
+                        widget: markdown
+                        i18n: true
+                        required: false
+                        buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                        editor_components: [image, code-block]
+                        modes: [rich_text, raw]
+                      - label: 'Buttons (optional)'
+                        name: buttons
+                        widget: list
+                        i18n: true
+                        required: false
+                        summary: '{{label}}'
+                        fields:
+                          - label: 'Label (this language)'
+                            name: label
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Link'
+                            name: link
+                            widget: string
+                            i18n: duplicate
+                          - label: 'Color'
+                            name: style
+                            widget: select
+                            i18n: duplicate
+                            options: ['gold', 'light', 'primary', 'outline']
       - name: updated
         widget: hidden
         i18n: duplicate

@@ -1,5 +1,6 @@
 ---
 import FundraiserProgress from './FundraiserProgress.astro';
+import Icon from './Icon.astro';
 import { resolveLink, type Lang } from '../config';
 import { renderMd } from '../lib/md';
 
@@ -7,78 +8,86 @@ interface Props {
   lang: Lang;
   ui: any;
   title: string;
-  blocks?: Array<any>;
   sections?: Array<any>;
 }
-const { lang, ui, title, blocks = [], sections = [] } = Astro.props;
+const { lang, ui, title, sections = [] } = Astro.props;
 
 const btnClassFor = (s: string) =>
   s === 'gold' ? 'btn btn-gold' : s === 'primary' ? 'btn btn-primary' : s === 'outline' ? 'btn btn-outline' : 'btn btn-light';
 const hrefFor = (link: string) => resolveLink(link || '', lang);
 // Render Markdown in frontmatter (existing pattern: set:html takes a variable,
-// never a function call in the template).
+// never a function call in the template). Cards carry their text in `text`.
 const withHtml = (list: Array<any>) =>
   (Array.isArray(list) ? list : []).map((b) => ({
     ...b,
-    __html: b?.body?.trim() ? renderMd(b.body) : '',
+    __html: b?.body?.trim() ? renderMd(b.body) : b?.text?.trim() ? renderMd(b.text) : '',
   }));
-const blocksR = withHtml(blocks);
+// Group consecutive cards so they render in one grid row, like the
+// site-wide card layouts. Other widgets keep their own order around them.
+const groupBlocks = (list: Array<any>) => {
+  const runs: Array<any> = [];
+  for (const b of withHtml(list)) {
+    if (b?.type === 'card' && !(b?.title?.trim() || b.__html || (b.buttons || []).length)) continue;
+    const last = runs[runs.length - 1];
+    if (b?.type === 'card' && last && last.kind === 'cards') last.blocks.push(b);
+    else if (b?.type === 'card') runs.push({ kind: 'cards', blocks: [b] });
+    else runs.push({ kind: 'single', block: b });
+  }
+  return runs;
+};
 const sectionsR = (Array.isArray(sections) ? sections : []).map((s) => ({
   ...s,
   __html: s?.body?.trim() ? renderMd(s.body) : '',
-  blocks: withHtml(s?.blocks),
+  runs: groupBlocks(s?.blocks),
 }));
 ---
 
-{blocksR.map((b) => (
-  <>
-    {b?.type === 'fundraiser' && <FundraiserProgress ui={ui} title={title} fundraiser={b} />}
-    {b?.type === 'embed' && b?.url?.trim() && (
-      <section aria-label={b.title?.trim() || title}>
-        {b.title?.trim() && <h2>{b.title}</h2>}
-        <div class="table-scroll" style="border:0">
-          <iframe src={b.url.trim()} title={b.title?.trim() || title} width="100%" height={Number(b.height) || 1000} loading="lazy"></iframe>
-        </div>
-        {b.caption?.trim() && <p class="text-sm text-soft">{b.caption}</p>}
-      </section>
-    )}
-    {b?.type === 'button' && b?.label?.trim() && b?.link?.trim() && (
-      <p><a class={btnClassFor(b.style || 'light')} href={hrefFor(b.link.trim())}>{b.label}</a></p>
-    )}
-    {b?.type === 'richtext' && b.__html && (
-      <div class="prose" set:html={b.__html} />
-    )}
-    {b?.type === 'image' && b?.image?.trim() && (
-      <p><img src={b.image} alt={b.alt || ''} loading="lazy" style="border-radius:.75rem" /></p>
-    )}
-  </>
-))}
 {sectionsR.map((s) => (
   <section aria-label={s?.title?.trim() || title} class={s?.type === 'fullwidth_section' ? 'fullwidth' : ''}>
     {s?.title?.trim() && <h2>{s.title}</h2>}
     {s.__html && <div class="prose" set:html={s.__html} />}
-    {s.blocks.map((b) => (
-      <>
-        {b?.type === 'fundraiser' && <FundraiserProgress ui={ui} title={s?.title?.trim() || title} fundraiser={b} />}
-        {b?.type === 'embed' && b?.url?.trim() && (
-          <div>
-            {b.title?.trim() && <h3>{b.title}</h3>}
-            <div class="table-scroll" style="border:0">
-              <iframe src={b.url.trim()} title={b.title?.trim() || s?.title || title} width="100%" height={Number(b.height) || 1000} loading="lazy"></iframe>
+    {s.runs.map((run) => (
+      run.kind === 'cards' ? (
+        <div class="cards">
+          {run.blocks.map((b) => (
+            <article class="card">
+              {b?.icon ? (
+                <div class="card-head"><Icon name={b.icon} /><h3>{b.title}</h3></div>
+              ) : b?.title?.trim() ? (
+                <h3>{b.title}</h3>
+              ) : null}
+              {b.__html && <div set:html={b.__html} />}
+              {(b.buttons || []).map((btn) => (
+                btn?.label?.trim() && btn?.link?.trim() ? (
+                  <p><a class={btnClassFor(btn.style || 'light')} href={hrefFor(btn.link.trim())}>{btn.label}</a></p>
+                ) : null
+              ))}
+            </article>
+          ))}
+        </div>
+      ) : (
+        <>
+          {run.block?.type === 'fundraiser' && <FundraiserProgress ui={ui} title={s?.title?.trim() || title} fundraiser={run.block} />}
+          {run.block?.type === 'embed' && run.block?.url?.trim() && (
+            <div>
+              {run.block.title?.trim() && <h3>{run.block.title}</h3>}
+              <div class="table-scroll" style="border:0">
+                <iframe src={run.block.url.trim()} title={run.block.title?.trim() || s?.title || title} width="100%" height={Number(run.block.height) || 1000} loading="lazy"></iframe>
+              </div>
+              {run.block.caption?.trim() && <p class="text-sm text-soft">{run.block.caption}</p>}
             </div>
-            {b.caption?.trim() && <p class="text-sm text-soft">{b.caption}</p>}
-          </div>
-        )}
-        {b?.type === 'button' && b?.label?.trim() && b?.link?.trim() && (
-          <p><a class={btnClassFor(b.style || 'light')} href={hrefFor(b.link.trim())}>{b.label}</a></p>
-        )}
-        {b?.type === 'richtext' && b.__html && (
-          <div class="prose" set:html={b.__html} />
-        )}
-        {b?.type === 'image' && b?.image?.trim() && (
-          <p><img src={b.image} alt={b.alt || ''} loading="lazy" style="border-radius:.75rem" /></p>
-        )}
-      </>
+          )}
+          {run.block?.type === 'button' && run.block?.label?.trim() && run.block?.link?.trim() && (
+            <p><a class={btnClassFor(run.block.style || 'light')} href={hrefFor(run.block.link.trim())}>{run.block.label}</a></p>
+          )}
+          {run.block?.type === 'richtext' && run.block.__html && (
+            <div class="prose" set:html={run.block.__html} />
+          )}
+          {run.block?.type === 'image' && run.block?.image?.trim() && (
+            <p><img src={run.block.image} alt={run.block.alt || ''} loading="lazy" style="border-radius:.75rem" /></p>
+          )}
+        </>
+      )
     ))}
   </section>
 ))}

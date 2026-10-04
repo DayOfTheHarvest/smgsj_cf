@@ -1,7 +1,7 @@
 import { z, defineCollection } from 'astro:content';
 
 // Native Sveltia i18n: one file per slug per locale (<slug>.<locale>.md,
-// multiple_files). Title/body live in each locale file; missing or empty
+// multiple_files). Title/sections live in each locale file; missing or empty
 // non-English content falls back to English + banner at render time.
 // slug_key is duplicated into every locale file (edited in English only).
 const fundraiserBlock = z.object({
@@ -40,12 +40,29 @@ const imageBlock = z.object({
   alt: z.string().nullish(),
 });
 
+// Reusable card (icon + heading + text + buttons), e.g. the contact page
+// visit/contact cards. Same shape everywhere so cards work on any page.
+const cardButton = z.object({
+  label: z.string().nullish(),
+  link: z.string().nullish(),
+  style: z.string().nullish(),
+});
+
+const cardBlock = z.object({
+  type: z.literal('card'),
+  icon: z.string().nullish(),
+  title: z.string().nullish(),
+  text: z.string().nullish(),
+  buttons: z.array(cardButton).optional().default([]),
+});
+
 const pageBlock = z.discriminatedUnion('type', [
   fundraiserBlock,
   embedBlock,
   buttonBlock,
   richtextBlock,
   imageBlock,
+  cardBlock,
 ]);
 
 const contentSection = z.object({
@@ -71,15 +88,9 @@ const pages = defineCollection({
     title: z.string().max(60).optional().default(''),
     updated: z.coerce.date().optional(),
     draft: z.boolean().optional().default(false),
-    // Fundraiser thermometer, configured on the page itself (Pages →
-    // Fundraiser section). Numbers/links are shared across languages;
-    // only the button label translates. Absent/zero goal renders nothing.
-    // Optional page widgets (added on demand, e.g. fundraiser, embed,
-    // button, richtext, image). Absent rows render nothing. Kept for
-    // backward-compat with campaign pages; new layouts prefer sections.
-    blocks: z.array(pageBlock).optional().default([]),
-    // Flexible sections (each with its own widgets). Empty = body only.
-    // Calendar page is recreated purely from sections (button + embeds).
+    // Sections are the whole page, top to bottom (title lives above them).
+    // The old markdown body and top-level widgets were migrated into
+    // sections, so every page renders the same way via PageBlocks.
     sections: z.array(pageSection).optional().default([]),
   }),
 });

@@ -2,5 +2,8 @@
 slug_key: rcia-children
 title: Christian Initiation of Children
 updated: 2026-10-02
+sections:
+- type: content_section
+  title: ''
+  body: Christian Initiation of Children (over 7 years old) parallels the Rite of Christian Initiation of Adults, welcoming children who are inquiring into our Catholic faith.
 ---
-Christian Initiation of Children (over 7 years old) parallels the Rite of Christian Initiation of Adults, welcoming children who are inquiring into our Catholic faith.
