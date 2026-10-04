@@ -66,10 +66,18 @@
           "link_label": "Tình Nguyện"
         }
       ],
-      "facility": {
-        "link_label": "Yêu cầu đặt cơ sở vật chất",
-        "tail": "Đối với các sự kiện cá nhân, vui lòng gọi văn phòng giáo xứ."
-      }
+      "blocks": [
+        {
+          "type": "richtext",
+          "body": "Đối với các sự kiện cá nhân, vui lòng gọi văn phòng giáo xứ."
+        },
+        {
+          "type": "button",
+          "label": "Yêu cầu đặt cơ sở vật chất",
+          "link": "@calendar-suggest",
+          "style": "outline"
+        }
+      ]
     },
     {
       "type": "preset",

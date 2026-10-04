@@ -66,10 +66,18 @@
           "link_label": "Volunteer"
         }
       ],
-      "facility": {
-        "link_label": "Facility Reservation Request",
-        "tail": "For individual events, please call the parish office."
-      }
+      "blocks": [
+        {
+          "type": "richtext",
+          "body": "For individual events, please call the parish office."
+        },
+        {
+          "type": "button",
+          "label": "Facility Reservation Request",
+          "link": "@calendar-suggest",
+          "style": "outline"
+        }
+      ]
     },
     {
       "type": "preset",

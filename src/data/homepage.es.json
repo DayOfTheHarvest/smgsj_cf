@@ -66,10 +66,18 @@
           "link_label": "Voluntariado"
         }
       ],
-      "facility": {
-        "link_label": "Solicitud de reserva de instalaciones",
-        "tail": "Para eventos individuales, llame a la oficina parroquial."
-      }
+      "blocks": [
+        {
+          "type": "richtext",
+          "body": "Para eventos individuales, llame a la oficina parroquial."
+        },
+        {
+          "type": "button",
+          "label": "Solicitud de reserva de instalaciones",
+          "link": "@calendar-suggest",
+          "style": "outline"
+        }
+      ]
     },
     {
       "type": "preset",

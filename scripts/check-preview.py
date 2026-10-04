@@ -28,14 +28,27 @@ def check(cond, msg):
 
 
 # 1. block types -----------------------------------------------------------
+# Every `blocks` widget list anywhere in the CMS (page sections and homepage
+# rows share the same widget names) must be handled by the shared renderer
+# (src/lib/render-blocks.js). An unhandled type would render as nothing in
+# BOTH site and preview.
 cfg = yaml.safe_load(open(f"{ADMIN}/config.yml", encoding="utf-8"))
-pages = next(c for c in cfg["collections"] if c.get("name") == "pages")
-sections = next(f for f in pages["fields"] if f.get("name") == "sections")
 cms_types = set()
-for t in sections["types"]:
-    for f in t.get("fields", []):
-        if f.get("name") == "blocks":
-            cms_types.update(b["name"] for b in f.get("types", []))
+
+
+def walk_fields(fields):
+    for f in fields or []:
+        if f.get("name") == "blocks" and isinstance(f.get("types"), list):
+            cms_types.update(b["name"] for b in f["types"])
+        walk_fields(f.get("fields"))
+        for t in f.get("types") or []:
+            walk_fields((t or {}).get("fields"))
+
+
+for c in cfg["collections"]:
+    walk_fields(c.get("fields"))
+    for fl in c.get("files", []) or []:
+        walk_fields(fl.get("fields"))
 render_src = open(f"{SRC}/lib/render-blocks.js", encoding="utf-8").read()
 handled = set(re.findall(r"b\.type === '(\w+)'", render_src))
 for t in sorted(cms_types):

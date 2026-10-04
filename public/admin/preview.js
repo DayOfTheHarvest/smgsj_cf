@@ -454,7 +454,8 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
     getInitialState: function () {
       return { settings: null, ui: null, actions: null, slides: null,
         bulletins: null, masses: null, langs: [], locs: [],
-        confession: null, office: null, signup: null, homeBody: null };
+        confession: null, office: null, signup: null, homeBody: null,
+        staff: null };
     },
     componentDidMount: function () {
       var self = this;
@@ -476,6 +477,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
         function (d) { return (d && d.confession) || null; });
       pull(safeGet(this.props, 'site', 'office-hours'), 'office');
       pull(safeGet(this.props, 'site', 'signup-form'), 'signup');
+      pull(safeGet(this.props, '_singletons', 'staff'), 'staff');
       safeGet(this.props, 'mass_languages').then(function (entries) {
         self.setState({ langs: collectItems(entries) });
       }, function () {});
@@ -507,6 +509,25 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       var bd = st.bulletins;
       var live = bd ? filterBulletins(bd.bulletins || [],
         Number(bd.weeks == null ? 3 : bd.weeks), Date.now()).slice(0, 5) : null;
+      var staffMembers = st.staff && st.staff.members ? st.staff.members : null;
+      var staffOpt = staffMembers ? {
+        members: staffMembers,
+        assetUrl: function (p) { var a = getAsset(p); return (a && a.url) || p; },
+        profileHref: function (slug) { return '/' + loc + '/staff/' + slug + '/'; },
+        profileLabel: PROFILE_LABELS[loc] || PROFILE_LABELS.en
+      } : null;
+      function blocksHtml(title, blocks) {
+        if (!blocks || !blocks.length) return '';
+        return renderSections(
+          [{ type: 'content_section', title: '', body: '', blocks: blocks }],
+          {
+            title: title, md: md,
+            href: function (link) { return previewHref(link, loc, aliases); },
+            assetUrl: function (p) { var a = getAsset(p); return (a && a.url) || p; },
+            t: { asof: 'Pledged as of', of: 'of', goal: 'goal', donate: 'Donate' },
+            staff: staffOpt
+          });
+      }
       function placeholder(si, label, extra) {
         return h('div', {
           key: 's' + si, className: 'preset-row',
@@ -535,7 +556,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       }
       function eventsNode(s, si) {
         var kp = 'sections.' + si;
-        var facility = s.facility || {};
+        var extra = blocksHtml(ui.eventsTitle || 'Events', s.blocks);
         return h('div', { key: 's' + si, 'data-key-path': kp, tabIndex: 0 },
           h('h2', {}, ui.eventsTitle || 'Events'),
           h('div', { className: 'cards', 'data-key-path': kp + '.events', tabIndex: 0 },
@@ -551,7 +572,6 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
                     href: previewHref(e.link, loc, aliases)
                   }, e.link_label || e.title)) : null);
             })),
-          facility.tail ? h('p', {}, facility.tail) : null,
           h('p', { className: 'btn-row' },
             h('a', {
               className: 'btn btn-primary',
@@ -559,10 +579,10 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
             }, ui.todayEvents || "Today's Events"),
             h('a', {
               className: 'btn btn-outline', href: previewHref('/calendar/', loc, aliases)
-            }, ui.fullCalendar || 'Full Calendar'),
-            facility.link_label ? h('a', {
-              className: 'btn btn-outline', href: settings.calendar_suggest || '#'
-            }, facility.link_label) : null));
+            }, ui.fullCalendar || 'Full Calendar')),
+          extra ? h('div', {
+            dangerouslySetInnerHTML: { __html: extra }
+          }) : null);
       }
       function catholicNode(s, si) {
         var kp = 'sections.' + si;
@@ -587,6 +607,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
             h('a', { href: settings.ethicspoint || '#' }, s.ethics_report || '')));
       }
       function customNode(s, si) {
+        var extra = blocksHtml(s.title || 'Custom block', s.blocks);
         return h('section', { key: 's' + si, 'aria-label': s.title || 'Custom block' },
           s.title ? h('h2', { 'data-key-path': 'sections.' + si + '.title', tabIndex: 0 }, s.title) : null,
           h('div', { className: 'cards' },
@@ -612,7 +633,10 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
                   ) + '" alt="" loading="lazy" style="border-radius:.5rem"></p>' : '') + inner
                 }
               });
-            })));
+            })),
+          extra ? h('div', {
+            dangerouslySetInnerHTML: { __html: extra }
+          }) : null);
       }
       function scheduleNode(si) {
         var m = st.masses;

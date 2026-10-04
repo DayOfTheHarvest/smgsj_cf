@@ -12,6 +12,10 @@ import homepageEs from '../data/homepage.es.json';
 import homepageVi from '../data/homepage.vi.json';
 import { pickLocale } from '../lib/i18n';
 import { renderMd } from '../lib/md';
+import { renderSections } from '../lib/render-blocks.js';
+import staffEn from '../data/staff.en.json';
+import staffEs from '../data/staff.es.json';
+import staffVi from '../data/staff.vi.json';
 import en from '../data/ui.en.json';
 import es from '../data/ui.es.json';
 import vi from '../data/ui.vi.json';
@@ -41,6 +45,33 @@ const sections = (homepage.sections as Array<any>) ?? [];
 const btnClassFor = (s: string) =>
   s === 'gold' ? 'btn btn-gold' : s === 'primary' ? 'btn btn-primary' : s === 'outline' ? 'btn btn-outline' : 'btn btn-light';
 const hrefFor = (link: string) => resolveLink(link, lang);
+// Generic content blocks (events extras, custom rows) render with the same
+// shared renderer as Pages sections: same widgets, same markup.
+const staffMembers = ((pickLocale({ en: staffEn, es: staffEs, vi: staffVi }, lang) as any).members as Array<any>) ?? [];
+const blockOpts = (title: string) => ({
+  title,
+  md: (src: string) => renderMd(src || ''),
+  href: (link: string) => resolveLink(link || '', lang),
+  assetUrl: (p: string) => p,
+  t: {
+    asof: ui.pledgedAsOf,
+    of: ui.ofWord,
+    goal: ui.goalWord,
+    donate: ui.nav.giving,
+  },
+  staff: {
+    members: staffMembers,
+    assetUrl: (p: string) => p,
+    profileHref: (slug: string) => `/${lang}/staff/${slug}/`,
+    profileLabel: ui.viewProfile,
+  },
+});
+const blocksHtml = (title: string, blocks: Array<any>) =>
+  ((blocks ?? []).length
+    ? renderSections(
+      [{ type: 'content_section', title: '', body: '', blocks: blocks ?? [] }],
+      blockOpts(title))
+    : '');
 // Staff-composed sections (Sveltia: Homepage welcome → Sections): rows in
 // display order with visibility toggles, plus custom blocks anywhere. Unknown
 // ids ignored; missing sections appended visible in default position.
@@ -81,6 +112,7 @@ for (const id of DEFAULT_ORDER) {
               </article>
             ))}
           </div>
+          {blocksHtml(s.title || `Section ${si + 1}`, s.blocks) && <div set:html={blocksHtml(s.title || `Section ${si + 1}`, s.blocks)} />}
         </section>
       ) : s.visible === false ? null : (
       <>
@@ -119,12 +151,11 @@ for (const id of DEFAULT_ORDER) {
               </article>
             ))}
           </div>
-          <p>{(s.facility as any)?.tail}</p>
           <p class="flex flex-wrap gap-2">
             <a class="btn btn-primary" href={`/${lang}/calendar/#today`}>{ui.todayEvents}</a>
             <a class="btn btn-outline" href={`/${lang}/calendar/`}>{ui.fullCalendar}</a>
-            <a class="btn btn-outline" href={EXTERNAL.calendarSuggest}>{(s.facility as any)?.link_label}</a>
           </p>
+          {blocksHtml(ui.eventsTitle, s.blocks) && <div set:html={blocksHtml(ui.eventsTitle, s.blocks)} />}
         </section>
       )}
       {s.id === 'body' && body && (
