@@ -2,21 +2,29 @@
   {
     "code": "english",
     "autonym": "English",
-    "chip": "english"
+    "chip": "english",
+    "color": "#DBEAFE",
+    "text_color": "#1E3A8A"
   },
   {
     "code": "spanish",
     "autonym": "Español",
-    "chip": "es"
+    "chip": "es",
+    "color": "#FEF3C7",
+    "text_color": "#78350F"
   },
   {
     "code": "vietnamese",
     "autonym": "Tiếng Việt",
-    "chip": "vi"
+    "chip": "vi",
+    "color": "#DCFCE7",
+    "text_color": "#14532D"
   },
   {
     "code": "tagalog",
     "autonym": "Tagalog",
-    "chip": "tagalog"
+    "chip": "tagalog",
+    "color": "#EDE9FE",
+    "text_color": "#4C1D95"
   }
 ]

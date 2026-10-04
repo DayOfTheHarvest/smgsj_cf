@@ -15,15 +15,18 @@ import locationsData from './locations.json';
 import massLangsData from './mass-languages.json';
 import { localize } from '../lib/i18n';
 
-// Mass locations: single-file entry collection (Sveltia: Mass locations).
-// Each object holds all locales: {key, en:{name}, es:{name}, vi:{name}}.
-// `key` is the stable Relation value; missing translations fall back to
-// English, then to the key itself.
-type LocEntry = { key?: string; en?: { name?: string }; es?: { name?: string }; vi?: { name?: string }; name?: string };
+// Mass locations: single-file entry collection (Sveltia: Mass Locations).
+// Each object holds all locales; the duplicate `key` is stored inside every
+// locale object ({key, en:{key,name}, es:{...}, vi:{...}}), with the root copy
+// kept for back-compat. Missing translations fall back to English, then key.
+type LocName = { key?: string; name?: string };
+type LocEntry = { key?: string; name?: string; en?: LocName; es?: LocName; vi?: LocName };
+const entryKey = (e: LocEntry): string =>
+  e.en?.key || e.es?.key || e.vi?.key || e.key || e.name || '';
 const LOCALES: Record<string, Record<Lang, string>> = Object.fromEntries(
   (locationsData as unknown as LocEntry[]).map((e) => {
-    const key = (e.key || (e as any).name || '') as string;
-    const enName = e.en?.name || (e as any).name || key;
+    const key = entryKey(e);
+    const enName = e.en?.name || e.name || key;
     const esName = e.es?.name || enName;
     const viName = e.vi?.name || enName;
     return [key, { en: enName, es: esName, vi: viName }];
@@ -37,7 +40,7 @@ export function locName(loc: string, lang: Lang): string {
 // Mass languages: single-file entry collection (Sveltia: Mass languages).
 // Codes are Relation values (english|spanish|vietnamese|tagalog); autonyms
 // name each language in itself so chips need no translation.
-type LangEntry = { code: string; autonym: string; chip?: string };
+type LangEntry = { code: string; autonym: string; chip?: string; color?: string; text_color?: string };
 export const MASS_LANGS: LangEntry[] = massLangsData as unknown as LangEntry[];
 const LANG_BY_CODE: Record<string, LangEntry> = Object.fromEntries(
   MASS_LANGS.map((l) => [l.code, l]),
@@ -63,6 +66,16 @@ export function langChip(code: string): string {
   const c = langCode(code);
   const suffix = LANG_BY_CODE[c]?.chip || c;
   return `chip chip-${suffix}`;
+}
+
+// Chip colors are staff-configurable Color fields; when set they render as
+// inline styles, otherwise the legacy chip class above applies (back-compat).
+export function langStyle(code: string): string | undefined {
+  const entry = LANG_BY_CODE[langCode(code)];
+  const bg = entry?.color?.trim();
+  if (!bg) return undefined;
+  const fg = entry?.text_color?.trim();
+  return fg ? `background-color:${bg};color:${fg}` : `background-color:${bg}`;
 }
 
 /** Site locale -> default Mass filter code (compact homepage block). */

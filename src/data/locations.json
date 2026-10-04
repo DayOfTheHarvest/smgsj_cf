@@ -2,49 +2,61 @@
   {
     "key": "church",
     "en": {
-      "name": "Church"
+      "name": "Church",
+      "key": "church"
     },
     "es": {
-      "name": "Templo"
+      "name": "Templo",
+      "key": "church"
     },
     "vi": {
-      "name": "Nhà thờ"
+      "name": "Nhà thờ",
+      "key": "church"
     }
   },
   {
     "key": "patio",
     "en": {
-      "name": "Patio"
+      "name": "Patio",
+      "key": "patio"
     },
     "es": {
-      "name": "Patio"
+      "name": "Patio",
+      "key": "patio"
     },
     "vi": {
-      "name": "Nhà gỗ"
+      "name": "Nhà gỗ",
+      "key": "patio"
     }
   },
   {
     "key": "divine-mercy-chapel",
     "en": {
-      "name": "Divine Mercy Chapel"
+      "name": "Divine Mercy Chapel",
+      "key": "divine-mercy-chapel"
     },
     "es": {
-      "name": "Divine Mercy Chapel"
+      "name": "Divine Mercy Chapel",
+      "key": "divine-mercy-chapel"
     },
     "vi": {
-      "name": "Nguyện Đường"
+      "name": "Nguyện Đường",
+      "key": "divine-mercy-chapel"
     }
   },
   {
     "key": "viet-martyrs-shrine",
     "en": {
-      "name": "Viet. Martyr's Shrine"
+      "name": "Viet. Martyr's Shrine",
+      "key": "viet-martyrs-shrine"
     },
     "es": {
-      "name": "Viet. Martyr's Shrine"
+      "name": "Viet. Martyr's Shrine",
+      "key": "viet-martyrs-shrine"
     },
     "vi": {
-      "name": "Nguyện Đường Các Thánh Tử Đạo"
+      "name": "Nguyện Đường Các Thánh Tử Đạo",
+      "key": "viet-martyrs-shrine"
     }
   }
 ]

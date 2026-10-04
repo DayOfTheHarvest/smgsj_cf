@@ -1,12 +1,14 @@
 ---
-import { MASS_ROWS, CONFESSION, locName, dayName, serviceName, SCHEDULE_DISPLAY, langCode, langAutonym, langChip, defaultLangFilter } from '../data/mass';
+import { MASS_ROWS, CONFESSION, locName, dayName, serviceName, SCHEDULE_DISPLAY, langCode, langAutonym, langChip, langStyle, defaultLangFilter } from '../data/mass';
 import type { Lang } from '../config';
 interface Props { lang: Lang; compact?: boolean; ui: any; }
 const { lang, compact = false, ui } = Astro.props;
 
 // Language chips/filters come from the Mass languages collection (Sveltia:
-// Mass languages), not hardcoded maps. Autonyms name each language in itself.
+// Mass Languages), not hardcoded maps. Autonyms name each language in itself;
+// chip colors are staff-picked Color fields rendered inline (class = fallback).
 const chipClass = (l: string) => langChip(l);
+const chipStyle = (l: string) => langStyle(l);
 const langName = (l: string) => langAutonym(l);
 
 // Weekly presiders live on each Mass row (blank = TBD). Names need no translation.
@@ -63,7 +65,7 @@ const showImage = compact && display.mode === 'image' && display.image?.trim();
           <dl class="my-2">
             {g.rows.map((r) => (
               <div data-lang={langCode(r.lang)}>
-                <dt>{r.service === 'Weekday' && r.day !== 'Mon-Fri' ? <>{dayName(r.day, lang)}{' '}</> : null}{r.time}{r.suffix ? ` ${r.suffix}` : ''}{r.note ? ` — ${r.note}` : ''} <span class={chipClass(r.lang)}>{langName(r.lang)}</span></dt>
+                <dt>{r.service === 'Weekday' && r.day !== 'Mon-Fri' ? <>{dayName(r.day, lang)}{' '}</> : null}{r.time}{r.suffix ? ` ${r.suffix}` : ''}{r.note ? ` — ${r.note}` : ''} <span class={chipClass(r.lang)} style={chipStyle(r.lang)}>{langName(r.lang)}</span></dt>
                 <dd>{serviceName(r.service, lang)} · {locName(r.location, lang)}{presiderOf(r) ? ` · ${presiderOf(r)}` : ''}</dd>
               </div>
             ))}
@@ -102,7 +104,7 @@ const showImage = compact && display.mode === 'image' && display.image?.trim();
             <tr data-lang={langCode(r.lang)}>
               <td>{serviceName(r.service, lang)}</td>
               <td><strong>{dayName(r.day, lang)}{' '}{r.time}{r.suffix ? ` ${r.suffix}` : ''}</strong>{r.note ? <><br /><small class="text-soft">{r.note}</small></> : null}</td>
-              <td><span class={chipClass(r.lang)}>{langName(r.lang)}</span></td>
+              <td><span class={chipClass(r.lang)} style={chipStyle(r.lang)}>{langName(r.lang)}</span></td>
               <td>{locName(r.location, lang)}</td>
               {showPresiders && <td>{presiderOf(r) || ui.tbd}</td>}
             </tr>

@@ -42,10 +42,10 @@ field_defaults:
 collections:
 
   - name: pages
-    label: Pages (one file per topic, EN + ES + VI)
+    label: Pages
     label_singular: Page
     icon: article
-    description: 'Safe to edit text freely — you cannot break the site layout from here. Only rule: never change the page address. Switch languages with the locale switcher in the top-right corner.'
+    description: 'One file per topic (EN + ES + VI). Safe to edit text freely — you cannot break the site layout from here. Only rule: never change the page address. Switch languages with the locale switcher in the top-right corner.'
     folder: src/content/pages
     summary: '{{title}}'
     preview_path: '/en/{{slug}}'
@@ -404,15 +404,18 @@ collections:
         widget: hidden
         i18n: duplicate
 
+  # ——— Masses: locations, languages, and the weekly schedule live here ———
+  - divider: true
+
   - name: locations
-    label: Mass locations
-    label_singular: Mass location
+    label: Mass Locations
+    label_singular: Mass Location
     icon: location_on
     description: 'Add a location once, then pick it in the Mass list. Switch languages top-right to translate each place name.'
     file: src/data/locations.json
     identifier_field: key
     i18n: true
-    summary: '{{name}}'
+    summary: '{{key}} — {{name}}'
     fields:
       - label: 'Location code (lowercase-with-dashes, e.g. church — set once, then never change)'
         name: key
@@ -429,8 +432,8 @@ collections:
         hint: 'How this place reads in this language. Switch languages top-right to translate.'
 
   - name: mass_languages
-    label: Mass languages
-    label_singular: Mass language
+    label: Mass Languages
+    label_singular: Mass Language
     icon: translate
     description: 'Add a language once, then pick it in the Mass list. Names use autonyms so chips need no translation.'
     file: src/data/mass-languages.json
@@ -451,21 +454,29 @@ collections:
         i18n: duplicate
         required: true
         hint: 'How the language names itself — shown on chips and filters in every site language.'
-      - label: 'Chip style (optional, e.g. english, es, vi, tagalog)'
-        name: chip
-        widget: string
+      - label: 'Chip background color'
+        name: color
+        widget: color
         i18n: duplicate
         required: false
-        hint: 'CSS suffix for the language chip. Blank = default chip.'
+        allowInput: true
+        hint: 'Pill background behind the language name on Mass filters and tables. Pick any color.'
+      - label: 'Chip text color'
+        name: text_color
+        widget: color
+        i18n: duplicate
+        required: false
+        allowInput: true
+        hint: 'Text color on the chip. Pick a dark color on light backgrounds.'
 
   - name: schedule
-    label: Mass schedule & presiders (weekly)
+    label: Mass Schedule & Presiders
     icon: calendar_month
-    description: 'Each Mass row carries its own presider name, so nothing can silently mismatch.'
+    description: 'Weekly schedule. Each Mass row carries its own presider name, so nothing can silently mismatch.'
     i18n: true
     files:
       - name: masses
-        label: Mass times, places & presiders
+        label: Mass Times, Places & Presiders
         icon: event
         file: src/data/masses.json
         description: The 21 weekly Masses, each with its presider. Everything is picked from lists except names and times.
@@ -530,7 +541,7 @@ collections:
                 widget: string
                 required: false
       - name: schedule-info
-        label: Confession text
+        label: Confession Text
         icon: notes
         file: src/data/schedule-info.{{locale}}.json
         i18n: true
@@ -554,13 +565,13 @@ collections:
                 required: false
 
   - name: bulletins
-    label: Bulletins (weekly)
+    label: Bulletins
     icon: description
     description: 'Weekly Sunday bulletin PDFs, newest first.'
     i18n: true
     files:
       - name: bulletin-list
-        label: Bulletin links
+        label: Bulletin Links
         file: src/data/bulletins.{{locale}}.json
         i18n: true
         description: Newest first. Upload the PDF via Media first, then paste its /uploads/ link here. Write the label in this language — switch top-right.
@@ -593,252 +604,14 @@ collections:
                 widget: string
                 i18n: duplicate
 
-  - name: announcements
-    label: Homepage carousel
-    icon: campaign
-    description: 'Rotating homepage banner slides — the first slide shows on load.'
+  - name: homepage
+    label: Homepage
+    icon: home
+    description: 'Everything on the homepage: welcome sections, action cards, and the rotating carousel.'
     i18n: true
     files:
-      - name: slides
-        label: Rotating slides (pastor letter + announcements)
-        file: src/data/announcements.{{locale}}.json
-        i18n: true
-        description: First slide shows on load; slides rotate every 5 seconds. Upload wide banners (~1920px) via Media. Write caption and alt text in this language — switch top-right.
-        fields:
-          - label: 'Slides'
-            name: slides
-            widget: list
-            collapsed: auto
-            label_singular: 'Slide'
-            i18n: true
-            summary: '{{caption}}'
-            thumbnail: image
-            fields:
-              - { label: 'Banner image', name: image, widget: image, i18n: duplicate }
-              - label: 'Alt text (describe the banner, this language)'
-                name: alt
-                widget: string
-                i18n: true
-                required: false
-              - { label: 'Image width in pixels (1920 matches the current banners)', name: width, widget: number, required: false, i18n: duplicate }
-              - { label: 'Image height in pixels (480 matches the current banners)', name: height, widget: number, required: false, i18n: duplicate }
-              - { label: 'Link (/campaign/ for parish pages, full URL for PDFs)', name: link, widget: string, i18n: duplicate }
-              - label: 'Caption (read aloud for blind visitors, this language)'
-                name: caption
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Seconds on screen (each slide can differ)'
-                name: seconds
-                widget: number
-                i18n: duplicate
-                hint: 'How long this slide shows before rotating. Blank = 5 seconds.'
-
-  # ——— Site-wide settings ———
-  - divider: true
-
-  - name: site
-    label: 'Site settings, navigation & homepage — CAREFUL'
-    icon: settings
-    description: 'Contact info, menus and homepage — changes here affect the whole site.'
-    i18n: true
-    files:
-      - name: settings
-        label: Contact info & external links
-        icon: settings
-        file: src/data/settings.json
-        description: >-
-          WARNING: these values appear in the header and footer of EVERY page.
-          Phone, email, address, emergency numbers, Giving/Payment, Calendar,
-          YouTube, Facebook, Flocknote. Double-check every character — a wrong
-          link here breaks donations and contact site-wide.
-        fields:
-          - { label: 'Phone (e.g. 408-363-2300)', name: phone, widget: string }
-          - { label: 'Header logo (pick from uploads)', name: logo, widget: image }
-          - { label: 'Parish name (browser tabs, headers)', name: site_name, widget: string }
-          - { label: 'Shrine address', name: shrine_address, widget: string }
-          - { label: 'Email', name: email, widget: string }
-          - { label: 'Address', name: address, widget: string }
-          - label: 'Emergency numbers (add rows for future languages)'
-            name: emergencies
-            widget: list
-            i18n: false
-            collapsed: auto
-            label_singular: 'Emergency number'
-            summary: '{{number}}'
-            hint: 'One row per emergency line. Labels carry all three translations so numbers stay stored once.'
-            fields:
-              - label: 'Row code (lowercase-with-dashes, e.g. en-es — set once, never change)'
-                name: id
-                widget: string
-                i18n: duplicate
-                required: true
-                pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Lowercase letters, numbers, and dashes only']
-              - label: 'Label (English)'
-                name: label_en
-                widget: string
-                required: false
-              - label: 'Label (Español)'
-                name: label_es
-                widget: string
-                required: false
-              - label: 'Label (Tiếng Việt)'
-                name: label_vi
-                widget: string
-                required: false
-              - label: 'Number (e.g. 408-363-2311)'
-                name: number
-                widget: string
-                i18n: duplicate
-                required: true
-          - { label: 'Facility email', name: facility_email, widget: string }
-          - { label: 'Online Giving URL', name: giving, widget: string }
-          - { label: 'Online Payment URL', name: payment, widget: string }
-          - { label: 'Calendar request URL', name: calendar_suggest, widget: string }
-          - { label: 'Calendar view URL', name: calendar_view, widget: string }
-          - label: 'Full-calendar embed URL (shown on the Calendar page)'
-            name: calendar_embed
-            widget: string
-            hint: 'WARNING: must be the CalendarWiz embed link. A wrong URL shows a blank calendar.'
-          - label: "Today's-events embed URL (shown on the Calendar page)"
-            name: today_embed
-            widget: string
-            hint: 'WARNING: must be the CalendarWiz day-view embed link. A wrong URL shows a blank box.'
-          - { label: 'YouTube channel URL', name: youtube, widget: string }
-          - { label: 'Facebook page URL', name: facebook, widget: string }
-          - { label: 'Flocknote signup URL', name: flocknote, widget: string }
-          - { label: 'EthicsPoint report link', name: ethicspoint, widget: string }
-          - { label: 'EthicsPoint phone', name: ethicspoint_phone, widget: string }
-      - name: signup-form
-        label: Signup form (Flocknote)
-        icon: form
-        file: src/data/signup-form.{{locale}}.json
-        i18n: true
-        description: 'Homepage signup block. Add, remove, or reorder fields with no code change. To switch services, change the Action URL below.'
-        fields:
-          - label: 'Heading (this language)'
-            name: title
-            widget: string
-            i18n: true
-            required: false
-          - label: 'Explanation (this language)'
-            name: text
-            widget: text
-            i18n: true
-            required: false
-          - label: 'Action URL (form posts here — do not change without the web developer volunteer)'
-            name: action
-            widget: string
-            i18n: duplicate
-            hint: 'WARNING: posts subscriptions to the parish group. A wrong URL silently sends signups nowhere.'
-          - label: 'Method'
-            name: method
-            widget: select
-            i18n: duplicate
-            options: ['post', 'get']
-            default: post
-          - label: 'Target (where the result opens)'
-            name: target
-            widget: string
-            i18n: duplicate
-            default: _blank
-            required: false
-          - label: 'Fields (add, remove, or reorder — no code change needed)'
-            name: fields
-            widget: list
-            i18n: true
-            collapsed: auto
-            label_singular: 'Field'
-            summary: '{{label}}'
-            fields:
-              - label: 'Field name (e.g. fname — set once, never change)'
-                name: name
-                widget: string
-                i18n: duplicate
-                required: true
-                pattern: ['^[a-z0-9_]+$', 'Lowercase letters, numbers, and underscores only']
-              - label: 'Label (this language)'
-                name: label
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Type'
-                name: type
-                widget: select
-                i18n: duplicate
-                options: ['text', 'email', 'tel', 'hidden', 'checkbox']
-              - label: 'Required'
-                name: required
-                widget: boolean
-                i18n: duplicate
-                default: false
-                required: false
-              - label: 'Autocomplete (optional, e.g. given-name, family-name, email, tel)'
-                name: autocomplete
-                widget: string
-                i18n: duplicate
-                required: false
-              - label: 'Default value (optional, for hidden fields)'
-                name: value
-                widget: string
-                i18n: duplicate
-                required: false
-          - label: 'Submit button label (this language)'
-            name: submit_label
-            widget: string
-            i18n: true
-            required: false
-      - name: navigation
-        label: Header menu structure
-        icon: menu
-        file: src/data/navigation.{{locale}}.json
-        i18n: true
-        description: >-
-          WARNING: this is the header menu for the whole site. A wrong link
-          breaks navigation everywhere; an empty label shows a blank menu item.
-          Links must start AND end with / (e.g. /mass-times/). Add, remove or
-          reorder menu items in English only — other languages follow the same
-          items. Ask the web volunteer before changing the structure.
-        fields:
-          - label: 'Menu groups'
-            name: groups
-            widget: list
-            collapsed: auto
-            label_singular: 'Menu group'
-            i18n: true
-            summary: '{{label}}'
-            fields:
-              - label: 'Group code (leave alone — used behind the scenes)'
-                name: id
-                widget: string
-                i18n: duplicate
-              - label: 'Group name (this language)'
-                name: label
-                widget: string
-                i18n: true
-                required: false
-              - label: 'Group link (e.g. /about-us/)'
-                name: href
-                widget: string
-                i18n: duplicate
-              - label: 'Submenu links'
-                name: children
-                widget: list
-                label_singular: 'Link'
-                i18n: true
-                summary: '{{label}}'
-                fields:
-                  - label: 'Link name (this language)'
-                    name: label
-                    widget: string
-                    i18n: true
-                    required: false
-                  - label: 'Link (e.g. /staff/)'
-                    name: href
-                    widget: string
-                    i18n: duplicate
       - name: homepage-text
-        label: Homepage welcome & events
+        label: Homepage Welcome & Events
         icon: home
         file: src/data/homepage.{{locale}}.json
         i18n: true
@@ -861,7 +634,16 @@ collections:
                     name: id
                     widget: select
                     i18n: duplicate
-                    options: ['carousel', 'hero', 'actions', 'schedule', 'events', 'body', 'office', 'flocknote', 'catholic']
+                    options:
+                      - { label: 'Carousel — rotating banner slides', value: carousel }
+                      - { label: 'Hero — welcome title, subtitle + buttons', value: hero }
+                      - { label: 'Actions — action cards row', value: actions }
+                      - { label: 'Schedule — Mass times + schedule buttons', value: schedule }
+                      - { label: 'Events — event cards + calendar buttons', value: events }
+                      - { label: 'Body — homepage page text', value: body }
+                      - { label: 'Office — contact + office hours cards', value: office }
+                      - { label: 'Flocknote — signup form', value: flocknote }
+                      - { label: 'Catholic — diocesan icons + EthicsPoint line', value: catholic }
                   - label: 'Visible'
                     name: visible
                     widget: boolean
@@ -1069,7 +851,7 @@ collections:
                 required: false
                 hint: 'Uncheck to hide the phone link (both in standard and custom-note display).'
       - name: action-cards
-        label: Homepage action cards
+        label: Homepage Action Cards
         icon: dashboard
         file: src/data/actions.{{locale}}.json
         i18n: true
@@ -1137,15 +919,218 @@ collections:
                   - { label: 'Link button', value: link }
                   - { label: 'Text only', value: text }
                 hint: 'WARNING: only ONE card should be a bulletin list.'
+      - name: slides
+        label: Homepage Carousel
+        icon: campaign
+        file: src/data/announcements.{{locale}}.json
+        i18n: true
+        description: First slide shows on load; slides rotate every 5 seconds. Upload wide banners (~1920px) via Media. Write caption and alt text in this language — switch top-right. Covers the pastor letter and announcement slides.
+        fields:
+          - label: 'Slides'
+            name: slides
+            widget: list
+            collapsed: auto
+            label_singular: 'Slide'
+            i18n: true
+            summary: '{{caption}}'
+            thumbnail: image
+            fields:
+              - { label: 'Banner image', name: image, widget: image, i18n: duplicate }
+              - label: 'Alt text (describe the banner, this language)'
+                name: alt
+                widget: string
+                i18n: true
+                required: false
+              - { label: 'Image width in pixels (1920 matches the current banners)', name: width, widget: number, required: false, i18n: duplicate }
+              - { label: 'Image height in pixels (480 matches the current banners)', name: height, widget: number, required: false, i18n: duplicate }
+              - { label: 'Link (/campaign/ for parish pages, full URL for PDFs)', name: link, widget: string, i18n: duplicate }
+              - label: 'Caption (read aloud for blind visitors, this language)'
+                name: caption
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Seconds on screen (each slide can differ)'
+                name: seconds
+                widget: number
+                i18n: duplicate
+                hint: 'How long this slide shows before rotating. Blank = 5 seconds.'
+
+  # ——— Site-wide settings ———
+  - divider: true
+
+  - name: site
+    label: 'Site Settings — CAREFUL'
+    icon: settings
+    description: 'Contact info, office hours, and the signup form — changes here affect the whole site.'
+    i18n: true
+    files:
+      - name: settings
+        label: Contact Info & External Links
+        icon: settings
+        file: src/data/settings.json
+        description: >-
+          WARNING: these values appear in the header and footer of EVERY page.
+          Phone, email, address, emergency numbers, Giving/Payment, Calendar,
+          YouTube, Facebook, Flocknote. Double-check every character — a wrong
+          link here breaks donations and contact site-wide.
+        fields:
+          - { label: 'Phone (e.g. 408-363-2300)', name: phone, widget: string }
+          - { label: 'Header logo (pick from uploads)', name: logo, widget: image }
+          - { label: 'Parish name (browser tabs, headers)', name: site_name, widget: string }
+          - { label: 'Shrine address', name: shrine_address, widget: string }
+          - { label: 'Email', name: email, widget: string }
+          - { label: 'Address', name: address, widget: string }
+          - label: 'Emergency numbers (add rows for future languages)'
+            name: emergencies
+            widget: list
+            i18n: false
+            collapsed: auto
+            label_singular: 'Emergency Number'
+            summary: '{{number}}'
+            hint: 'One row per emergency line. Labels carry all three translations so numbers stay stored once.'
+            fields:
+              - label: 'Row code (lowercase-with-dashes, e.g. en-es — set once, never change)'
+                name: id
+                widget: string
+                i18n: duplicate
+                required: true
+                pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Lowercase letters, numbers, and dashes only']
+              - label: 'Label (English)'
+                name: label_en
+                widget: string
+                required: false
+              - label: 'Label (Español)'
+                name: label_es
+                widget: string
+                required: false
+              - label: 'Label (Tiếng Việt)'
+                name: label_vi
+                widget: string
+                required: false
+              - label: 'Number (e.g. 408-363-2311)'
+                name: number
+                widget: string
+                i18n: duplicate
+                required: true
+          - { label: 'Facility email', name: facility_email, widget: string }
+          - { label: 'Online Giving URL', name: giving, widget: string }
+          - { label: 'Online Payment URL', name: payment, widget: string }
+          - { label: 'Calendar request URL', name: calendar_suggest, widget: string }
+          - { label: 'Calendar view URL', name: calendar_view, widget: string }
+          - label: 'Full-calendar embed URL (shown on the Calendar page)'
+            name: calendar_embed
+            widget: string
+            hint: 'WARNING: must be the CalendarWiz embed link. A wrong URL shows a blank calendar.'
+          - label: "Today's-events embed URL (shown on the Calendar page)"
+            name: today_embed
+            widget: string
+            hint: 'WARNING: must be the CalendarWiz day-view embed link. A wrong URL shows a blank box.'
+          - { label: 'YouTube channel URL', name: youtube, widget: string }
+          - { label: 'Facebook page URL', name: facebook, widget: string }
+          - { label: 'Flocknote signup URL', name: flocknote, widget: string }
+          - { label: 'EthicsPoint report link', name: ethicspoint, widget: string }
+          - { label: 'EthicsPoint phone', name: ethicspoint_phone, widget: string }
+      - name: office-hours
+        label: Office Hours
+        file: src/data/office.{{locale}}.json
+        i18n: true
+        icon: business
+        description: One place — updates the homepage Contact section, the footer on every page, and the contact page automatically. Switch languages top-right.
+        fields:
+          - label: 'Office hours (two lines: open days first, closed days second)'
+            name: text
+            widget: text
+            i18n: true
+            required: false
+            hint: 'Example: Tuesday – Friday: 10:00 a.m. – 5:00 p.m.'
+      - name: signup-form
+        label: Signup Form
+        icon: send
+        file: src/data/signup-form.{{locale}}.json
+        i18n: true
+        description: 'Homepage signup block. Add, remove, or reorder fields with no code change. To switch services, change the Action URL below.'
+        fields:
+          - label: 'Heading (this language)'
+            name: title
+            widget: string
+            i18n: true
+            required: false
+          - label: 'Explanation (this language)'
+            name: text
+            widget: text
+            i18n: true
+            required: false
+          - label: 'Action URL (form posts here — do not change without the web developer volunteer)'
+            name: action
+            widget: string
+            i18n: duplicate
+            hint: 'WARNING: posts subscriptions to the parish group. A wrong URL silently sends signups nowhere.'
+          - label: 'Method'
+            name: method
+            widget: select
+            i18n: duplicate
+            options: ['post', 'get']
+            default: post
+          - label: 'Target (where the result opens)'
+            name: target
+            widget: string
+            i18n: duplicate
+            default: _blank
+            required: false
+          - label: 'Fields (add, remove, or reorder — no code change needed)'
+            name: fields
+            widget: list
+            i18n: true
+            collapsed: auto
+            label_singular: 'Field'
+            summary: '{{label}}'
+            fields:
+              - label: 'Field name (e.g. fname — set once, never change)'
+                name: name
+                widget: string
+                i18n: duplicate
+                required: true
+                pattern: ['^[a-z0-9_]+$', 'Lowercase letters, numbers, and underscores only']
+              - label: 'Label (this language)'
+                name: label
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Type'
+                name: type
+                widget: select
+                i18n: duplicate
+                options: ['text', 'email', 'tel', 'hidden', 'checkbox']
+              - label: 'Required'
+                name: required
+                widget: boolean
+                i18n: duplicate
+                default: false
+                required: false
+              - label: 'Autocomplete (optional, e.g. given-name, family-name, email, tel)'
+                name: autocomplete
+                widget: string
+                i18n: duplicate
+                required: false
+              - label: 'Default value (optional, for hidden fields)'
+                name: value
+                widget: string
+                i18n: duplicate
+                required: false
+          - label: 'Submit button label (this language)'
+            name: submit_label
+            widget: string
+            i18n: true
+            required: false
 
   - name: updates
-    label: Notices, forms & galleries
+    label: Notices, Forms & Galleries
     icon: notifications
     description: 'Urgent site-wide banner, request-form links and photo galleries.'
     i18n: true
     files:
       - name: notice
-        label: Urgent site-wide notice banner
+        label: Urgent Site-Wide Notice Banner
         icon: warning
         file: src/data/notice.{{locale}}.json
         i18n: true
@@ -1171,7 +1156,7 @@ collections:
             required: false
             i18n: true
       - name: forms
-        label: Request form links
+        label: Request Form Links
         icon: assignment
         file: src/data/forms.json
         description: The request-forms page list. Update URLs when yearly registrations roll over (e.g. 2026-2027 → 2027-2028). Parish-page links must start AND end with / .
@@ -1186,7 +1171,7 @@ collections:
               - { label: 'Label (keep all 3 languages in one line)', name: label, widget: string }
               - { label: 'Link', name: url, widget: string, hint: 'A parish page, a full web address, or a @shortcut word (@giving @payment @calendar-suggest @calendar-view @flocknote @youtube).' }
       - name: galleries
-        label: Photo galleries
+        label: Photo Galleries
         icon: photo_library
         file: src/data/galleries.{{locale}}.json
         i18n: true
@@ -1219,13 +1204,13 @@ collections:
   - divider: true
 
   - name: interface
-    label: 'Interface words — TRANSLATORS ONLY'
+    label: 'Interface Words — TRANSLATORS ONLY'
     icon: translate
     description: 'Button and heading words in English, Español and Tiếng Việt — one screen, switch language top-right.'
     i18n: true
     files:
       - name: ui
-        label: Button & heading words (all languages)
+        label: Button & Heading Words
         file: src/data/ui.{{locale}}.json
         description: 'WARNING: wording only — never rename, remove, or add rows, or buttons and headings across the site go blank. Switch languages with the locale switcher in the top-right corner. A missing translation shows English automatically.'
         i18n: true
@@ -1327,24 +1312,60 @@ collections:
         - { label: '“View profile” link', name: viewProfile, widget: string, i18n: true, required: false }
         - { label: 'Visit title', name: visitTitle, widget: string, i18n: true, required: false }
 
-# Single-entry files, top-level for one-click editing (pilot: office-hours + staff).
+# Single-entry files, top-level for one-click editing (header menu + staff directory).
 # Paths unchanged so templates work untouched. Relations use collection _singletons.
 singletons:
-  - name: office-hours
-    label: Office hours (homepage, footer, contact)
-    file: src/data/office.{{locale}}.json
+  - name: header-menu
+    label: Header Menu
+    icon: menu
+    file: src/data/navigation.{{locale}}.json
     i18n: true
-    icon: business
-    description: One place — updates the homepage Contact section, the footer on every page, and the contact page automatically. Switch languages top-right.
+    description: >-
+      WARNING: this is the header menu for the whole site. A wrong link
+      breaks navigation everywhere; an empty label shows a blank menu item.
+      Links must start AND end with / (e.g. /mass-times/). Add, remove or
+      reorder menu items in English only — other languages follow the same
+      items. Ask the web volunteer before changing the structure.
     fields:
-      - label: 'Office hours (two lines: open days first, closed days second)'
-        name: text
-        widget: text
+      - label: 'Menu groups'
+        name: groups
+        widget: list
+        collapsed: auto
+        label_singular: 'Menu Group'
         i18n: true
-        required: false
-        hint: 'Example: Tuesday – Friday: 10:00 a.m. – 5:00 p.m.'
+        summary: '{{label}}'
+        fields:
+          - label: 'Group code (leave alone — used behind the scenes)'
+            name: id
+            widget: string
+            i18n: duplicate
+          - label: 'Group name (this language)'
+            name: label
+            widget: string
+            i18n: true
+            required: false
+          - label: 'Group link (e.g. /about-us/)'
+            name: href
+            widget: string
+            i18n: duplicate
+          - label: 'Submenu links'
+            name: children
+            widget: list
+            label_singular: 'Link'
+            i18n: true
+            summary: '{{label}}'
+            fields:
+              - label: 'Link name (this language)'
+                name: label
+                widget: string
+                i18n: true
+                required: false
+              - label: 'Link (e.g. /staff/)'
+                name: href
+                widget: string
+                i18n: duplicate
   - name: staff
-    label: Staff members
+    label: Staff Members
     file: src/data/staff.{{locale}}.json
     i18n: true
     icon: group
