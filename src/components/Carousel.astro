@@ -15,9 +15,13 @@ const hrefFor = (link: string) => resolveLink(link, lang);
       <ul class="carousel-track" data-track>
         {slides.map((s, i) => (
           <li class="carousel-slide" data-slide data-seconds={s.seconds || 5} aria-hidden={i !== 0 ? 'true' : 'false'}>
-            <a href={hrefFor(s.link)} tabindex={i !== 0 ? -1 : undefined}>
+            {s.link?.trim() ? (
+              <a href={hrefFor(s.link.trim())} tabindex={i !== 0 ? -1 : undefined}>
+                <img src={s.image} alt={s.alt} width={s.width || 1920} height={s.height || 480} loading={i === 0 ? 'eager' : 'lazy'} />
+              </a>
+            ) : (
               <img src={s.image} alt={s.alt} width={s.width || 1920} height={s.height || 480} loading={i === 0 ? 'eager' : 'lazy'} />
-            </a>
+            )}
           </li>
         ))}
       </ul>
@@ -26,7 +30,7 @@ const hrefFor = (link: string) => resolveLink(link, lang);
       <>
         <button type="button" class="carousel-arrow carousel-prev" data-prev aria-label={ui.prevSlide}>‹</button>
         <button type="button" class="carousel-arrow carousel-next" data-next aria-label={ui.nextSlide}>›</button>
-        <div class="carousel-dots" role="group" aria-label="Choose slide">
+        <div class="carousel-dots" role="group" aria-label={ui.dotsLabel}>
           {slides.map((s, i) => (
             <button type="button" data-dot={i} aria-label={`${ui.showSlide} ${i + 1}: ${s.caption}`} aria-current={i === 0 ? 'true' : 'false'}></button>
           ))}

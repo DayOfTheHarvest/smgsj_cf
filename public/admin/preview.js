@@ -189,9 +189,8 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
     catholic: 'Catholic — diocesan icons + EthicsPoint line'
   };
 
-  /* Action-card button colors, mirroring btnClassFor on the site. */
-  function actionBtnClass(s) {
-    return btnClassFor(s);
+  function actionBtnExtraClass(s) {
+    return s === 'primary' || s === 'gold' || s === 'outline' ? btnClassFor(s) : '';
   }
 
   /* Shared composed-section renderers: the standalone file previews and the
@@ -232,11 +231,17 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
             c.text ? h('p', {}, c.text) : null,
             c.kind === 'link' && c.link ? h('p', {},
               h('a', {
-                className: actionBtnClass(c.style),
+                className: btnClassFor(c.style),
                 href: previewHref(c.link, loc, aliases)
               }, c.link_label || c.title)) : null,
             c.extra_link ? h('p', {},
-              h('a', { href: previewHref(c.extra_link, loc, aliases) }, c.extra_label)) : null);
+              h('a', actionBtnExtraClass(c.extra_style)
+                ? {
+                    className: actionBtnExtraClass(c.extra_style),
+                    href: previewHref(c.extra_link, loc, aliases)
+                  }
+                : { href: previewHref(c.extra_link, loc, aliases) },
+                c.extra_label)) : null);
         }
         return h('article', {
           key: i, className: 'card', 'data-key-path': kp + '.' + i, tabIndex: 0
@@ -322,8 +327,9 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       var bd = this.state.bulletins;
       var aliases = this.state.aliases;
       var loc = previewLocale(this.props.entry.get('path'));
+      var limit = Number(data.bulletins_limit == null ? 5 : data.bulletins_limit) || 5;
       var live = bd ? filterBulletins(bd.bulletins || [],
-        Number(bd.weeks == null ? 3 : bd.weeks), Date.now()).slice(0, 5) : null;
+        Number(bd.weeks == null ? 3 : bd.weeks), Date.now()).slice(0, limit) : null;
       return h('div', { className: 'wrap' },
         h('h1', { 'data-key-path': 'cards', tabIndex: 0 }, 'Action cards preview'),
         actionCards(cards, live, aliases, loc, 'cards'));
@@ -507,8 +513,10 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
           return { type: 'preset', id: id, visible: true };
         });
       var bd = st.bulletins;
+      var actionLimit = Number(st.actions && st.actions.bulletins_limit == null
+        ? 5 : st.actions && st.actions.bulletins_limit) || 5;
       var live = bd ? filterBulletins(bd.bulletins || [],
-        Number(bd.weeks == null ? 3 : bd.weeks), Date.now()).slice(0, 5) : null;
+        Number(bd.weeks == null ? 3 : bd.weeks), Date.now()).slice(0, actionLimit) : null;
       var staffMembers = st.staff && st.staff.members ? st.staff.members : null;
       var staffOpt = staffMembers ? {
         members: staffMembers,
@@ -629,9 +637,11 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
             ((s.cards || [])).map(function (c, ci) {
               var adapted = {
                 type: 'card', icon: c.icon, title: c.title, text: c.text,
-                buttons: c.link ? [{
+                image: c.image,
+                buttons: c.buttons || (c.link ? [{
                   label: c.link_label || c.title, link: c.link, style: 'outline'
-                }] : []
+                }] : []),
+                buttons_layout: c.buttons_layout
               };
               var inner = renderBlock(adapted, {
                 title: s.title || '', md: md,
@@ -642,11 +652,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
               return h('div', {
                 key: ci,
                 'data-key-path': 'sections.' + si + '.cards.' + ci,
-                dangerouslySetInnerHTML: {
-                  __html: (c.image ? '<p><img src="' + (
-                    (getAsset(c.image) || {}).url || c.image
-                  ) + '" alt="" loading="lazy" style="border-radius:.5rem"></p>' : '') + inner
-                }
+                dangerouslySetInnerHTML: { __html: inner }
               });
             })),
           extra ? h('div', {

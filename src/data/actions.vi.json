@@ -1,4 +1,5 @@
 {
+  "bulletins_limit": 5,
   "cards": [
     {
       "icon": "news",

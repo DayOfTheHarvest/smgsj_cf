@@ -1028,21 +1028,44 @@ collections:
                         i18n: true
                       - label: 'Text (this language)'
                         name: text
-                        widget: text
+                        widget: markdown
                         required: false
                         i18n: true
+                        buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                        editor_components: [image, code-block]
+                        modes: [rich_text, raw]
                       - { label: 'Picture (Media library)', name: image, widget: image, required: false, i18n: duplicate }
-                      - label: 'Button link (blank = no button)'
-                        name: link
-                        widget: string
-                        required: false
+                      - label: 'Buttons (optional)'
+                        name: buttons
+                        widget: list
                         i18n: duplicate
-                        hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
-                      - label: 'Button label (this language)'
-                        name: link_label
-                        widget: string
                         required: false
-                        i18n: true
+                        summary: '{{label}}'
+                        fields:
+                          - label: 'Label (this language)'
+                            name: label
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Link'
+                            name: link
+                            widget: string
+                            i18n: duplicate
+                            hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
+                          - label: 'Color'
+                            name: style
+                            widget: select
+                            i18n: duplicate
+                            options: ['gold', 'light', 'primary', 'outline']
+                      - label: 'Buttons layout'
+                        name: buttons_layout
+                        widget: select
+                        i18n: duplicate
+                        options:
+                          - { label: 'Stacked (one per line)', value: stacked }
+                          - { label: 'Inline (side by side)', value: inline }
+                        default: stacked
+                        required: false
                   - label: 'Extra widgets (below the cards)'
                     name: blocks
                     widget: list
@@ -1199,6 +1222,12 @@ collections:
           Each card has a kind (bulletin list, link button, or text only).
           Switch languages top-right; add/remove cards in English only.
         fields:
+          - label: 'Bulletin list length (bulletin cards show this many)'
+            name: bulletins_limit
+            widget: number
+            i18n: duplicate
+            default: 5
+            hint: 'How many bulletins the bulletin card lists. Older bulletins still drop off by date.'
           - label: 'Cards'
             name: cards
             widget: list
@@ -1250,6 +1279,17 @@ collections:
                 widget: string
                 required: false
                 i18n: true
+              - label: 'Second link style'
+                name: extra_style
+                widget: select
+                i18n: duplicate
+                options:
+                  - { label: 'Plain link', value: link }
+                  - { label: 'Primary button', value: primary }
+                  - { label: 'Gold button', value: gold }
+                  - { label: 'Outline button', value: outline }
+                default: link
+                required: false
               - label: 'Card kind (what this card shows)'
                 name: kind
                 widget: select

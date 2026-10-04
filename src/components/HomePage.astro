@@ -13,7 +13,7 @@ import homepageVi from '../data/homepage.vi.json';
 import { pickLocale } from '../lib/i18n';
 import { renderMd } from '../lib/md';
 import { renderSections } from '../lib/render-blocks.js';
-import { btnClassFor, esc } from '../lib/render-blocks.js';
+import { renderBlock, btnClassFor, esc } from '../lib/render-blocks.js';
 import staffEn from '../data/staff.en.json';
 import staffEs from '../data/staff.es.json';
 import staffVi from '../data/staff.vi.json';
@@ -129,17 +129,23 @@ const scheduleBtnClass = (b: any) =>
         <section aria-label={s.title || `Section ${si + 1}`}>
           {(s.title) && <h2>{s.title}</h2>}
           <div class="cards">
-            {((Array.isArray(s.cards) ? s.cards : []) as any[]).map((c: any) => (
-              <article class="card">
-                {c.icon ? <div class="card-head"><Icon name={c.icon} /><h3>{c.title}</h3></div>
-                : (c.title) ? <h3>{c.title}</h3> : null}
-                {c.image?.trim() ? (c.link?.trim()
-                  ? <p><a href={hrefFor(c.link.trim())}><img src={c.image} alt={c.title || ''} loading="lazy" style="border-radius:.5rem" /></a></p>
-                  : <p><img src={c.image} alt={c.title || ''} loading="lazy" style="border-radius:.5rem" /></p>) : null}
-                {(c.text) && <p>{c.text}</p>}
-                {c.link?.trim() ? <p><a class="btn btn-outline" href={hrefFor(c.link.trim())}>{c.link_label || c.title}</a></p> : null}
-              </article>
-            ))}
+            {((Array.isArray(s.cards) ? s.cards : []) as any[]).map((c: any) => {
+              // Same card shape as page sections: multiple buttons with a
+              // layout choice (the old single link still maps to one button).
+              const adapted = {
+                type: 'card',
+                icon: c.icon,
+                title: c.title,
+                text: c.text,
+                image: c.image,
+                buttons: (Array.isArray(c.buttons) ? c.buttons : (c.link ? [{
+                  label: c.link_label || c.title, link: c.link, style: 'outline'
+                }] : [])),
+                buttons_layout: c.buttons_layout,
+              };
+              const cardHtml = renderBlock(adapted as any, blockOpts(s.title || `Section ${si + 1}`));
+              return cardHtml ? <div set:html={cardHtml} /> : null;
+            })}
           </div>
           {blocksHtml(s.title || `Section ${si + 1}`, s.blocks) && <div set:html={blocksHtml(s.title || `Section ${si + 1}`, s.blocks)} />}
         </section>
