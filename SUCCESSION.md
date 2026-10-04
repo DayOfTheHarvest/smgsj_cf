@@ -35,14 +35,15 @@ Also: `smgsj@smgsj.org` (parish mail) and `webaccount@smgsj.org` (domain/hosting
 - First week: log in at `/admin` (Sveltia CMS — Sign in with GitHub), do the sandbox drills in `HANDBOOK.md`,
   run `npm run build` locally, read the open office questions in `MIGRATION.md §3`.
 - Standing routine: bulletins + presiders weekly (office staff, no volunteer
-  needed); dependency refresh (`npm update`, rebuild) quarterly.
+  needed); dependency refresh quarterly (review with the parish's technical
+  help — update only to fix something broken, never just to have the newest).
 
 ## 3. What breaks if neglected (and how fast)
 
 - Domain renewal lapses → whole site offline. Keep auto-renew + monitored inbox.
 - Cloudflare Pages/Workers free-tier limits → effectively never for this traffic; check the
   Cloudflare dashboard email summary.
-- `node_modules` rot → rebuild from scratch yearly (`rm -rf node_modules dist .astro && npm install && npm run build`).
+- `node_modules` rot → rebuild from scratch yearly (`rm -rf node_modules dist .astro && npm clean-install && npm run build`).
 - weconnect.com hotlinks (4 bulletins only) die → re-upload those PDFs via Media.
 
 ## 4. Emergency contacts (fill in)

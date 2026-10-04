@@ -17,13 +17,13 @@ to keep the repo lean — `MIGRATION.md` records what came from where.
 |---|---|---|
 | Site generator | Astro 4 (static output, no adapter) | `astro.config.mjs`, `site: https://www.smgsj.org` |
 | Styling | Tailwind CSS 3 (`tailwind.config.mjs` + `src/styles/global.css`) | Parish navy/gold tokens; purges to ~26KB |
-| CMS | Sveltia CMS (`public/admin/`) | Sign in with GitHub (OAuth via Cloudflare Worker), no approval flow |
+| CMS | Sveltia CMS 0.227.4, exact-pinned (`public/admin/`) | Sign in with GitHub (OAuth via Cloudflare Worker), no approval flow |
 | Content | Markdown (`src/content/pages/*.<locale>.md`) + JSON (`src/data/*.<locale>.json`) | One file per topic per language, EN required, ES/VI optional with fallback banner |
 | Markdown rendering | `marked` (`src/lib/md.ts`) | GFM tables |
 | Search | Pagefind static index (`dist/pagefind/`) | Built by `npm run build` |
-| Hosting | Cloudflare Pages (static site + headers/redirects) | `npm run build` → `dist/`; `public/_redirects` + `public/_headers` ship verbatim (no web forms on site; contact page uses call/email cards) |
+| Hosting | Cloudflare Workers, static assets (`wrangler.jsonc`, no `main`) | `npm run build` → `dist/`; `npx wrangler deploy` uploads it; `public/_redirects` + `public/_headers` ship verbatim (no web forms on site; contact page uses call/email cards) |
 | DNS | Network Solutions (domain + DNS, account `webaccount@smgsj.org`) | See `DEPLOY.md` |
-| Analytics | Undecided (beacon placeholder in `src/layouts/Base.astro`) | Must work without moving DNS; see `DEPLOY.md §5` |
+| Analytics | None yet (dead placeholder removed from `src/layouts/Base.astro`) | Must work without moving DNS; see `DEPLOY.md §5` |
 
 ## Repo map
 
@@ -35,12 +35,12 @@ src/pages/[lang]/staff/[member].astro  13 staff profiles × 3 langs
 src/pages/[lang]/search.astro    Pagefind search UI
 src/pages/404.astro              Not-found page
 src/layouts/Base.astro           Shell: hreflang/canonical, header, notice bar, footer
-src/components/                  Header, Footer, MassCards, StaffCards, Carousel,
-                                 ActionCards, BulletinList, CalendarEmbeds,
-                                 FundraiserProgress, FlocknoteSignup, OfficeSection, Icon
+src/components/                  Header, Footer, MassCards, Carousel,
+                                 FlocknoteSignup, HomePage, Icon, PageBlocks
 src/content/pages/*.<locale>.md   41 topics × EN/ES/VI: frontmatter (address, title) + body
 src/data/*.json                  Schedule, presiders, staff, bulletins, nav, settings,
-                                 homepage copy, forms, galleries, notice, UI words
+                                 homepage rows, footer links, office hours, signup form,
+                                 notice, UI words
 src/data/*.{en,es,vi}.json       Per-language data files (native Sveltia i18n);
                                  missing text falls back to English (see src/lib/i18n.ts)
 src/data/ui.*.json               Button/heading wording, 3 languages (Sveltia: Interface words)
@@ -58,10 +58,10 @@ scripts/sitemap.py               Post-build sitemap.xml with hreflang alternates
   native Sveltia i18n, `multiple_files`). Empty/missing ES/VI content renders
   English + a small "parts may not be translated" banner (never a 404).
   The address (`slug_key`) is shared by all languages — set once, never change it.
-- Repeating/weekly content (Mass times, presiders, bulletins, staff, forms,
-  carousel, nav, homepage copy) lives in `src/data/*.json`, every file wired to
-  a CMS screen. Shared link logic (`resolveLink`, `@giving`/`@youtube`/…
-  aliases) lives in `src/config.ts`.
+- Repeating/weekly content (Mass times, presiders, bulletins, staff, carousel,
+  nav, homepage rows, footer links, office hours, signup form, notice) lives
+  in `src/data/*.json`, every file wired to a CMS screen. Shared link logic
+  (`resolveLink`, `@giving`/`@youtube`/… aliases) lives in `src/config.ts`.
 - Staff never touch `src/components`, `tailwind.config.mjs`, or build/redirect files.
 
 ## Local development (verified 2026-10-02, Node v22)
@@ -69,7 +69,7 @@ scripts/sitemap.py               Post-build sitemap.xml with hreflang alternates
 ```bash
 npm install        # once
 npm run dev        # http://localhost:4321 (Astro picks a free port if busy)
-npm run build      # astro build + sitemap.py + pagefind → dist/ (167 pages)
+npm run build      # pins check + syncs + astro build + sitemap.py + pagefind → dist/ (167 pages)
 npm run preview    # serves dist/ locally; add --port 4321 to fix the port
 ```
 
@@ -80,10 +80,16 @@ verified list in `DEPLOY.md`).
 
 ## Testing
 
-- **Build gate:** `npm run build` must complete with no `ERROR`.
-- **Content scan:** every `<article class="prose">` in `dist/` must contain no
-  literal Markdown (`**`, `[](…)`); mass table always 21 rows; ES/VI fallback
-  banner present exactly where translations are missing.
+- **Build gate:** `npm run build` must complete with no `ERROR` (it starts
+  with `check-pins.py`: pinned CDN/tooling, stdlib-only build scripts, no
+  remote pulls in code).
+- **Content gate:** `npm run content:check` (41 page addresses × locales, all
+  `slug_key` agree).
+- **Preview/drift gates:** `python3 scripts/check-preview.py`
+  (CMS widgets = shared renderer, identical widget lists, classes, icons),
+  plus `sync-shortcuts.py --check` and `sync-icons.py --check` (generated
+  references match code).
+- **Auth gate:** `npm run auth:check` (provider/backend agree).
 - **Smoke:** preview + curl the 9 URLs in `DEPLOY.md §5`.
 - **Sandbox acceptance:** bulletin swap + hours fix + new ES paragraph, each
   <5 min in `/admin` on a laptop, per `HANDBOOK.md`.
