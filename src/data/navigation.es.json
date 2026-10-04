@@ -147,7 +147,7 @@
         },
         {
           "label": "Solicitud de reserva",
-          "href": "https://www.calendarwiz.com/cwsuggest/cwsuggestform.php?crd=smgsj"
+          "href": "@calendar-suggest"
         },
         {
           "label": "Revisión previa",

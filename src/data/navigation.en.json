@@ -147,7 +147,7 @@
         },
         {
           "label": "Facility Reservation Request",
-          "href": "https://www.calendarwiz.com/cwsuggest/cwsuggestform.php?crd=smgsj"
+          "href": "@calendar-suggest"
         },
         {
           "label": "Before-Event Walkthrough",

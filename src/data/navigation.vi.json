@@ -147,7 +147,7 @@
         },
         {
           "label": "Yêu cầu đặt chỗ",
-          "href": "https://www.calendarwiz.com/cwsuggest/cwsuggestform.php?crd=smgsj"
+          "href": "@calendar-suggest"
         },
         {
           "label": "Kiểm tra trước sự kiện",

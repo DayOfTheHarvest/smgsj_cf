@@ -28,10 +28,10 @@ sections:
     title: Follow Us
     buttons:
     - label: Facebook
-      link: https://www.facebook.com/smgsjca
+      link: '@facebook'
       style: outline
     - label: YouTube
-      link: https://www.youtube.com/@smgsjca
+      link: '@youtube'
       style: outline
   - type: embed
     title: ''
