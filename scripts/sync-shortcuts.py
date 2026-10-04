@@ -35,20 +35,38 @@ resolver_body = re.search(
 aliases = re.findall(r"'(@[\w-]+)':\s*EXTERNAL\.(\w+)", resolver_body)
 assert aliases, "no @aliases found in src/config.ts resolveLink"
 
-import yaml  # noqa: E402  (pyyaml, already required by check-preview.py)
+try:
+    import yaml  # pyyaml; local-only — build envs may lack it
 
-cfg = yaml.safe_load(open(ADMIN_YML, encoding="utf-8"))
-site = next(c for c in cfg["collections"] if c.get("name") == "site")
-settings_file = next(f for f in site["files"] if f.get("name") == "settings")
-labels = {}
+    cfg = yaml.safe_load(open(ADMIN_YML, encoding="utf-8"))
+    site = next(c for c in cfg["collections"] if c.get("name") == "site")
+    settings_file = next(f for f in site["files"] if f.get("name") == "settings")
+    labels = {}
 
-def walk(fields):
-    for f in fields or []:
-        if f.get("name"):
-            labels[f["name"]] = f.get("label", f["name"])
-        walk(f.get("fields"))
+    def walk(fields):
+        for f in fields or []:
+            if f.get("name"):
+                labels[f["name"]] = f.get("label", f["name"])
+            walk(f.get("fields"))
 
-walk(settings_file.get("fields"))
+    walk(settings_file.get("fields"))
+except ImportError:
+    # No pyyaml here (e.g. Cloudflare build): read the inline
+    # `- { label: '...', name: ... }` mappings out of the settings file
+    # block with regex instead. (Nested blocks like emergencies are
+    # multi-line, so inline-only matching cannot misfire on them —
+    # but scope to the settings block anyway, since field names such
+    # as `giving` recur elsewhere in the file.)
+    raw_cfg = open(ADMIN_YML, encoding="utf-8").read()
+    start = raw_cfg.index("      - name: settings\n")
+    end = raw_cfg.index("\n      - name: ", start + 1)
+    settings_block = raw_cfg[start:end]
+    labels = {
+        m.group(2): m.group(1)
+        for m in re.finditer(
+            r"\{\s*label:\s*'([^']+)',\s*name:\s*(\w+)", settings_block
+        )
+    }
 
 lines, inline, warnings = [], [], []
 for alias, prop in aliases:
