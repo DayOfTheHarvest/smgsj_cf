@@ -65,12 +65,40 @@ table.mass th {
 table.mass td { border-bottom: 1px solid #e3e6ec; padding: 0.625rem 0.75rem; vertical-align: top; }
 table.mass tbody tr:nth-child(even) { background: #f5f6f8; }
 
-.fundraiser { margin: 1.5rem 0; border: 1px solid #e3e6ec; border-radius: 0.75rem; background: #f5f6f8; padding: 1.25rem; text-align: center; }
-.fundraiser .raised { font-family: Georgia, serif; font-size: 2.25rem; font-weight: 700; color: #1e2e4f; margin: 0.25rem 0; }
-.fundraiser .asof { font-size: 0.875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #5b6270; margin: 0.25rem 0; }
-.fundraiser .bar { margin: 0.75rem auto; height: 1.25rem; max-width: 36rem; overflow: hidden; border-radius: 999px; background: #fff; }
-.fundraiser .bar > div { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #a8861c, #c9a227); }
-.fundraiser .pct { font-weight: 700; color: #1e2e4f; margin: 0.25rem 0; }
+/* Plain-CSS stand-ins for the Tailwind utilities the shared renderer emits
+   (the preview iframe has no Tailwind runtime). Keep in sync with
+   src/lib/render-blocks.js class output. */
+.my-1 { margin-top: 0.25rem; margin-bottom: 0.25rem; }
+.my-3 { margin-top: 0.75rem; margin-bottom: 0.75rem; }
+.my-6 { margin-top: 1.5rem; margin-bottom: 1.5rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.p-5 { padding: 1.25rem; }
+.rounded-xl { border-radius: 0.75rem; }
+.rounded-full { border-radius: 999px; }
+.border { border-width: 1px; border-style: solid; }
+.border-line { border-color: #e3e6ec; }
+.bg-muted { background: #f5f6f8; }
+.bg-white { background: #fff; }
+.text-center { text-align: center; }
+.text-sm { font-size: 0.875rem; }
+.text-4xl { font-size: 2.25rem; }
+.font-bold { font-weight: 700; }
+.font-extrabold { font-weight: 800; }
+.font-serif { font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, 'Times New Roman', serif; }
+.uppercase { text-transform: uppercase; }
+.tracking-widest { letter-spacing: 0.1em; }
+.text-soft { color: #5b6270; }
+.text-navy { color: #1e2e4f; }
+.max-w-none { max-width: none; }
+.max-w-xl { max-width: 36rem; }
+.h-5 { height: 1.25rem; }
+.h-full { height: 100%; }
+.overflow-hidden { overflow: hidden; }
+/* Legacy chip tints (used only when a language has no configured colors). */
+.chip-english { background: #dbeafe; color: #1e3a8a; }
+.chip-es { background: #fef3c7; color: #78350f; }
+.chip-vi { background: #dcfce7; color: #14532d; }
+.chip-tagalog { background: #ede9fe; color: #4c1d95; }
 
 iframe.preview-embed { width: 100%; border: 0; }
 .text-soft { color: #5b6270; font-size: 0.875rem; }

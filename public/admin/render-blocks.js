@@ -191,7 +191,7 @@ function renderBlock(b, o, kp) {
       (html ? '<div>' + html + '</div>' : '') +
       (buttons.length
         ? b.buttons_layout === 'inline'
-          ? '<p class="flex flex-wrap gap-2">' + buttons.join('') + '</p>'
+          ? '<p class="btn-row">' + buttons.join('') + '</p>'
           : buttons.map((a) => '<p>' + a + '</p>').join('')
         : '') +
       '</article>'

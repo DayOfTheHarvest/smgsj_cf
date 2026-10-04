@@ -47,6 +47,7 @@
   .btn-outline:hover { @apply bg-navy text-white; }
   .btn-light { @apply border-white/60 bg-white/10 text-white; }
   .btn-light:hover { @apply bg-white/25 text-white; }
+  .btn-row { @apply flex flex-wrap gap-2; }
 
   .topbar { @apply bg-navyDark text-sm text-slate-300; }
   /* Header language switcher: full names, always visible */
