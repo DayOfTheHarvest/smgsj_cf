@@ -151,7 +151,10 @@ const scheduleBtnClass = (b: any) =>
         </section>
       ) : s.visible === false ? null : (
       <>
-      {s.id === 'carousel' && <Carousel lang={lang} ui={ui} />}
+      {s.id === 'carousel' && (<>
+        <Carousel lang={lang} ui={ui} />
+        {blocksHtml('Announcements', s.blocks) && <div set:html={blocksHtml('Announcements', s.blocks)} />}
+      </>)}
       {s.type === 'hero' && (
         <section class="hero" aria-label="Welcome">
           {s.eyebrow ? <p class="hero-eyebrow">{s.eyebrow}</p> : null}
@@ -163,9 +166,13 @@ const scheduleBtnClass = (b: any) =>
               <a class={btnClassFor(b.style)} href={hrefFor(b.link)}>{b.label}</a>
             ))}
           </div>
+          {blocksHtml(s.title || ui.hero.welcome, s.blocks) && <div set:html={blocksHtml(s.title || ui.hero.welcome, s.blocks)} />}
         </section>
       )}
-      {s.id === 'actions' && <ActionCards lang={lang} ui={ui} />}
+      {s.id === 'actions' && (<>
+        <ActionCards lang={lang} ui={ui} />
+        {blocksHtml('Actions', s.blocks) && <div set:html={blocksHtml('Actions', s.blocks)} />}
+      </>)}
       {s.type === 'schedule' && (
         <>
           <MassCards lang={lang} ui={ui} compact />
@@ -178,6 +185,7 @@ const scheduleBtnClass = (b: any) =>
               ))}
             </p>
           )}
+          {blocksHtml(ui.schedule.massTimes, s.blocks) && <div set:html={blocksHtml(ui.schedule.massTimes, s.blocks)} />}
         </>
       )}
       {s.type === 'events' && (
@@ -194,14 +202,21 @@ const scheduleBtnClass = (b: any) =>
           {blocksHtml(s.title || ui.eventsTitle, s.blocks) && <div set:html={blocksHtml(s.title || ui.eventsTitle, s.blocks)} />}
         </section>
       )}
-      {s.id === 'body' && body && (
+      {s.id === 'body' && body && (<>
         <section class="prose" data-pagefind-body>
           {fallback && <p class="fallback" data-fallback="en" role="note"><small>{ui.fallbackBanner}</small></p>}
           <div set:html={body} />
         </section>
-      )}
-      {s.id === 'office' && <OfficeSection lang={lang} ui={ui} />}
-      {s.id === 'flocknote' && <FlocknoteSignup ui={ui} lang={lang} />}
+        {blocksHtml(typeof titleVal === 'string' ? titleVal : ui.hero.welcome, s.blocks) && <div set:html={blocksHtml(typeof titleVal === 'string' ? titleVal : ui.hero.welcome, s.blocks)} />}
+      </>)}
+      {s.id === 'office' && (<>
+        <OfficeSection lang={lang} ui={ui} />
+        {blocksHtml(ui.contactSection, s.blocks) && <div set:html={blocksHtml(ui.contactSection, s.blocks)} />}
+      </>)}
+      {s.id === 'flocknote' && (<>
+        <FlocknoteSignup ui={ui} lang={lang} />
+        {blocksHtml(ui.stayTitle, s.blocks) && <div set:html={blocksHtml(ui.stayTitle, s.blocks)} />}
+      </>)}
       {s.type === 'catholic' && (
         <section class="mb-2 mt-10 text-center" aria-label="Catholic links">
           <div class="flex flex-wrap items-end justify-center gap-10 md:gap-16">
@@ -219,6 +234,7 @@ const scheduleBtnClass = (b: any) =>
           ) : (
             <p class="mx-auto mt-4 text-sm text-soft">{(s as any).ethics_name}: {(s as any).show_phone !== false && (<><a href={`tel:${EXTERNAL.ethicspoint_phone.replace(/[^0-9]/g, '')}`} class="font-bold">{EXTERNAL.ethicspoint_phone}</a> · </>)}<a href={EXTERNAL.ethicspoint}>{(s as any).ethics_report}</a></p>
           ))}
+          {blocksHtml('Catholic links', s.blocks) && <div set:html={blocksHtml('Catholic links', s.blocks)} />}
         </section>
       )}
       </>

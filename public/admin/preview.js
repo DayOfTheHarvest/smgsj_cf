@@ -568,6 +568,7 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
       }
       function heroNode(s, si) {
         var kp = 'sections.' + si;
+        var extra = blocksHtml(s.title || 'Welcome', s.blocks);
         return h('div', { key: 's' + si, className: 'preview-hero', 'data-key-path': kp, tabIndex: 0 },
           s.eyebrow ? h('p', { className: 'hero-eyebrow' }, s.eyebrow) : null,
           h('h1', { 'data-key-path': kp + '.title', tabIndex: 0 }, s.title || ''),
@@ -582,7 +583,10 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
                 key: i, className: 'btn btn-' + (b.style || 'light'),
                 href: previewHref(b.link, loc, aliases)
               }, b.label);
-            }))));
+            }))),
+          extra ? h('div', {
+            dangerouslySetInnerHTML: { __html: extra }
+          }) : null);
       }
       function eventsNode(s, si) {
         var kp = 'sections.' + si;
@@ -627,7 +631,10 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
               href: 'tel:' + String(settings.ethicspoint_phone || '').replace(/[^0-9]/g, '')
             }, settings.ethicspoint_phone || ''),
             ' · ',
-            h('a', { href: settings.ethicspoint || '#' }, s.ethics_report || '')));
+            h('a', { href: settings.ethicspoint || '#' }, s.ethics_report || '')),
+          blocksHtml('Catholic links', s.blocks) ? h('div', {
+            dangerouslySetInnerHTML: { __html: blocksHtml('Catholic links', s.blocks) }
+          }) : null);
       }
       function customNode(s, si) {
         var extra = blocksHtml(s.title || 'Custom block', s.blocks);
@@ -664,6 +671,8 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
         if (!m) return placeholder(si, PRESET_INFO.schedule, '(loading…)');
         var rows = m.masses || [];
         var conf = st.confession || {};
+        var massTitle = (ui.schedule && ui.schedule.massTimes) || 'Mass Times';
+        var extra = blocksHtml(massTitle, s.blocks);
         var buttons = ((s && s.buttons) || []).map(function (b) {
           var label = (b.label || '').trim();
           var link = (b.link || '').trim();
@@ -680,9 +689,12 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
           (conf.day || conf.time) ? h('p', {},
             h('strong', {}, ((ui.schedule && ui.schedule.confession) || 'Confession') + ': '),
             (conf.day || '') + (conf.day && conf.time ? ' · ' : '') + (conf.time || '')) : null,
-          buttons.length ? h('p', { className: 'btn-row' }, buttons) : null);
+          buttons.length ? h('p', { className: 'btn-row' }, buttons) : null,
+          extra ? h('div', {
+            dangerouslySetInnerHTML: { __html: extra }
+          }) : null);
       }
-      function officeNode(si) {
+      function officeNode(s, si) {
         if (!st.office) return placeholder(si, PRESET_INFO.office, '(loading…)');
         var lines = String(st.office.text || '').split('\n').map(function (line) {
           var i = line.indexOf(':');
@@ -721,9 +733,14 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
               settings.phone ? h('p', { className: 'my-1' },
                 h('a', { href: 'tel:' + String(settings.phone).replace(/[^0-9]/g, '') }, settings.phone)) : null,
               settings.email ? h('p', { className: 'my-1' },
-                h('a', { href: 'mailto:' + settings.email }, settings.email)) : null)));
+                h('a', { href: 'mailto:' + settings.email }, settings.email)) : null)),
+          blocksHtml(ui.contactSection || 'Contact & Office Hours', s.blocks) ? h('div', {
+            dangerouslySetInnerHTML: {
+              __html: blocksHtml(ui.contactSection || 'Contact & Office Hours', s.blocks)
+            }
+          }) : null);
       }
-      function flocknoteNode(si) {
+      function flocknoteNode(s, si) {
         var f = st.signup;
         if (!f) return placeholder(si, PRESET_INFO.flocknote, '(loading…)');
         return h('div', { key: 's' + si, 'data-key-path': 'sections.' + si, tabIndex: 0 },
@@ -747,7 +764,12 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
                     })));
             }),
             h('p', {},
-              h('button', { className: 'btn btn-gold', type: 'submit' }, f.submit_label || 'Sign Up'))));
+              h('button', { className: 'btn btn-gold', type: 'submit' }, f.submit_label || 'Sign Up')),
+            blocksHtml(f.title || 'Stay Connected', s.blocks) ? h('div', {
+              dangerouslySetInnerHTML: {
+                __html: blocksHtml(f.title || 'Stay Connected', s.blocks)
+              }
+            }) : null));
       }
       var kids = rows.map(function (s, si) {
         if (!s) return null;
@@ -770,26 +792,36 @@ import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, 
           if (s.id === 'carousel') {
             return st.slides
               ? h('div', { key: 's' + si, 'data-key-path': 'sections.' + si, tabIndex: 0 },
-                slideFigures(st.slides.slides || [], loc, getAsset))
+                slideFigures(st.slides.slides || [], loc, getAsset),
+                blocksHtml('Announcements', s.blocks) ? h('div', {
+                  dangerouslySetInnerHTML: { __html: blocksHtml('Announcements', s.blocks) }
+                }) : null)
               : placeholder(si, PRESET_INFO.carousel, '(loading…)');
           }
           if (s.id === 'actions') {
             return st.actions
               ? h('div', { key: 's' + si, 'data-key-path': 'sections.' + si, tabIndex: 0 },
-                actionCards(st.actions.cards || [], live, aliases, loc, 'sections.' + si + '.cards'))
+                actionCards(st.actions.cards || [], live, aliases, loc, 'sections.' + si + '.cards'),
+                blocksHtml('Actions', s.blocks) ? h('div', {
+                  dangerouslySetInnerHTML: { __html: blocksHtml('Actions', s.blocks) }
+                }) : null)
               : placeholder(si, PRESET_INFO.actions, '(loading…)');
           }
           if (s.id === 'body') {
             return st.homeBody
-              ? h('div', {
-                key: 's' + si, className: 'prose',
-                'data-key-path': 'sections.' + si, tabIndex: 0,
-                dangerouslySetInnerHTML: { __html: md(st.homeBody) }
-              })
+              ? h('div', { key: 's' + si },
+                h('div', {
+                  className: 'prose',
+                  'data-key-path': 'sections.' + si, tabIndex: 0,
+                  dangerouslySetInnerHTML: { __html: md(st.homeBody) }
+                }),
+                blocksHtml('Homepage text', s.blocks) ? h('div', {
+                  dangerouslySetInnerHTML: { __html: blocksHtml('Homepage text', s.blocks) }
+                }) : null)
               : placeholder(si, PRESET_INFO.body, '(page text lives on the Home topic page)');
           }
-          if (s.id === 'office') return officeNode(si);
-          if (s.id === 'flocknote') return flocknoteNode(si);
+          if (s.id === 'office') return officeNode(s, si);
+          if (s.id === 'flocknote') return flocknoteNode(s, si);
           return placeholder(si, PRESET_INFO[s.id] || s.id);
         }
         return null;

@@ -54,6 +54,33 @@ handled = set(re.findall(r"b\.type === '(\w+)'", render_src))
 for t in sorted(cms_types):
     check(t in handled, f"config block type {t!r} not handled in render-blocks.js")
 
+# 1b. uniform widgets -------------------------------------------------------
+# Every `blocks` list (page sections and all homepage rows) must offer the
+# same widgets with the same fields: staff learn one widget set that works
+# everywhere, and the shared renderer treats them identically.
+block_maps = {}
+
+
+def collect(fields, path):
+    for f in fields or []:
+        if f.get("name") == "blocks" and isinstance(f.get("types"), list):
+            block_maps[path] = {
+                b["name"]: sorted(x["name"] for x in b.get("fields", []))
+                for b in f["types"]
+            }
+        collect(f.get("fields"), path)
+        for t in f.get("types") or []:
+            collect((t or {}).get("fields"), path + "/" + str((t or {}).get("name")))
+
+
+for c in cfg["collections"]:
+    collect(c.get("fields"), c.get("name"))
+    for fl in c.get("files", []) or []:
+        collect(fl.get("fields"), c.get("name") + "/" + fl.get("name"))
+ref_path, ref_map = next(iter(block_maps.items()))
+for path, m in sorted(block_maps.items()):
+    check(m == ref_map, f"blocks list at {path} differs from {ref_path}")
+
 # 2. CSS classes ------------------------------------------------------------
 css = open(f"{ADMIN}/preview.css", encoding="utf-8").read()
 selectors = set(re.findall(r"[a-zA-Z0-9_-]+", css))
@@ -110,4 +137,4 @@ if errors:
     for e in errors:
         print(" -", e)
     sys.exit(1)
-print(f"preview OK: {len(cms_types)} block types, {len(emitted)} classes, {len(offered)} icons")
+print(f"preview OK: {len(cms_types)} block types in {len(block_maps)} identical lists, {len(emitted)} classes, {len(offered)} icons")

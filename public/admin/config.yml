@@ -651,6 +651,152 @@ collections:
                     widget: boolean
                     default: true
                     i18n: duplicate
+                  - label: 'Extra content (below this section)'
+                    name: blocks
+                    widget: list
+                    i18n: duplicate
+                    required: false
+                    hint: 'Text, buttons, thermometers, images, or embeds — anything a page section can hold. Drag to reorder. Consecutive buttons show side by side. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
+                    types:
+                      - name: fundraiser
+                        label: Fundraiser thermometer
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Title (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - { label: 'Goal (dollars)', name: goal, widget: number, i18n: duplicate }
+                          - { label: 'Raised so far (dollars)', name: pledged, widget: number, i18n: duplicate }
+                          - { label: 'As of (date)', name: updated, widget: string, i18n: duplicate }
+                          - { label: 'Donate link', name: donate_link, widget: string, i18n: duplicate }
+                          - label: 'Donate button label (this language)'
+                            name: donate_label
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: embed
+                        label: Embed (calendar, video, map)
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Title (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Embed URL'
+                            name: url
+                            widget: string
+                            i18n: duplicate
+                          - label: 'Height in pixels'
+                            name: height
+                            widget: number
+                            i18n: duplicate
+                            default: 1000
+                            required: false
+                          - label: 'Caption (optional, this language)'
+                            name: caption
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: button
+                        label: Button
+                        summary: '{{label}}'
+                        fields:
+                          - label: 'Label (this language)'
+                            name: label
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Link'
+                            name: link
+                            widget: string
+                            i18n: duplicate
+                            hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
+                          - label: 'Color'
+                            name: style
+                            widget: select
+                            i18n: duplicate
+                            options: ['gold', 'light', 'primary', 'outline']
+                      - name: richtext
+                        label: Text block
+                        summary: '{{body}}'
+                        fields:
+                          - label: 'Text (this language)'
+                            name: body
+                            widget: markdown
+                            i18n: true
+                            required: false
+                            buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                            editor_components: [image, code-block]
+                            modes: [rich_text, raw]
+                      - name: image
+                        label: Image
+                        summary: '{{alt}}'
+                        fields:
+                          - { label: 'Picture', name: image, widget: image, i18n: duplicate, required: false }
+                          - label: 'Alt text (this language)'
+                            name: alt
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: card
+                        label: Card
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Icon (pick from the list, optional)'
+                            name: icon
+                            widget: select
+                            i18n: duplicate
+                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                            required: false
+                          - label: 'Heading (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Text (this language)'
+                            name: text
+                            widget: markdown
+                            i18n: true
+                            required: false
+                            buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                            editor_components: [image, code-block]
+                            modes: [rich_text, raw]
+                          - label: 'Buttons (optional)'
+                            name: buttons
+                            widget: list
+                            i18n: duplicate
+                            required: false
+                            summary: '{{label}}'
+                            fields:
+                              - label: 'Label (this language)'
+                                name: label
+                                widget: string
+                                i18n: true
+                                required: false
+                              - label: 'Link'
+                                name: link
+                                widget: string
+                                i18n: duplicate
+                                hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
+                              - label: 'Color'
+                                name: style
+                                widget: select
+                                i18n: duplicate
+                                options: ['gold', 'light', 'primary', 'outline']
+                          - label: 'Buttons layout'
+                            name: buttons_layout
+                            widget: select
+                            i18n: duplicate
+                            options:
+                              - { label: 'Stacked (one per line)', value: stacked }
+                              - { label: 'Inline (side by side)', value: inline }
+                            default: stacked
+                            required: false
+                      - name: staff
+                        label: Staff Directory
               - name: schedule
                 label: Schedule Block
                 summary: 'Mass schedule'
@@ -690,6 +836,152 @@ collections:
                           - { label: 'Standard', value: standard }
                           - { label: 'Large', value: large }
                         default: standard
+                  - label: 'Extra content (below the buttons)'
+                    name: blocks
+                    widget: list
+                    i18n: duplicate
+                    required: false
+                    hint: 'Text, buttons, thermometers, images, or embeds — anything a page section can hold. Drag to reorder. Consecutive buttons show side by side. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
+                    types:
+                      - name: fundraiser
+                        label: Fundraiser thermometer
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Title (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - { label: 'Goal (dollars)', name: goal, widget: number, i18n: duplicate }
+                          - { label: 'Raised so far (dollars)', name: pledged, widget: number, i18n: duplicate }
+                          - { label: 'As of (date)', name: updated, widget: string, i18n: duplicate }
+                          - { label: 'Donate link', name: donate_link, widget: string, i18n: duplicate }
+                          - label: 'Donate button label (this language)'
+                            name: donate_label
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: embed
+                        label: Embed (calendar, video, map)
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Title (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Embed URL'
+                            name: url
+                            widget: string
+                            i18n: duplicate
+                          - label: 'Height in pixels'
+                            name: height
+                            widget: number
+                            i18n: duplicate
+                            default: 1000
+                            required: false
+                          - label: 'Caption (optional, this language)'
+                            name: caption
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: button
+                        label: Button
+                        summary: '{{label}}'
+                        fields:
+                          - label: 'Label (this language)'
+                            name: label
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Link'
+                            name: link
+                            widget: string
+                            i18n: duplicate
+                            hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
+                          - label: 'Color'
+                            name: style
+                            widget: select
+                            i18n: duplicate
+                            options: ['gold', 'light', 'primary', 'outline']
+                      - name: richtext
+                        label: Text block
+                        summary: '{{body}}'
+                        fields:
+                          - label: 'Text (this language)'
+                            name: body
+                            widget: markdown
+                            i18n: true
+                            required: false
+                            buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                            editor_components: [image, code-block]
+                            modes: [rich_text, raw]
+                      - name: image
+                        label: Image
+                        summary: '{{alt}}'
+                        fields:
+                          - { label: 'Picture', name: image, widget: image, i18n: duplicate, required: false }
+                          - label: 'Alt text (this language)'
+                            name: alt
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: card
+                        label: Card
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Icon (pick from the list, optional)'
+                            name: icon
+                            widget: select
+                            i18n: duplicate
+                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                            required: false
+                          - label: 'Heading (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Text (this language)'
+                            name: text
+                            widget: markdown
+                            i18n: true
+                            required: false
+                            buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                            editor_components: [image, code-block]
+                            modes: [rich_text, raw]
+                          - label: 'Buttons (optional)'
+                            name: buttons
+                            widget: list
+                            i18n: duplicate
+                            required: false
+                            summary: '{{label}}'
+                            fields:
+                              - label: 'Label (this language)'
+                                name: label
+                                widget: string
+                                i18n: true
+                                required: false
+                              - label: 'Link'
+                                name: link
+                                widget: string
+                                i18n: duplicate
+                                hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
+                              - label: 'Color'
+                                name: style
+                                widget: select
+                                i18n: duplicate
+                                options: ['gold', 'light', 'primary', 'outline']
+                          - label: 'Buttons layout'
+                            name: buttons_layout
+                            widget: select
+                            i18n: duplicate
+                            options:
+                              - { label: 'Stacked (one per line)', value: stacked }
+                              - { label: 'Inline (side by side)', value: inline }
+                            default: stacked
+                            required: false
+                      - name: staff
+                        label: Staff Directory
               - name: hero
                 label: Hero Banner
                 summary: '{{title}}'
@@ -741,6 +1033,152 @@ collections:
                     widget: text
                     i18n: true
                     required: false
+                  - label: 'Extra content (below the banner buttons)'
+                    name: blocks
+                    widget: list
+                    i18n: duplicate
+                    required: false
+                    hint: 'Text, buttons, thermometers, images, or embeds — anything a page section can hold. Drag to reorder. Consecutive buttons show side by side. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
+                    types:
+                      - name: fundraiser
+                        label: Fundraiser thermometer
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Title (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - { label: 'Goal (dollars)', name: goal, widget: number, i18n: duplicate }
+                          - { label: 'Raised so far (dollars)', name: pledged, widget: number, i18n: duplicate }
+                          - { label: 'As of (date)', name: updated, widget: string, i18n: duplicate }
+                          - { label: 'Donate link', name: donate_link, widget: string, i18n: duplicate }
+                          - label: 'Donate button label (this language)'
+                            name: donate_label
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: embed
+                        label: Embed (calendar, video, map)
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Title (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Embed URL'
+                            name: url
+                            widget: string
+                            i18n: duplicate
+                          - label: 'Height in pixels'
+                            name: height
+                            widget: number
+                            i18n: duplicate
+                            default: 1000
+                            required: false
+                          - label: 'Caption (optional, this language)'
+                            name: caption
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: button
+                        label: Button
+                        summary: '{{label}}'
+                        fields:
+                          - label: 'Label (this language)'
+                            name: label
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Link'
+                            name: link
+                            widget: string
+                            i18n: duplicate
+                            hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
+                          - label: 'Color'
+                            name: style
+                            widget: select
+                            i18n: duplicate
+                            options: ['gold', 'light', 'primary', 'outline']
+                      - name: richtext
+                        label: Text block
+                        summary: '{{body}}'
+                        fields:
+                          - label: 'Text (this language)'
+                            name: body
+                            widget: markdown
+                            i18n: true
+                            required: false
+                            buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                            editor_components: [image, code-block]
+                            modes: [rich_text, raw]
+                      - name: image
+                        label: Image
+                        summary: '{{alt}}'
+                        fields:
+                          - { label: 'Picture', name: image, widget: image, i18n: duplicate, required: false }
+                          - label: 'Alt text (this language)'
+                            name: alt
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: card
+                        label: Card
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Icon (pick from the list, optional)'
+                            name: icon
+                            widget: select
+                            i18n: duplicate
+                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                            required: false
+                          - label: 'Heading (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Text (this language)'
+                            name: text
+                            widget: markdown
+                            i18n: true
+                            required: false
+                            buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                            editor_components: [image, code-block]
+                            modes: [rich_text, raw]
+                          - label: 'Buttons (optional)'
+                            name: buttons
+                            widget: list
+                            i18n: duplicate
+                            required: false
+                            summary: '{{label}}'
+                            fields:
+                              - label: 'Label (this language)'
+                                name: label
+                                widget: string
+                                i18n: true
+                                required: false
+                              - label: 'Link'
+                                name: link
+                                widget: string
+                                i18n: duplicate
+                                hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
+                              - label: 'Color'
+                                name: style
+                                widget: select
+                                i18n: duplicate
+                                options: ['gold', 'light', 'primary', 'outline']
+                          - label: 'Buttons layout'
+                            name: buttons_layout
+                            widget: select
+                            i18n: duplicate
+                            options:
+                              - { label: 'Stacked (one per line)', value: stacked }
+                              - { label: 'Inline (side by side)', value: inline }
+                            default: stacked
+                            required: false
+                      - name: staff
+                        label: Staff Directory
               - name: events
                 label: Event Cards
                 summary: 'Event cards'
@@ -998,48 +1436,57 @@ collections:
                     default: true
                     required: false
                     hint: 'Uncheck to hide the phone link (both in standard and custom-note display).'
-              - name: custom
-                label: Custom block
-                summary: '{{title}}'
-                fields:
-                  - label: 'Block heading (this language)'
-                    name: title
-                    widget: string
-                    required: false
-                    i18n: true
-                  - label: 'Cards in this block'
-                    name: cards
+                  - label: 'Extra content (below the EthicsPoint line)'
+                    name: blocks
                     widget: list
-                    collapsed: auto
                     i18n: duplicate
-                    summary: '{{title}}'
-                    thumbnail: image
-                    fields:
-                      - label: 'Icon (pick from the list)'
-                        name: icon
-                        widget: select
-                        i18n: duplicate
-                        options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
-                        required: false
-                      - label: 'Heading (this language)'
-                        name: title
-                        widget: string
-                        required: false
-                        i18n: true
-                      - label: 'Text (this language)'
-                        name: text
-                        widget: markdown
-                        required: false
-                        i18n: true
-                        buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
-                        editor_components: [image, code-block]
-                        modes: [rich_text, raw]
-                      - { label: 'Picture (Media library)', name: image, widget: image, required: false, i18n: duplicate }
-                      - label: 'Buttons (optional)'
-                        name: buttons
-                        widget: list
-                        i18n: duplicate
-                        required: false
+                    required: false
+                    hint: 'Text, buttons, thermometers, images, or embeds — anything a page section can hold. Drag to reorder. Consecutive buttons show side by side. Add, remove, or reorder rows in English only (rows are read-only in other languages).'
+                    types:
+                      - name: fundraiser
+                        label: Fundraiser thermometer
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Title (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - { label: 'Goal (dollars)', name: goal, widget: number, i18n: duplicate }
+                          - { label: 'Raised so far (dollars)', name: pledged, widget: number, i18n: duplicate }
+                          - { label: 'As of (date)', name: updated, widget: string, i18n: duplicate }
+                          - { label: 'Donate link', name: donate_link, widget: string, i18n: duplicate }
+                          - label: 'Donate button label (this language)'
+                            name: donate_label
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: embed
+                        label: Embed (calendar, video, map)
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Title (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Embed URL'
+                            name: url
+                            widget: string
+                            i18n: duplicate
+                          - label: 'Height in pixels'
+                            name: height
+                            widget: number
+                            i18n: duplicate
+                            default: 1000
+                            required: false
+                          - label: 'Caption (optional, this language)'
+                            name: caption
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: button
+                        label: Button
                         summary: '{{label}}'
                         fields:
                           - label: 'Label (this language)'
@@ -1057,15 +1504,93 @@ collections:
                             widget: select
                             i18n: duplicate
                             options: ['gold', 'light', 'primary', 'outline']
-                      - label: 'Buttons layout'
-                        name: buttons_layout
-                        widget: select
-                        i18n: duplicate
-                        options:
-                          - { label: 'Stacked (one per line)', value: stacked }
-                          - { label: 'Inline (side by side)', value: inline }
-                        default: stacked
-                        required: false
+                      - name: richtext
+                        label: Text block
+                        summary: '{{body}}'
+                        fields:
+                          - label: 'Text (this language)'
+                            name: body
+                            widget: markdown
+                            i18n: true
+                            required: false
+                            buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                            editor_components: [image, code-block]
+                            modes: [rich_text, raw]
+                      - name: image
+                        label: Image
+                        summary: '{{alt}}'
+                        fields:
+                          - { label: 'Picture', name: image, widget: image, i18n: duplicate, required: false }
+                          - label: 'Alt text (this language)'
+                            name: alt
+                            widget: string
+                            i18n: true
+                            required: false
+                      - name: card
+                        label: Card
+                        summary: '{{title}}'
+                        fields:
+                          - label: 'Icon (pick from the list, optional)'
+                            name: icon
+                            widget: select
+                            i18n: duplicate
+                            options: ['users', 'church', 'star', 'calendar', 'heart', 'news', 'form', 'phone', 'mail', 'clock', 'info']
+                            required: false
+                          - label: 'Heading (this language)'
+                            name: title
+                            widget: string
+                            i18n: true
+                            required: false
+                          - label: 'Text (this language)'
+                            name: text
+                            widget: markdown
+                            i18n: true
+                            required: false
+                            buttons: [bold, italic, strikethrough, code, link, heading-one, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                            editor_components: [image, code-block]
+                            modes: [rich_text, raw]
+                          - label: 'Buttons (optional)'
+                            name: buttons
+                            widget: list
+                            i18n: duplicate
+                            required: false
+                            summary: '{{label}}'
+                            fields:
+                              - label: 'Label (this language)'
+                                name: label
+                                widget: string
+                                i18n: true
+                                required: false
+                              - label: 'Link'
+                                name: link
+                                widget: string
+                                i18n: duplicate
+                                hint: 'Parish pages, full URLs, or @shortcuts — see “Contact Info & External Links” for what each opens.'
+                              - label: 'Color'
+                                name: style
+                                widget: select
+                                i18n: duplicate
+                                options: ['gold', 'light', 'primary', 'outline']
+                          - label: 'Buttons layout'
+                            name: buttons_layout
+                            widget: select
+                            i18n: duplicate
+                            options:
+                              - { label: 'Stacked (one per line)', value: stacked }
+                              - { label: 'Inline (side by side)', value: inline }
+                            default: stacked
+                            required: false
+                      - name: staff
+                        label: Staff Directory
+              - name: custom
+                label: Custom block
+                summary: '{{title}}'
+                fields:
+                  - label: 'Block heading (this language)'
+                    name: title
+                    widget: string
+                    required: false
+                    i18n: true
                   - label: 'Extra widgets (below the cards)'
                     name: blocks
                     widget: list
