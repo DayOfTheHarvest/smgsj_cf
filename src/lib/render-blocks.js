@@ -1,0 +1,260 @@
+// Shared page-section renderer: the SINGLE implementation of the site's
+// section/block markup, used by both PageBlocks.astro (site build) and the
+// CMS live preview (browser). Framework-free ESM with zero imports apart
+// from ./icons.js — every environment difference is injected:
+//   md      Markdown text -> HTML string (marked on the site)
+//   href    button link -> URL (resolveLink+lang on the site, raw in preview)
+//   assetUrl image path -> URL (identity on the site, blob URL in preview)
+//   t       microcopy { asof, of, goal, donate } (translated ui on the site)
+//   kp      emit data-key-path markers for CMS click-to-highlight (preview)
+// public/admin/render-blocks.js is a build-synced copy (scripts/sync-preview.py).
+import { ICON_PATHS } from './icons.js';
+
+// Text nodes: Astro renders ' as &#39;. Attribute values keep ' raw.
+const esc = (v) =>
+  String(v ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+export { esc };
+const escAttr = (v) =>
+  String(v ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+export function btnClassFor(style) {
+  return style === 'gold'
+    ? 'btn btn-gold'
+    : style === 'primary'
+      ? 'btn btn-primary'
+      : style === 'outline'
+        ? 'btn btn-outline'
+        : 'btn btn-light';
+}
+
+export function fmtUSD(n) {
+  const v = Number(n || 0);
+  return v.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: v % 1 ? 2 : 0,
+  });
+}
+
+function iconBadge(name) {
+  const paths = ICON_PATHS[name] || ICON_PATHS.info;
+  return (
+    '<span class="icon-badge" aria-hidden="true"><svg width="26" height="26" ' +
+    'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round">' +
+    paths +
+    '</svg></span>'
+  );
+}
+
+function buttonAnchor(btn, o) {
+  const label = (btn.label || '').trim();
+  const link = (btn.link || '').trim();
+  if (!label || !link) return '';
+  return (
+    '<a class="' + btnClassFor(btn.style) + '" href="' + escAttr(o.href(link)) + '">' + esc(label) + '</a>'
+  );
+}
+
+function renderFundraiser(b, o, kp) {
+  const goal = Number(b.goal) || 0;
+  if (!b || !goal) return '';
+  const pledged = Number(b.pledged) || 0;
+  const pct = Math.min(100, (pledged / goal) * 100);
+  const label = (b.donate_label || '').trim() || o.t.donate;
+  const ariaTitle = (b.title || '').trim() || o.title;
+  const center = 'text-align:center';
+  return (
+    '<section class="my-6 rounded-xl border border-line bg-muted p-5 text-center" style="' +
+    center +
+    '" aria-label="' +
+    escAttr(ariaTitle) +
+    '"' +
+    (kp ? ' data-key-path="' + kp + '" tabindex="0"' : '') +
+    '>' +
+    '<p class="my-1 max-w-none text-center text-sm font-bold uppercase tracking-widest text-soft" style="' +
+    center +
+    '">' +
+    esc(o.t.asof) +
+    ' ' +
+    esc(b.updated || '') +
+    '</p>' +
+    '<p class="my-1 max-w-none text-center font-serif text-4xl font-bold text-navy" style="' +
+    center +
+    '">' +
+    esc(fmtUSD(pledged)) +
+    '</p>' +
+    '<div class="mx-auto my-3 h-5 max-w-xl overflow-hidden rounded-full bg-white" role="progressbar" aria-valuenow="' +
+    String(Math.round(pct * 100) / 100) +
+    '" aria-valuemin="0" aria-valuemax="100" aria-label="' +
+    escAttr(fmtUSD(pledged) + ' ' + o.t.of + ' ' + fmtUSD(goal) + ' ' + o.t.goal) +
+    '">' +
+    '<div class="h-full rounded-full" style="width:' +
+    pct.toFixed(2) +
+    '%;background:linear-gradient(90deg,#a8861c,#c9a227)"></div>' +
+    '</div>' +
+    '<p class="my-1 max-w-none text-center font-bold text-navy" style="' +
+    center +
+    '">' +
+    pct.toFixed(2) +
+    '% ' +
+    esc(o.t.of) +
+    ' ' +
+    esc(fmtUSD(goal)) +
+    ' ' +
+    esc(o.t.goal) +
+    '</p>' +
+    (b.donate_link && String(b.donate_link).trim()
+      ? '<p class="max-w-none text-center" style="' +
+        center +
+        '"><a class="btn btn-gold" href="' +
+        escAttr(String(b.donate_link).trim()) +
+        '">' +
+        esc(label) +
+        '</a></p>'
+      : '') +
+    '</section>'
+  );
+}
+
+function renderBlock(b, o, kp) {
+  if (!b) return '';
+  if (b.type === 'fundraiser') return renderFundraiser(b, o, kp);
+  if (b.type === 'embed') {
+    if (!b.url || !String(b.url).trim()) return '';
+    return (
+      '<div' +
+      (kp ? ' data-key-path="' + kp + '" tabindex="0"' : '') +
+      '>' +
+      (b.title && String(b.title).trim() ? '<h3>' + esc(b.title) + '</h3>' : '') +
+      '<div class="table-scroll" style="border:0">' +
+      '<iframe src="' +
+      escAttr(String(b.url).trim()) +
+      '" title="' +
+      escAttr((b.title || '').trim() || o.sectionTitle || o.title) +
+      '" width="100%" height="' +
+      String(Number(b.height) || 1000) +
+      '" loading="lazy"></iframe>' +
+      '</div>' +
+      (b.caption && String(b.caption).trim()
+        ? '<p class="text-sm text-soft">' + esc(b.caption) + '</p>'
+        : '') +
+      '</div>'
+    );
+  }
+  if (b.type === 'button') {
+    const a = buttonAnchor(b, o);
+    return a ? '<p>' + a + '</p>' : '';
+  }
+  if (b.type === 'richtext') {
+    const html = b.body && String(b.body).trim() ? o.md(b.body) : '';
+    return html ? '<div class="prose">' + html + '</div>' : '';
+  }
+  if (b.type === 'image') {
+    if (!b.image) return '';
+    return (
+      '<p><img src="' +
+      escAttr(o.assetUrl(b.image)) +
+      '" alt="' +
+      escAttr(b.alt || '') +
+      '" loading="lazy" style="border-radius:.75rem"></p>'
+    );
+  }
+  if (b.type === 'card') {
+    const html = b.text && String(b.text).trim() ? o.md(b.text) : '';
+    const buttons = (Array.isArray(b.buttons) ? b.buttons : [])
+      .map((btn) => buttonAnchor(btn, o))
+      .filter(Boolean);
+    if (!(b.title && String(b.title).trim()) && !html && !buttons.length) return '';
+    return (
+      '<article class="card"' +
+      (kp ? ' data-key-path="' + kp + '" tabindex="0"' : '') +
+      '>' +
+      (b.icon
+        ? '<div class="card-head">' +
+          iconBadge(b.icon) +
+          '<h3>' +
+          esc(b.title || '') +
+          '</h3></div>'
+        : b.title && String(b.title).trim()
+          ? '<h3>' + esc(b.title) + '</h3>'
+          : '') +
+      (html ? '<div>' + html + '</div>' : '') +
+      (buttons.length
+        ? b.buttons_layout === 'inline'
+          ? '<p class="flex flex-wrap gap-2">' + buttons.join('') + '</p>'
+          : buttons.map((a) => '<p>' + a + '</p>').join('')
+        : '') +
+      '</article>'
+    );
+  }
+  return '';
+}
+
+// Group consecutive cards so they render in one grid row, like the
+// site-wide card layouts. Other widgets keep their own order around them.
+// Cards with no heading, text, or buttons are skipped entirely.
+function groupBlocks(blocks) {
+  const runs = [];
+  const list = Array.isArray(blocks) ? blocks : [];
+  list.forEach((b, bi) => {
+    if (b && b.type === 'card') {
+      const text = b.text && String(b.text).trim() ? 'x' : '';
+      const title = b.title && String(b.title).trim() ? 'x' : '';
+      if (!(title || text || (b.buttons || []).length)) return;
+      const last = runs[runs.length - 1];
+      if (last && last.kind === 'cards') last.items.push({ b, bi });
+      else runs.push({ kind: 'cards', items: [{ b, bi }] });
+      return;
+    }
+    runs.push({ kind: 'single', b, bi });
+  });
+  return runs;
+}
+
+// Render whole page sections. o: { title, md, href, assetUrl, t, kp? }.
+// o.title = page title fallback; kp = emit data-key-path markers (preview).
+// o.sectionTitle is set per section for embed title fallbacks.
+export function renderSections(sections, o) {
+  return (Array.isArray(sections) ? sections : [])
+    .map((s, si) => {
+      const stitle = (s.title || '').trim();
+      const bodyHtml = s.body && String(s.body).trim() ? o.md(s.body) : '';
+      const so = Object.assign({}, o, { sectionTitle: s.title });
+      const kp = o.kp ? (suffix) => 'sections.' + si + suffix : null;
+      const inner = groupBlocks(s.blocks)
+        .map((run) => {
+          if (run.kind === 'cards') {
+            const cards = run.items
+              .map((it) => renderBlock(it.b, so, kp ? kp('.blocks.' + it.bi) : undefined))
+              .filter(Boolean);
+            return cards.length ? '<div class="cards">' + cards.join('') + '</div>' : '';
+          }
+          return renderBlock(run.b, so, kp ? kp('.blocks.' + run.bi) : undefined);
+        })
+        .join('');
+      return (
+        '<section aria-label="' +
+        escAttr(stitle || o.title) +
+        '" class="' +
+        (s.type === 'fullwidth_section' ? 'fullwidth' : '') +
+        '"' +
+        (kp ? ' data-key-path="sections.' + si + '" tabindex="0"' : '') +
+        '>' +
+        (stitle ? '<h2>' + esc(s.title) + '</h2>' : '') +
+        (bodyHtml ? '<div class="prose">' + bodyHtml + '</div>' : '') +
+        inner +
+        '</section>'
+      );
+    })
+    .join('');
+}

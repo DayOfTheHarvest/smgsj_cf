@@ -1,8 +1,7 @@
 ---
-import FundraiserProgress from './FundraiserProgress.astro';
-import Icon from './Icon.astro';
-import { resolveLink, type Lang } from '../config';
+import { renderSections } from '../lib/render-blocks.js';
 import { renderMd } from '../lib/md';
+import { resolveLink, type Lang } from '../config';
 
 interface Props {
   lang: Lang;
@@ -12,92 +11,20 @@ interface Props {
 }
 const { lang, ui, title, sections = [] } = Astro.props;
 
-const btnClassFor = (s: string) =>
-  s === 'gold' ? 'btn btn-gold' : s === 'primary' ? 'btn btn-primary' : s === 'outline' ? 'btn btn-outline' : 'btn btn-light';
-const hrefFor = (link: string) => resolveLink(link || '', lang);
-// Render Markdown in frontmatter (existing pattern: set:html takes a variable,
-// never a function call in the template). Cards carry their text in `text`.
-const withHtml = (list: Array<any>) =>
-  (Array.isArray(list) ? list : []).map((b) => ({
-    ...b,
-    __html: b?.body?.trim() ? renderMd(b.body) : b?.text?.trim() ? renderMd(b.text) : '',
-  }));
-// Group consecutive cards so they render in one grid row, like the
-// site-wide card layouts. Other widgets keep their own order around them.
-const groupBlocks = (list: Array<any>) => {
-  const runs: Array<any> = [];
-  for (const b of withHtml(list)) {
-    if (b?.type === 'card' && !(b?.title?.trim() || b.__html || (b.buttons || []).length)) continue;
-    const last = runs[runs.length - 1];
-    if (b?.type === 'card' && last && last.kind === 'cards') last.blocks.push(b);
-    else if (b?.type === 'card') runs.push({ kind: 'cards', blocks: [b] });
-    else runs.push({ kind: 'single', block: b });
-  }
-  return runs;
-};
-const sectionsR = (Array.isArray(sections) ? sections : []).map((s) => ({
-  ...s,
-  __html: s?.body?.trim() ? renderMd(s.body) : '',
-  runs: groupBlocks(s?.blocks),
-}));
+// Page sections share one markup implementation with the CMS live preview
+// (src/lib/render-blocks.js): same classes, same output. Only the data
+// sources differ (translated ui strings + resolveLink here).
+const html = renderSections(Array.isArray(sections) ? sections : [], {
+  title,
+  md: (src: string) => renderMd(src || ''),
+  href: (link: string) => resolveLink(link || '', lang),
+  assetUrl: (p: string) => p,
+  t: {
+    asof: ui.pledgedAsOf,
+    of: ui.ofWord,
+    goal: ui.goalWord,
+    donate: ui.nav.giving,
+  },
+});
 ---
-
-{sectionsR.map((s) => (
-  <section aria-label={s?.title?.trim() || title} class={s?.type === 'fullwidth_section' ? 'fullwidth' : ''}>
-    {s?.title?.trim() && <h2>{s.title}</h2>}
-    {s.__html && <div class="prose" set:html={s.__html} />}
-    {s.runs.map((run) => (
-      run.kind === 'cards' ? (
-        <div class="cards">
-          {run.blocks.map((b) => (
-            <article class="card">
-              {b?.icon ? (
-                <div class="card-head"><Icon name={b.icon} /><h3>{b.title}</h3></div>
-              ) : b?.title?.trim() ? (
-                <h3>{b.title}</h3>
-              ) : null}
-              {b.__html && <div set:html={b.__html} />}
-              {b.buttons_layout === 'inline' && (b.buttons || []).length ? (
-                <p class="flex flex-wrap gap-2">
-                  {(b.buttons || []).map((btn) => (
-                    btn?.label?.trim() && btn?.link?.trim() ? (
-                      <a class={btnClassFor(btn.style || 'light')} href={hrefFor(btn.link.trim())}>{btn.label}</a>
-                    ) : null
-                  ))}
-                </p>
-              ) : (
-                (b.buttons || []).map((btn) => (
-                  btn?.label?.trim() && btn?.link?.trim() ? (
-                    <p><a class={btnClassFor(btn.style || 'light')} href={hrefFor(btn.link.trim())}>{btn.label}</a></p>
-                  ) : null
-                ))
-              )}
-            </article>
-          ))}
-        </div>
-      ) : (
-        <>
-          {run.block?.type === 'fundraiser' && <FundraiserProgress ui={ui} title={s?.title?.trim() || title} fundraiser={run.block} />}
-          {run.block?.type === 'embed' && run.block?.url?.trim() && (
-            <div>
-              {run.block.title?.trim() && <h3>{run.block.title}</h3>}
-              <div class="table-scroll" style="border:0">
-                <iframe src={run.block.url.trim()} title={run.block.title?.trim() || s?.title || title} width="100%" height={Number(run.block.height) || 1000} loading="lazy"></iframe>
-              </div>
-              {run.block.caption?.trim() && <p class="text-sm text-soft">{run.block.caption}</p>}
-            </div>
-          )}
-          {run.block?.type === 'button' && run.block?.label?.trim() && run.block?.link?.trim() && (
-            <p><a class={btnClassFor(run.block.style || 'light')} href={hrefFor(run.block.link.trim())}>{run.block.label}</a></p>
-          )}
-          {run.block?.type === 'richtext' && run.block.__html && (
-            <div class="prose" set:html={run.block.__html} />
-          )}
-          {run.block?.type === 'image' && run.block?.image?.trim() && (
-            <p><img src={run.block.image} alt={run.block.alt || ''} loading="lazy" style="border-radius:.75rem" /></p>
-          )}
-        </>
-      )
-    ))}
-  </section>
-))}
+<Fragment set:html={html} />
