@@ -176,18 +176,32 @@ export function iconBadge(name) {
 
 function buttonAnchor(btn, o) {
   const label = (btn.label || '').trim();
-  const link = (btn.link || '').trim();
-  if (!label || !link) return '';
+  const href = safeLink(btn.link, o);
+  if (!label || !href) return '';
   return (
-    '<a class="' + btnClassFor(btn.style) + '" href="' + escAttr(o.href(link)) + '">' + esc(label) + '</a>'
+    '<a class="' + btnClassFor(btn.style) + '" href="' + escAttr(href) + '">' + esc(label) + '</a>'
   );
+}
+
+// Staff-typed URLs go through one guard: empty or dangerous schemes
+// (javascript:, data:, vbscript:) produce no link, so a pasted typo renders
+// nothing instead of a broken or script-executing target. Runs identically
+// on the site and in the CMS preview (same function, same output).
+function safeLink(url, o) {
+  const l = String(url || '').trim();
+  if (!l || /^(javascript|data|vbscript)\s*:/i.test(l)) return '';
+  const out = String(o.href(l) || '').trim();
+  return /^(javascript|data|vbscript)\s*:/i.test(out) ? '' : out;
 }
 
 function renderFundraiser(b, o, kp) {
   const goal = Number(b.goal) || 0;
   if (!b || !goal) return '';
   const pledged = Number(b.pledged) || 0;
-  const pct = Math.min(100, (pledged / goal) * 100);
+  // Clamped 0–100 so a negative or over-large pledge can never render a
+  // negative-width or overflowing bar; non-numeric input falls back to 0.
+  const pct = Math.min(100, Math.max(0, (pledged / goal) * 100 || 0));
+  const donateHref = safeLink(b.donate_link, o);
   const label = (b.donate_label || '').trim() || o.t.donate;
   const ariaTitle = (b.title || '').trim() || o.title;
   const center = 'text-align:center';
@@ -231,11 +245,11 @@ function renderFundraiser(b, o, kp) {
     ' ' +
     esc(o.t.goal) +
     '</p>' +
-    (b.donate_link && String(b.donate_link).trim()
+    (donateHref
       ? '<p class="max-w-none text-center" style="' +
         center +
         '"><a class="btn btn-gold" href="' +
-        escAttr(String(b.donate_link).trim()) +
+        escAttr(donateHref) +
         '">' +
         esc(label) +
         '</a></p>'
@@ -248,20 +262,24 @@ export function renderBlock(b, o, kp) {
   if (!b) return '';
   if (b.type === 'fundraiser') return renderFundraiser(b, o, kp);
   if (b.type === 'embed') {
-    if (!b.url || !String(b.url).trim()) return '';
+    const src = safeLink(b.url, o);
+    if (!src) return '';
     return (
       '<div' +
       (kp ? ' data-key-path="' + kp + '" tabindex="0"' : '') +
       '>' +
       (b.title && String(b.title).trim() ? '<h3>' + esc(b.title) + '</h3>' : '') +
       '<div class="table-scroll" style="border:0">' +
+      // sandbox lets video/calendar/map embeds run scripts and forms but
+      // never navigate the top page or run plugins, so a pasted embed URL
+      // can show a blank box at worst — never hijack the parish page.
       '<iframe src="' +
-      escAttr(String(b.url).trim()) +
+      escAttr(src) +
       '" title="' +
       escAttr((b.title || '').trim() || o.sectionTitle || o.title) +
       '" width="100%" height="' +
       String(Number(b.height) || 1000) +
-      '" loading="lazy"></iframe>' +
+      '" loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"></iframe>' +
       '</div>' +
       (b.caption && String(b.caption).trim()
         ? '<p class="text-sm text-soft">' + esc(b.caption) + '</p>'

@@ -7,7 +7,7 @@ import noticeVi from '../data/notice.vi.json';
 import { pickLocale } from '../lib/i18n';
 import '../styles/global.css';
 import type { Lang } from '../config';
-import { SITE_NAME } from '../config';
+import { SITE_NAME, resolveLink } from '../config';
 import en from '../data/ui.en.json';
 import es from '../data/ui.es.json';
 import vi from '../data/ui.vi.json';
@@ -28,6 +28,10 @@ const canonical = `${base}${canonicalPath ?? `/${lang}${slug && slug !== 'home' 
 const notice = pickLocale({ en: noticeEn, es: noticeEs, vi: noticeVi }, lang) as any;
 const noticeText: string = (notice.text || '').trim();
 const noticeLabel: string = (notice.link_label || '').trim();
+// Parish-page links gain the viewing language (/mass-times/ -> /en/...);
+// dangerous schemes resolve to '#' and are hidden outright.
+const noticeHref = resolveLink(notice.link || '', lang);
+const showNoticeLink = Boolean((notice.link || '').trim()) && noticeHref !== '#';
 const showNotice = Boolean(notice.enabled) && noticeText.length > 0;
 ---
 <!doctype html>
@@ -53,7 +57,7 @@ const showNotice = Boolean(notice.enabled) && noticeText.length > 0;
     <div class="notice" role="alert">
       <div class="wrap">
         <strong>{noticeText}</strong>
-        {notice.link?.trim() ? <> <a href={notice.link.trim()}>{noticeLabel || notice.link.trim()}</a></> : null}
+        {showNoticeLink ? <> <a href={noticeHref}>{noticeLabel || noticeHref}</a></> : null}
       </div>
     </div>
   )}

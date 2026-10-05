@@ -9,7 +9,7 @@
    English (the stored values); fundraiser microcopy is English; map/calendar
    iframes may refuse framing and show blank until deployed; the previewed
    locale is read off the entry file path (falls back to English). */
-import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, renderBlock, btnClassFor, iconBadge, esc } from './render-blocks.js?v=2';
+import { renderSections, renderStaffCards, filterBulletins, renderBulletinList, renderBlock, btnClassFor, iconBadge, esc } from './render-blocks.js?v=3';
 
 (function () {
   if (!window.CMS) return;

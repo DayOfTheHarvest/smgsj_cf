@@ -220,7 +220,11 @@ const scheduleBtnClass = (b: any) =>
         <section class="mb-2 mt-10 text-center" aria-label="Catholic links">
           <div class="flex flex-wrap items-end justify-center gap-10 md:gap-16">
             {((s.icons ?? []) as any[]).map((ic) => (
-              <a href={ic.link}><img src={ic.image} alt={ic.alt} width={ic.width || 140} height={ic.height || 140} loading="lazy" class="diocesan-icon" /></a>
+              ic.link?.trim() && hrefFor(ic.link.trim()) !== '#' ? (
+                <a href={hrefFor(ic.link.trim())}><img src={ic.image} alt={ic.alt} width={ic.width || 140} height={ic.height || 140} loading="lazy" class="diocesan-icon" /></a>
+              ) : (
+                <img src={ic.image} alt={ic.alt} width={ic.width || 140} height={ic.height || 140} loading="lazy" class="diocesan-icon" />
+              )
             ))}
           </div>
           {(((s as any).ethics_note || '').trim() ? (

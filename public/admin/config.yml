@@ -63,13 +63,13 @@ collections:
         required: true
         i18n: duplicate
         pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Lowercase letters, numbers, and dashes only']
-        hint: 'WARNING: this becomes the web address (/en/your-address/). Changing it later breaks links. Shared by all languages — edit in English only.'
-      - label: 'Title (required in English, max 60 — other languages optional)'
+        hint: 'WARNING: this becomes the web address (/en/your-address/). Changing it later breaks links and bookmarks — the old address stops working. Ask the web developer volunteer to redirect the old address before changing. Shared by all languages — edit in English only.'
+      - label: 'Title (required in English — other languages optional)'
         name: title
         widget: string
         i18n: true
         required: [en]
-        hint: 'Shown in the header and Google results. Keep short. Empty translations show English.'
+        hint: 'Shown in the header and Google results. Keep short (Google shows about 60 characters). Any length is safe — long titles wrap, never break the site. Empty translations show English.'
       - label: 'Page sections (the whole page, top to bottom)'
         name: sections
         widget: list
@@ -613,7 +613,7 @@ collections:
         label: Bulletin Links
         file: src/data/bulletins.{{locale}}.json
         i18n: true
-        description: Newest first. Upload the PDF via Media first, then paste its /uploads/ link here. Pick the Sunday date — the display label translates automatically.
+        description: Newest first. Upload the PDF via Media first, then paste its /uploads/ link here. Pick the Sunday date — the display label translates automatically. Never delete or rename an uploaded bulletin file — saved bulletins link to it by address.
         fields:
           - label: 'Show bulletins from the past N weeks (0 = show all)'
             name: weeks
@@ -666,7 +666,7 @@ collections:
             name: sections
             widget: list
             i18n: duplicate
-            hint: 'Pick a row type when you add a row — the settings for that section live inside the row. Drag rows to reorder the homepage. Uncheck Visible to hide a section without deleting it (everything is kept). WARNING: never change a row type after filling it in — that clears the row. Add/remove rows in English only.'
+            hint: 'Pick a row type when you add a row — the settings for that section live inside the row. Drag rows to reorder the homepage. To take a section off the site, uncheck its Visible box instead of deleting the row — deleting throws away everything inside it (buttons, events, icons). WARNING: never change a row type after filling it in — that clears the row. Add/remove rows in English only.'
             types:
               - name: preset
                 label: Theme section
@@ -1894,7 +1894,7 @@ collections:
         icon: campaign
         file: src/data/announcements.{{locale}}.json
         i18n: true
-        description: First slide shows on load; slides rotate every 5 seconds. Upload wide banners (~1920px) via Media. Write caption and alt text in this language — switch top-right. Covers the pastor letter and announcement slides.
+        description: First slide shows on load; slides rotate every 5 seconds. Upload wide banners (~1920px) via Media. Never delete or rename a banner image in Media — slides link to it by address. Write caption and alt text in this language — switch top-right. Covers the pastor letter and announcement slides.
         fields:
           - label: 'Slides'
             name: slides
@@ -2069,7 +2069,7 @@ collections:
             name: action
             widget: string
             i18n: duplicate
-            hint: 'WARNING: posts subscriptions to the parish group. A wrong URL silently sends signups nowhere.'
+            hint: 'WARNING: posts subscriptions to the parish group. A wrong URL silently sends signups nowhere. After changing it, fill in the signup form on the live site yourself and confirm the signup arrives.'
           - label: 'Method'
             name: method
             widget: select
@@ -2326,9 +2326,11 @@ singletons:
     description: >-
       WARNING: this is the header menu for the whole site. A wrong link
       breaks navigation everywhere; an empty label shows a blank menu item.
-      Links must start AND end with / (e.g. /mass-times/). Add, remove or
+      Links must start AND end with / (e.g. /mass-times/). Changing an
+      existing link orphans bookmarks — ask the web developer volunteer to
+      redirect the old address first. Add, remove or
       reorder menu items in English only — other languages follow the same
-      items. Ask the web volunteer before changing the structure.
+      items. Ask the web developer volunteer before changing the structure.
     fields:
       - label: 'Menu groups'
         name: groups

@@ -55,14 +55,14 @@ message bar shows on every page of the site.
 
 | What you want to change | Where to go in the editing screen |
 |---|---|
-| Page text (41 topics, English/Spanish/Vietnamese) | Pages → pick the topic, then switch language with the button in the top-right corner. English is required; if Spanish or Vietnamese is empty, visitors see the English with a small note (never a broken page). **New page:** open Pages and create a new page → set its address once (lowercase words with dashes), write the English, save — it appears in all 3 languages at once. Then link it from another page. If two pages ever share an address, the site stops updating and the web developer volunteer gets an email — ask them to fix it. |
+| Page text (41 topics, English/Spanish/Vietnamese) | Pages → pick the topic, then switch language with the button in the top-right corner. English is required; if Spanish or Vietnamese is empty, visitors see the English with a small note (never a broken page). **New page:** open Pages and create a new page → set its address once (lowercase words with dashes), write the English, save — it appears in all 3 languages at once. Then link it from another page. Never change a page's address afterward — the old address stops working for anyone who saved it. If an address must change, ask the web developer volunteer to redirect the old address first. Tip: the same Bulletin, Office hours, Emergency, and Contact cards from the homepage also work on any page — add a Card and set its Card content. |
 | Mass times, places, notes | Mass Schedule & Presiders → Mass Times, Places & Presiders. Day, language, and place are picked from lists. Each row also holds that Mass's presider name, so nothing can silently mismatch. |
 | Confession wording | Mass Schedule & Presiders → Confession Text. Shows beside the Mass schedule. |
 | Office hours wording | Site Settings — CAREFUL → Office Hours. Hours update everywhere at once (homepage Contact section and the bottom of every page). |
 | Staff names, job titles, phone numbers, biographies | Staff Members. Job titles and biographies in each language — switch top-right; empty shows English. Photos: press Choose image and pick an uploaded photo, never type an address. Empty biography = no personal page. |
-| Homepage moving pictures | Homepage → Homepage Carousel. The first picture shows on load; each picture has its own seconds on screen. Picture sizes default to 1920 wide by 480 tall — leave them unless the web developer volunteer says otherwise. Upload wide pictures (about 1920 wide) under Media first. Captions and alt text in each language — switch top-right; empty shows English. |
+| Homepage moving pictures | Homepage → Homepage Carousel. The first picture shows on load; each picture has its own seconds on screen. Picture sizes default to 1920 wide by 480 tall — leave them unless the web developer volunteer says otherwise. Upload wide pictures (about 1920 wide) under Media first. Never delete or rename a picture in Media — pages link to it, and deleting breaks every page that uses it. Captions and alt text in each language — switch top-right; empty shows English. |
 | Homepage boxes (Bulletin, Giving, Payment, Requests) | Homepage → Homepage Welcome & Events → the row without a heading, in its Content list. Each box is a card: set Card content per card — Bulletin list (only ONE), Office hours, Emergency numbers, and Contact card fill themselves in on their own; Generic card holds your own heading, text, and buttons. How many bulletins show is set on the bulletin card itself. Web addresses for parish pages must start AND end with `/`. You can also type a shortcut word (@giving, @payment, @calendar-suggest, @calendar-view, @flocknote, @facebook, @youtube) instead of an address — those follow Site settings automatically. To pick a picture for a card, tap the picture in the grid that pops up. |
-| Homepage order | Homepage → Homepage Welcome & Events → the Sections list. Drag rows to reorder; uncheck Visible to hide a section (it keeps its place, re-check to show it again). For Theme section rows, never change which section the row points to — only its visibility. |
+| Homepage order | Homepage → Homepage Welcome & Events → the Sections list. Drag rows to reorder; uncheck Visible to hide a section (it keeps its place, re-check to show it again). To take a section off the site, always use Visible — never delete the row, or everything inside it (buttons, events, pictures) is thrown away. For Theme section rows, never change which section the row points to — only its visibility. |
 | Welcome text, buttons, Mass schedule links, events, church icons | Homepage → Homepage Welcome & Events (hero banner, schedule block, event cards, Catholic block, custom blocks). Each row carries its own buttons, headings, and extra content — change them inside the row. The Contact section is a custom row of live cards (hours, emergency, contact) you can reorder or remove. The pastor's words should stay as he wrote them. |
 | Top menu | Header Menu. Links must start AND end with `/`. Add a temporary entry (for example a fundraiser) and remove it when done. |
 | Phone, email, address, Giving/Payment, Calendar, YouTube, social media | Site Settings — CAREFUL → Contact Info & External Links. A wrong address here shows on every page — double-check. |
@@ -74,14 +74,19 @@ message bar shows on every page of the site.
 
 **Media** → Upload. Rules of thumb: PDFs under 5 MB, photos under 1 MB,
 wide banners about 1920 wide. Every upload lands in `/uploads/` — copy its
-address into the bulletin list, moving pictures, or page. Big files (weekly
+address into the bulletin list, moving pictures, or page. Never delete or
+rename a file in Media — saved bulletins, pictures, and pages link to it by
+its address, and deleting breaks all of them at once. Old files can stay;
+storage is cheap, broken links are not. Big files (weekly
 bulletins over 5 MB) stay as links — ask the web developer volunteer before
 uploading those.
 
 ## What NOT to touch (tell the web developer volunteer)
 
 Page design, colors and fonts, logins, the build settings, redirects,
-the Flocknote signup address, visitor statistics. If the editing screen shows
+the Flocknote signup address, visitor statistics. (If the signup address
+ever must change, fill in the live signup form yourself afterward and confirm
+the signup arrives — a wrong address loses signups silently.) If the editing screen shows
 an error you do not understand, stop and tell — do not guess.
 
 ## If something looks wrong after saving

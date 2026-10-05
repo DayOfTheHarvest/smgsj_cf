@@ -94,8 +94,14 @@ export const EXTERNAL = {
 // Single link resolver used by every template. @aliases always follow Site
 // settings, so a changed Giving/Calendar/YouTube URL updates site-wide.
 // Page paths (/slug/) gain the viewing language; files and full URLs pass through.
+// Dangerous schemes (javascript:, data:, vbscript:) can never become links:
+// staff paste typos, and a hijacked editing session must not turn a button
+// into script execution. They resolve to '#' (a visible dead link staff will
+// notice and fix) instead of executing.
+const DANGEROUS_SCHEME = /^(javascript|data|vbscript)\s*:/i;
 export function resolveLink(link: string, lang: Lang): string {
   const l = (link || '').trim();
+  if (DANGEROUS_SCHEME.test(l)) return '#';
   const aliases: Record<string, string> = {
     '@giving': EXTERNAL.giving,
     '@payment': EXTERNAL.payment,

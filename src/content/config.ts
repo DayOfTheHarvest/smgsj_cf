@@ -42,6 +42,10 @@ const imageBlock = z.object({
 
 // Reusable card (icon + heading + text + buttons), e.g. the contact page
 // visit/contact cards. Same shape everywhere so cards work on any page.
+// kind/limit mirror the CMS "Card content" select: live cards (bulletins,
+// hours, emergency, contact) fill their body from parish data at render
+// time, so the schema must keep these keys instead of stripping them.
+// image is accepted for forward-compat (preview data may carry one).
 const cardButton = z.object({
   label: z.string().nullish(),
   link: z.string().nullish(),
@@ -50,6 +54,9 @@ const cardButton = z.object({
 
 const cardBlock = z.object({
   type: z.literal('card'),
+  kind: z.string().nullish(),
+  limit: z.coerce.number().optional(),
+  image: z.string().nullish(),
   icon: z.string().nullish(),
   title: z.string().nullish(),
   text: z.string().nullish(),
@@ -93,7 +100,11 @@ const pages = defineCollection({
   type: 'content',
   schema: z.object({
     slug_key: z.string().optional().default(''),
-    title: z.string().max(60).optional().default(''),
+    // Titles are unlimited: an over-long title used to fail the whole site
+    // build (zod max), stranding staff on the last deploy. Long titles wrap
+    // on the page; Google truncates ~60 characters, so the CMS still advises
+    // keeping them short — but length can never break a build again.
+    title: z.string().optional().default(''),
     updated: z.coerce.date().optional(),
     draft: z.boolean().optional().default(false),
     // Sections are the whole page, top to bottom (title lives above them).
